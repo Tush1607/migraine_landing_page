@@ -1,0 +1,613 @@
+import streamlit as st
+import streamlit.components.v1 as components
+
+st.set_page_config(
+    page_title="Migraine Intelligence Hub",
+    layout="wide",
+    initial_sidebar_state="collapsed",
+)
+
+st.markdown("""
+<style>
+#MainMenu {visibility: hidden;}
+footer {visibility: hidden;}
+header {visibility: hidden;}
+[data-testid="stSidebar"] {display: none;}
+.block-container {padding: 0 !important; max-width: 100% !important;}
+[data-testid="stAppViewBlockContainer"] {padding: 0 !important;}
+</style>
+""", unsafe_allow_html=True)
+
+html_content = r"""
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Migraine Intelligence Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+    --navy-900: #0A1A3D;
+    --navy-800: #102A5C;
+    --navy-700: #163990;
+    --navy-600: #1C4FC0;
+    --navy-500: #3B6FD9;
+    --accent: #41B6E6;
+    --bg: #EEF3FB;
+    --bg-2: #E3EBF7;
+    --surface: #FFFFFF;
+    --surface-2: #F8FAFD;
+    --text: #0F172A;
+    --text-muted: #64748B;
+    --text-soft: #475569;
+    --hairline: rgba(15,23,42,0.08);
+    --hairline-2: rgba(15,23,42,0.05);
+    --up: #10B981;
+    --down: #EF4444;
+    --flat: #94A3B8;
+    --shadow-xs: 0 1px 2px rgba(15,23,42,0.04);
+    --shadow-sm: 0 2px 8px rgba(15,23,42,0.05), 0 1px 2px rgba(15,23,42,0.04);
+    --shadow-md: 0 6px 16px rgba(15,23,42,0.07), 0 2px 4px rgba(15,23,42,0.04);
+    --shadow-lg: 0 18px 40px rgba(15,23,42,0.10), 0 6px 12px rgba(15,23,42,0.06);
+    --shadow-panel: 0 8px 24px rgba(15,23,42,0.07), 0 2px 6px rgba(15,23,42,0.04);
+    --ease: cubic-bezier(0.4, 0, 0.2, 1);
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    --sidebar-w: 232px;
+    --shell-pad: 10px;
+    --panel-radius: 18px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { height: 100%; }
+
+body {
+    font-family: 'Inter', system-ui, -apple-system, 'SF Pro Text', 'Segoe UI', Roboto, sans-serif;
+    background:
+        radial-gradient(ellipse 80% 60% at 0% 0%, rgba(28,79,192,0.08) 0%, transparent 60%),
+        radial-gradient(ellipse 70% 50% at 100% 0%, rgba(65,182,230,0.07) 0%, transparent 55%),
+        radial-gradient(ellipse 60% 50% at 50% 100%, rgba(124,58,237,0.04) 0%, transparent 60%),
+        var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+    font-size: 14px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow: hidden;
+}
+
+h1, h2, h3, h4 { font-family: 'Manrope', 'Inter', 'SF Pro Display', system-ui, sans-serif; letter-spacing: -0.015em; }
+a { color: inherit; text-decoration: none; }
+
+/* ───── APP SHELL ───── */
+.app { height: 100vh; display: grid; grid-template-columns: var(--sidebar-w) 1fr; gap: var(--shell-pad); padding: var(--shell-pad); overflow: hidden; }
+
+/* ───── SIDEBAR ───── */
+.sidebar { position: relative; background: rgba(255,255,255,0.62); backdrop-filter: saturate(180%) blur(22px); -webkit-backdrop-filter: saturate(180%) blur(22px); border: 1px solid var(--hairline); border-radius: var(--panel-radius); box-shadow: var(--shadow-panel); display: flex; flex-direction: column; overflow: hidden; z-index: 10; }
+
+.sidebar-brand { padding: 1.4rem 1.2rem 1.2rem; display: flex; flex-direction: column; gap: 0.7rem; }
+.sidebar-brand img { height: 28px; align-self: flex-start; }
+.sidebar-brand .title { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 1.22rem; color: var(--navy-900); line-height: 1.18; letter-spacing: -0.025em; }
+.sidebar-brand .subtitle { font-size: 0.72rem; color: var(--text-muted); font-weight: 500; }
+
+.sidebar-divider { height: 1px; background: var(--hairline); margin: 0 0.85rem; }
+
+.sidebar-section-label { font-family: 'Manrope', sans-serif; font-size: 0.62rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-muted); padding: 0.95rem 1.15rem 0.4rem; }
+
+.nav { padding: 0 0.55rem; }
+.nav-item {
+    position: relative; display: flex; align-items: center; gap: 0.7rem;
+    padding: 0.55rem 0.7rem; margin: 0.08rem 0; border-radius: 8px;
+    font-size: 0.84rem; font-weight: 500; color: var(--text-soft);
+    cursor: pointer; transition: background 0.18s var(--ease), color 0.18s var(--ease);
+    background: transparent; border: none; width: 100%; text-align: left; font-family: inherit;
+}
+.nav-item .nav-icon { width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; color: var(--text-muted); transition: color 0.18s var(--ease); flex-shrink: 0; }
+.nav-item .nav-icon svg { width: 16px; height: 16px; stroke-width: 1.8; fill: none; stroke: currentColor; }
+.nav-item .nav-label { flex: 1; min-width: 0; }
+.nav-item .nav-count { font-size: 0.66rem; font-weight: 600; color: var(--text-muted); background: rgba(15,23,42,0.06); padding: 0.12rem 0.42rem; border-radius: 5px; font-variant-numeric: tabular-nums; transition: background 0.18s var(--ease), color 0.18s var(--ease); flex-shrink: 0; line-height: 1.3; }
+.nav-item:hover { background: rgba(15,23,42,0.04); color: var(--text); }
+.nav-item:hover .nav-icon { color: var(--navy-700); }
+.nav-item:hover .nav-count { background: rgba(15,23,42,0.09); color: var(--text-soft); }
+
+.nav-item.active { background: linear-gradient(90deg, rgba(28,79,192,0.10) 0%, rgba(28,79,192,0.04) 100%); color: var(--navy-700); font-weight: 600; }
+.nav-item.active .nav-icon { color: var(--navy-700); }
+.nav-item.active .nav-count { background: rgba(28,79,192,0.14); color: var(--navy-700); }
+.nav-item.active::before { content: ''; position: absolute; left: -0.55rem; top: 6px; bottom: 6px; width: 3px; border-radius: 0 3px 3px 0; background: linear-gradient(180deg, var(--navy-600), var(--accent)); box-shadow: 0 0 8px rgba(28,79,192,0.3); }
+
+/* ───── SUB-NAV (indented children) ───── */
+.nav-sub {
+    display: none;
+    flex-direction: column;
+    padding: 0.15rem 0 0.15rem 1.8rem;
+}
+.nav-sub.is-open { display: flex; }
+.nav-sub-item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.38rem 0.65rem;
+    margin: 0.04rem 0;
+    border-radius: 6px;
+    font-size: 0.76rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: background 0.18s var(--ease), color 0.18s var(--ease);
+    background: transparent;
+    border: none;
+    width: 100%;
+    text-align: left;
+    font-family: inherit;
+}
+.nav-sub-item:hover { background: rgba(15,23,42,0.04); color: var(--text); }
+.nav-sub-item.active { background: rgba(28,79,192,0.08); color: var(--navy-700); font-weight: 600; }
+.nav-sub-item.external { color: var(--text-muted); font-style: italic; }
+.nav-sub-item.external svg { width: 10px; height: 10px; stroke: currentColor; fill: none; stroke-width: 2; flex-shrink: 0; }
+
+.sidebar-spacer { flex: 1; }
+
+.sidebar-meta { padding: 0.85rem 1.15rem 1rem; font-size: 0.7rem; color: var(--text-muted); line-height: 1.55; border-top: 1px solid var(--hairline); background: linear-gradient(180deg, transparent 0%, rgba(28,79,192,0.025) 100%); overflow: hidden; }
+.sidebar-meta strong { color: var(--text-soft); font-weight: 600; }
+.sidebar-meta a { color: var(--navy-700); white-space: nowrap; font-size: 0.54rem; }
+.sidebar-meta a:hover { text-decoration: underline; }
+.sidebar-meta .meta-row { margin-bottom: 0.2rem; }
+
+/* ───── MAIN ───── */
+.main { background: rgba(255,255,255,0.55); backdrop-filter: saturate(180%) blur(14px); -webkit-backdrop-filter: saturate(180%) blur(14px); border: 1px solid var(--hairline); border-radius: var(--panel-radius); box-shadow: var(--shadow-panel); display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
+
+/* ───── CONTENT ───── */
+.content { flex: 1; min-height: 0; overflow-y: auto; padding: 1.4rem; }
+.content::-webkit-scrollbar { width: 6px; }
+.content::-webkit-scrollbar-track { background: transparent; }
+.content::-webkit-scrollbar-thumb { background: rgba(15,23,42,0.14); border-radius: 3px; }
+.content::-webkit-scrollbar-thumb:hover { background: rgba(15,23,42,0.24); }
+
+/* ───── DROPDOWN ───── */
+.dropdown-wrap { position: relative; }
+.icon-btn { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.4rem 0.7rem; border-radius: 7px; background: rgba(255,255,255,0.7); border: 1px solid var(--hairline); color: var(--text-soft); font-size: 0.75rem; font-weight: 500; cursor: pointer; font-family: inherit; transition: all 0.18s var(--ease); }
+.icon-btn:hover { background: #fff; color: var(--navy-700); border-color: rgba(28,79,192,0.25); box-shadow: var(--shadow-xs); }
+.icon-btn svg { width: 13px; height: 13px; stroke-width: 1.8; fill: none; stroke: currentColor; }
+.dropdown { position: absolute; top: calc(100% + 6px); right: 0; background: rgba(255,255,255,0.96); backdrop-filter: saturate(180%) blur(20px); border: 1px solid var(--hairline); border-radius: 12px; box-shadow: var(--shadow-lg); min-width: 240px; padding: 0.45rem 0; opacity: 0; visibility: hidden; transform: translateY(-6px) scale(0.98); transform-origin: top right; transition: opacity 0.2s var(--ease), transform 0.2s var(--ease), visibility 0.2s; z-index: 200; }
+.dropdown.show { opacity: 1; visibility: visible; transform: translateY(0) scale(1); }
+.dropdown-header { font-size: 0.62rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); padding: 0.5rem 0.95rem 0.35rem; }
+.dropdown-item { display: flex; align-items: center; justify-content: space-between; padding: 0.45rem 0.95rem; font-size: 0.78rem; }
+.dropdown-item:hover { background: rgba(15,23,42,0.04); }
+.dropdown-item .src { font-weight: 500; }
+.dropdown-item .date { font-size: 0.7rem; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+
+/* ───── SECTIONS ───── */
+.section { display: none; opacity: 0; transform: translateY(4px); transition: opacity 0.22s var(--ease), transform 0.22s var(--ease-out); }
+.section.is-active { display: block; }
+.section.is-visible { opacity: 1; transform: translateY(0); }
+
+.section-head { margin-bottom: 1rem; }
+.section-head-row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 0.2rem; }
+.section-head h2 { font-size: 1.35rem; font-weight: 700; color: var(--navy-900); letter-spacing: -0.02em; margin-bottom: 0.2rem; }
+.section-head p { font-size: 0.84rem; color: var(--text-muted); max-width: 680px; }
+
+.grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+
+/* ───── CARDS ───── */
+.card { position: relative; display: flex; flex-direction: column; background: var(--surface); border-radius: 14px; padding: 1.15rem 1.2rem; min-height: 148px; overflow: hidden; box-shadow: var(--shadow-sm); transition: transform 0.28s var(--ease-out), box-shadow 0.28s var(--ease); cursor: pointer; }
+.card::after { content: ''; position: absolute; inset: 0; border-radius: inherit; background: linear-gradient(135deg, rgba(255,255,255,0) 55%, rgba(65,182,230,0.05) 80%, rgba(28,79,192,0.07) 100%); opacity: 0; transition: opacity 0.28s var(--ease); pointer-events: none; }
+.card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+.card:hover::after { opacity: 1; }
+
+.card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.7rem; }
+.icon-chip { width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.icon-chip svg { width: 19px; height: 19px; stroke-width: 1.8; fill: none; }
+.chip-s1 { background: linear-gradient(135deg, #DBEAFE, #BFDBFE); } .chip-s1 svg { stroke: #1D4ED8; }
+.chip-s2 { background: linear-gradient(135deg, #E0E7FF, #C7D2FE); } .chip-s2 svg { stroke: #4338CA; }
+.chip-s3 { background: linear-gradient(135deg, #EDE9FE, #DDD6FE); } .chip-s3 svg { stroke: #6D28D9; }
+.chip-s4 { background: linear-gradient(135deg, #CFFAFE, #A5F3FC); } .chip-s4 svg { stroke: #0E7490; }
+.chip-s5 { background: linear-gradient(135deg, #DCFCE7, #BBF7D0); } .chip-s5 svg { stroke: #047857; }
+
+.card-title { font-family: 'Manrope', sans-serif; font-size: 1.02rem; font-weight: 700; color: var(--navy-900); line-height: 1.25; margin-bottom: 0.3rem; }
+.card-desc { font-size: 0.8rem; color: var(--text-muted); line-height: 1.5; flex: 1; margin-bottom: 0.85rem; }
+.dest-pill { display: inline-flex; align-items: center; gap: 0.35rem; font-size: 0.7rem; font-weight: 600; color: var(--text-soft); padding: 0.22rem 0.55rem; border-radius: 6px; background: rgba(15,23,42,0.05); align-self: flex-start; }
+.dest-tableau .swatch { color: #1F77B4; } .dest-ppt .swatch { color: #D24726; } .dest-xlsx .swatch { color: #107C41; } .dest-agent .swatch { color: #7C3AED; } .dest-doc .swatch { color: #475569; }
+.badge { font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; padding: 0.2rem 0.5rem; border-radius: 5px; background: rgba(15,23,42,0.05); color: var(--text-muted); }
+.badge.weekly { background: rgba(16,185,129,0.12); color: #047857; }
+.badge.monthly { background: rgba(59,130,246,0.12); color: #1E40AF; }
+
+/* ───── HERO BANNER ───── */
+.hero { position: relative; background: radial-gradient(ellipse 90% 80% at 20% 20%, rgba(28,79,192,0.06) 0%, transparent 50%), radial-gradient(ellipse 60% 70% at 80% 80%, rgba(65,182,230,0.05) 0%, transparent 50%), linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(248,250,253,0.95) 100%); border-radius: 16px; padding: 2rem 2rem 1.6rem; border: 1px solid var(--hairline-2); box-shadow: var(--shadow-sm); overflow: hidden; }
+.hero::before { content: ''; position: absolute; top: -1px; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--navy-600), var(--accent), var(--navy-500)); border-radius: 16px 16px 0 0; opacity: 0.7; }
+.hero-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 1.5rem; }
+.hero-title { font-family: 'Manrope', sans-serif; font-size: 1.65rem; font-weight: 800; color: var(--navy-900); letter-spacing: -0.025em; line-height: 1.15; margin-bottom: 0.35rem; }
+.hero-subtitle { font-size: 0.82rem; font-weight: 500; color: var(--text-muted); display: flex; align-items: center; gap: 0.5rem; }
+.hero-subtitle .dot { width: 4px; height: 4px; border-radius: 50%; background: var(--text-muted); opacity: 0.5; }
+.hero-badge { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.68rem; font-weight: 600; color: var(--navy-700); background: rgba(28,79,192,0.08); padding: 0.3rem 0.7rem; border-radius: 8px; flex-shrink: 0; margin-top: 0.2rem; }
+.hero-badge svg { width: 12px; height: 12px; stroke: currentColor; fill: none; stroke-width: 2; }
+.hero-kpis { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.75rem; }
+.hero-kpi { background: rgba(255,255,255,0.75); backdrop-filter: blur(8px); border: 1px solid var(--hairline-2); border-radius: 12px; padding: 0.85rem 1rem 0.8rem; transition: transform 0.25s var(--ease-out), box-shadow 0.25s var(--ease); }
+.hero-kpi:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.hero-kpi .kpi-label { font-size: 0.7rem; color: var(--text-muted); font-weight: 500; margin-bottom: 0.25rem; }
+.hero-kpi .kpi-value { font-family: 'Manrope', sans-serif; font-size: 1.5rem; font-weight: 700; color: var(--navy-900); line-height: 1.1; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; margin-bottom: 0.3rem; }
+.hero-kpi .kpi-delta { display: inline-flex; align-items: center; gap: 0.25rem; font-size: 0.7rem; font-weight: 600; font-variant-numeric: tabular-nums; }
+.hero-kpi .kpi-delta.up { color: var(--up); } .hero-kpi .kpi-delta.down { color: var(--down); } .hero-kpi .kpi-delta.flat { color: var(--flat); }
+.hero-kpi .kpi-delta .tri { font-size: 0.65rem; line-height: 1; }
+.hero-kpi .kpi-delta .vs { color: var(--text-muted); font-weight: 500; }
+
+.workspace-divider { height: 1px; background: var(--hairline); margin: 1.4rem 0; }
+
+/* ───── SUB-PANEL (full content area) ───── */
+.sub-panel { display: none; }
+.sub-panel.is-active { display: block; }
+.sub-panel-title { font-family: 'Manrope', sans-serif; font-size: 1.25rem; font-weight: 700; color: var(--navy-900); margin-bottom: 0.3rem; letter-spacing: -0.02em; }
+.sub-panel-desc { font-size: 0.84rem; color: var(--text-muted); margin-bottom: 1.4rem; max-width: 640px; }
+.placeholder-chart { border: 2px dashed var(--hairline); border-radius: 12px; padding: 3rem 2rem; display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 0.85rem; font-weight: 500; background: var(--surface-2); margin-bottom: 1.2rem; min-height: 220px; }
+.placeholder-table { border: 1px solid var(--hairline); border-radius: 10px; overflow: hidden; }
+.placeholder-table-header { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; padding: 0.6rem 1rem; background: var(--surface-2); font-size: 0.7rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; border-bottom: 1px solid var(--hairline); }
+.placeholder-table-row { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; padding: 0.55rem 1rem; font-size: 0.8rem; color: var(--text-soft); border-bottom: 1px solid var(--hairline-2); }
+.placeholder-table-row:last-child { border-bottom: none; }
+
+/* ───── RESPONSIVE ───── */
+@media (max-width: 1180px) { :root { --sidebar-w: 208px; } }
+@media (max-width: 980px) { .grid { grid-template-columns: repeat(2, 1fr); } .hero-kpis { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 760px) { :root { --sidebar-w: 60px; } .sidebar-brand .title, .sidebar-brand .subtitle, .sidebar-section-label, .sidebar-meta, .nav-item .nav-label, .nav-item .nav-count, .nav-sub { display: none; } .nav-item { justify-content: center; padding: 0.6rem 0; } .nav { padding: 0 0.3rem; } }
+@media (max-width: 560px) { .grid { grid-template-columns: 1fr; } body { overflow: auto; } .app { height: auto; grid-template-columns: 1fr; padding: 0; gap: 0; } .sidebar { display: none; } .main { border-radius: 0; border: none; } .main, .content { overflow: visible; } .hero-kpis { grid-template-columns: repeat(2, 1fr); } .hero-title { font-size: 1.35rem; } .hero { padding: 1.4rem 1.2rem 1.2rem; } .hero-header { flex-direction: column; gap: 0.6rem; } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; } }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+<!-- ═══ SIDEBAR ═══ -->
+<aside class="sidebar">
+    <div class="sidebar-brand">
+        <img src="https://cdn.pfizer.com/pfizercom/2022-10/Pfizer_Logo_Color_CMYK.png" alt="Pfizer">
+        <div>
+            <div class="title">Migraine<br>Intelligence Hub</div>
+            <div class="subtitle">Nurtec&reg; ODT</div>
+        </div>
+    </div>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section-label">Workspace</div>
+    <nav class="nav" id="sidebarNav">
+        <button class="nav-item active" data-target="dashboards">
+            <span class="nav-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg></span>
+            <span class="nav-label">Deep-Dive Dashboards</span>
+            <span class="nav-count">6</span>
+        </button>
+        <button class="nav-item" data-target="newsletter">
+            <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/><path d="M4 9h16M9 4v16"/></svg></span>
+            <span class="nav-label">Weekly Newsletter</span>
+            <span class="nav-count">6</span>
+        </button>
+        <!-- Sub-nav items (indented under Weekly Newsletter) -->
+        <div class="nav-sub" id="newsletterSub">
+            <button class="nav-sub-item active" data-panel="nl-exec">Executive Summary</button>
+            <button class="nav-sub-item" data-panel="nl-xponent">Xponent Trends</button>
+            <button class="nav-sub-item" data-panel="nl-market">Market Insights</button>
+            <button class="nav-sub-item" data-panel="nl-access">Access Changes</button>
+            <a class="nav-sub-item external" href="https://dss-amer-design.pfizer.com/webapps/MIGRAINEDOPPLR/zXimTdd/" target="_blank" rel="noopener">DOppLR Alerts <svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg></a>
+            <button class="nav-sub-item" data-panel="nl-financial">Financial Summary</button>
+        </div>
+        <button class="nav-item" data-target="agents">
+            <span class="nav-icon"><svg viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="10" rx="2"/><path d="M9 16v3M15 16v3M9 6V3M15 6V3M3 11h3M18 11h3"/></svg></span>
+            <span class="nav-label">CoWork Agents</span>
+            <span class="nav-count">3</span>
+        </button>
+        <button class="nav-item" data-target="deliverables">
+            <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M14 3v5h5M5 21h14a1 1 0 001-1V8l-5-5H5a1 1 0 00-1 1v16a1 1 0 001 1z"/></svg></span>
+            <span class="nav-label">Analytics Deliverables</span>
+            <span class="nav-count">3</span>
+        </button>
+        <button class="nav-item" data-target="docs">
+            <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M5 3h11l3 3v15a1 1 0 01-1 1H5a1 1 0 01-1-1V4a1 1 0 011-1z"/><path d="M9 9h6M9 13h6M9 17h4"/></svg></span>
+            <span class="nav-label">Business Rule Docs</span>
+            <span class="nav-count">5</span>
+        </button>
+    </nav>
+    <div class="sidebar-spacer"></div>
+    <div class="sidebar-meta">
+        <div class="meta-row"><strong>IIS Migraine Analytics</strong></div>
+        <div class="meta-row"><a href="mailto:Team_ZS_US_Migraine_Analytics@zs.com">Team_ZS_US_Migraine_Analytics@zs.com</a></div>
+        <div class="meta-row">Updated Jun 19, 2026</div>
+    </div>
+</aside>
+
+<!-- ═══ MAIN ═══ -->
+<div class="main">
+    <main class="content">
+
+        <!-- HERO BANNER -->
+        <div class="hero">
+            <div class="hero-header">
+                <div class="hero-text">
+                    <h1 class="hero-title">Nurtec Performance YTD</h1>
+                    <div class="hero-subtitle"><span>Nurtec&reg; ODT</span><span class="dot"></span><span>IIS Analytics</span></div>
+                </div>
+                <span class="hero-badge"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 5V3M12 21v-2M16.95 7.05l1.41-1.41M5.64 18.36l1.41-1.41M19 12h2M3 12h2M16.95 16.95l1.41 1.41M5.64 5.64l1.41 1.41"/></svg>Executive KPIs</span>
+            </div>
+            <div class="hero-kpis">
+                <div class="hero-kpi"><div class="kpi-label">Nurtec TRx</div><div class="kpi-value">892K</div><div class="kpi-delta up"><span class="tri">&#9650;</span>+12.4% <span class="vs">vs STLY</span></div></div>
+                <div class="hero-kpi"><div class="kpi-label">Nurtec NBRx</div><div class="kpi-value">187K</div><div class="kpi-delta up"><span class="tri">&#9650;</span>+8.6% <span class="vs">vs STLY</span></div></div>
+                <div class="hero-kpi"><div class="kpi-label">Nurtec oCGRP Mkt Share</div><div class="kpi-value">34.1%</div><div class="kpi-delta up"><span class="tri">&#9650;</span>+1.8pp <span class="vs">vs STLY</span></div></div>
+                <div class="hero-kpi"><div class="kpi-label">Acute Nurtec oCGRP Share</div><div class="kpi-value">41.2%</div><div class="kpi-delta up"><span class="tri">&#9650;</span>+2.3pp <span class="vs">vs STLY</span></div></div>
+                <div class="hero-kpi"><div class="kpi-label">Preventive Nurtec oCGRP Share</div><div class="kpi-value">22.7%</div><div class="kpi-delta down"><span class="tri">&#9660;</span>-0.5pp <span class="vs">vs STLY</span></div></div>
+            </div>
+        </div>
+
+        <div class="workspace-divider"></div>
+
+        <!-- 1. DASHBOARDS -->
+        <section class="section is-active is-visible" id="dashboards" data-label="Deep-Dive Dashboards">
+            <div class="section-head">
+                <div class="section-head-row">
+                    <h2>Deep-Dive Dashboards</h2>
+                    <div class="dropdown-wrap">
+                        <button class="icon-btn" onclick="toggleDropdown('dataDropdown', event)"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v6c0 1.7 3.6 3 8 3s8-1.3 8-3V6"/><path d="M4 12v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/></svg>Data Availability<svg viewBox="0 0 24 24" style="width:11px;height:11px;"><path d="M6 9l6 6 6-6"/></svg></button>
+                        <div class="dropdown" id="dataDropdown">
+                            <div class="dropdown-header">Last refresh by source</div>
+                            <div class="dropdown-item"><span class="src">NPA</span><span class="date">Jun 13, 2026</span></div>
+                            <div class="dropdown-item"><span class="src">Weekly LAAD</span><span class="date">Jun 11, 2026</span></div>
+                            <div class="dropdown-item"><span class="src">Monthly LAAD</span><span class="date">May 31, 2026</span></div>
+                            <div class="dropdown-item"><span class="src">Xponent</span><span class="date">Jun 6, 2026</span></div>
+                            <div class="dropdown-item"><span class="src">Forsyth</span><span class="date">Jun 10, 2026</span></div>
+                            <div class="dropdown-item"><span class="src">Optum</span><span class="date">Mar 31, 2026</span></div>
+                        </div>
+                    </div>
+                </div>
+                <p>Interactive analytics across patient funnel, volume, HCP, payer, and financial performance.</p>
+            </div>
+            <div class="grid">
+                <a class="card" href="https://us-east-1.online.tableau.com/#/site/amerdev/views/USMigraineDashboard/PatientFunnel?:iid=1" target="_blank" rel="noopener"><div class="card-top"><span class="icon-chip chip-s1"><svg viewBox="0 0 24 24"><path d="M5.5 5h13a1 1 0 011 1v10a1 1 0 01-1 1h-13a1 1 0 01-1-1V6a1 1 0 011-1zM4 20h16M10 5V3M14 5V3"/></svg></span></div><div class="card-title">Patient Funnel</div><div class="card-desc">Eligibility through treatment at claims and patient-level views.</div><span class="dest-pill dest-tableau"><span class="swatch">&#9632;</span>Tableau</span></a>
+                <a class="card" href="https://us-east-1.online.tableau.com/#/site/amerdev/views/USMigraineConcurrentUsageTab/ConcurrentUsageTab" target="_blank" rel="noopener"><div class="card-top"><span class="icon-chip chip-s1"><svg viewBox="0 0 24 24"><circle cx="12" cy="7" r="4"/><path d="M6 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/></svg></span></div><div class="card-title">Patient Deep Dive</div><div class="card-desc">Concurrent usage, switching patterns, and patient segmentation.</div><span class="dest-pill dest-tableau"><span class="swatch">&#9632;</span>Tableau</span></a>
+                <a class="card" href="https://us-east-1.online.tableau.com/#/site/amerdev/views/USMigraineDashboard/VolumeDeepDive" target="_blank" rel="noopener"><div class="card-top"><span class="icon-chip chip-s1"><svg viewBox="0 0 24 24"><path d="M3 12h4l3-9 4 18 3-9h4"/></svg></span></div><div class="card-title">Volume Deep Dive</div><div class="card-desc">TRx and NBRx volume trends across brands and channels.</div><span class="dest-pill dest-tableau"><span class="swatch">&#9632;</span>Tableau</span></a>
+                <a class="card" href="https://us-east-1.online.tableau.com/#/site/amerdev/views/USMigraineDashboard/PrescriptionInsights?:iid=1" target="_blank" rel="noopener"><div class="card-top"><span class="icon-chip chip-s1"><svg viewBox="0 0 24 24"><path d="M12 4a5 5 0 015 5v3a1 1 0 01-1 1H8a1 1 0 01-1-1V9a5 5 0 015-5z"/><path d="M12 13v7M9 20h6"/></svg></span></div><div class="card-title">HCP Deep Dive</div><div class="card-desc">Prescriber behavior, decile analysis, and targeting insights.</div><span class="dest-pill dest-tableau"><span class="swatch">&#9632;</span>Tableau</span></a>
+                <a class="card" href="https://us-east-1.online.tableau.com/#/site/amerdev/views/USMigraineDashboardPayerDeepDive/PayerSummary?:iid=1" target="_blank" rel="noopener"><div class="card-top"><span class="icon-chip chip-s1"><svg viewBox="0 0 24 24"><path d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-4"/></svg></span></div><div class="card-title">Payer Deep Dive</div><div class="card-desc">Formulary status, payer mix, and access rates.</div><span class="dest-pill dest-tableau"><span class="swatch">&#9632;</span>Tableau</span></a>
+                <a class="card" href="https://us-east-1.online.tableau.com/#/site/amerdev/views/USMigraineDashboard/FinancialSummary?:iid=1" target="_blank" rel="noopener"><div class="card-top"><span class="icon-chip chip-s1"><svg viewBox="0 0 24 24"><path d="M12 2v20M5 9h11a3 3 0 010 6H7a3 3 0 000 6h12"/></svg></span></div><div class="card-title">Financial Summary</div><div class="card-desc">Revenue, cost, and financial KPIs across the portfolio.</div><span class="dest-pill dest-tableau"><span class="swatch">&#9632;</span>Tableau</span></a>
+            </div>
+        </section>
+
+        <!-- 2. NEWSLETTER -->
+        <section class="section" id="newsletter" data-label="Weekly Newsletter">
+            <!-- Card grid view (initial state when clicking Weekly Newsletter) -->
+            <div id="nl-grid-view">
+                <div class="section-head">
+                    <h2>Weekly Newsletter Deep-Dive</h2>
+                    <p>In-depth weekly analyses covering market momentum, competitive share shifts, and performance trends.</p>
+                </div>
+                <div class="grid">
+                    <div class="card" data-nl-panel="nl-exec"><div class="card-top"><span class="icon-chip chip-s2"><svg viewBox="0 0 24 24"><path d="M4 19h16M4 15l4-6 4 2 4-5 4 4"/></svg></span><span class="badge weekly">Weekly</span></div><div class="card-title">Executive Summary</div><div class="card-desc">High-level performance overview and key takeaways.</div><span class="dest-pill dest-ppt"><span class="swatch">&#9632;</span>PowerPoint</span></div>
+                    <div class="card" data-nl-panel="nl-xponent"><div class="card-top"><span class="icon-chip chip-s2"><svg viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8M14 7h7v7"/></svg></span><span class="badge weekly">Weekly</span></div><div class="card-title">Xponent Trends</div><div class="card-desc">Weekly Xponent data trends and brand performance.</div><span class="dest-pill dest-ppt"><span class="swatch">&#9632;</span>PowerPoint</span></div>
+                    <div class="card" data-nl-panel="nl-market"><div class="card-top"><span class="icon-chip chip-s2"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg></span><span class="badge weekly">Weekly</span></div><div class="card-title">Market Insights</div><div class="card-desc">Competitive landscape and market share dynamics.</div><span class="dest-pill dest-ppt"><span class="swatch">&#9632;</span>PowerPoint</span></div>
+                    <div class="card" data-nl-panel="nl-access"><div class="card-top"><span class="icon-chip chip-s2"><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5-2a9 9 0 11-4.219-7.619"/></svg></span><span class="badge weekly">Weekly</span></div><div class="card-title">Access Changes</div><div class="card-desc">Payer access updates and formulary change tracking.</div><span class="dest-pill dest-ppt"><span class="swatch">&#9632;</span>PowerPoint</span></div>
+                    <a class="card" href="https://dss-amer-design.pfizer.com/webapps/MIGRAINEDOPPLR/zXimTdd/" target="_blank" rel="noopener"><div class="card-top"><span class="icon-chip chip-s2"><svg viewBox="0 0 24 24"><path d="M10 5a2 2 0 114 0v1a7 7 0 014 6v4l2 2H4l2-2v-4a7 7 0 014-6V5z"/><path d="M9 17v1a3 3 0 006 0v-1"/></svg></span><span class="badge weekly">Weekly</span></div><div class="card-title">DOppLR Alerts</div><div class="card-desc">Predictive alerts for market momentum shifts.</div><span class="dest-pill dest-ppt"><span class="swatch">&#9632;</span>PowerPoint</span></a>
+                    <div class="card" data-nl-panel="nl-financial"><div class="card-top"><span class="icon-chip chip-s2"><svg viewBox="0 0 24 24"><path d="M5 21V5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3-7 3z"/></svg></span><span class="badge weekly">Weekly</span></div><div class="card-title">Financial Summary</div><div class="card-desc">Weekly financial metrics and revenue tracking.</div><span class="dest-pill dest-xlsx"><span class="swatch">&#9632;</span>Excel</span></div>
+                </div>
+            </div>
+            <!-- Deep-dive sub-panels (shown when a card is clicked) -->
+            <div id="nl-deepdive-view" style="display:none;">
+                <div class="sub-panel is-active" id="nl-exec">
+                    <div class="sub-panel-title">Executive Summary</div>
+                    <div class="sub-panel-desc">High-level performance overview and key takeaways for the current reporting week.</div>
+                    <div class="placeholder-chart">Chart: Weekly TRx / NBRx trend with YoY comparison</div>
+                    <div class="placeholder-table">
+                        <div class="placeholder-table-header"><span>Metric</span><span>Current Wk</span><span>Prior Wk</span><span>% Change</span></div>
+                        <div class="placeholder-table-row"><span>Nurtec TRx</span><span>42.3K</span><span>41.0K</span><span style="color:var(--up)">+3.2%</span></div>
+                        <div class="placeholder-table-row"><span>Nurtec NBRx</span><span>8.7K</span><span>8.5K</span><span style="color:var(--up)">+1.8%</span></div>
+                        <div class="placeholder-table-row"><span>oCGRP Market Share</span><span>34.1%</span><span>34.3%</span><span style="color:var(--down)">-0.2pp</span></div>
+                    </div>
+                </div>
+                <div class="sub-panel" id="nl-xponent">
+                    <div class="sub-panel-title">Xponent Trends</div>
+                    <div class="sub-panel-desc">Weekly Xponent data trends and brand performance across CGRP class.</div>
+                    <div class="placeholder-chart">Chart: Brand-level TRx share trend (Nurtec, Ubrelvy, Qulipta, Aimovig, Ajovy, Emgality)</div>
+                    <div class="placeholder-table">
+                        <div class="placeholder-table-header"><span>Brand</span><span>TRx</span><span>Share</span><span>Trend</span></div>
+                        <div class="placeholder-table-row"><span>Nurtec ODT</span><span>42.3K</span><span>34.1%</span><span style="color:var(--up)">&#9650;</span></div>
+                        <div class="placeholder-table-row"><span>Ubrelvy</span><span>38.1K</span><span>30.7%</span><span style="color:var(--flat)">&#8212;</span></div>
+                        <div class="placeholder-table-row"><span>Qulipta</span><span>22.4K</span><span>18.1%</span><span style="color:var(--up)">&#9650;</span></div>
+                    </div>
+                </div>
+                <div class="sub-panel" id="nl-market">
+                    <div class="sub-panel-title">Market Insights</div>
+                    <div class="sub-panel-desc">Competitive landscape and market share dynamics across the migraine treatment market.</div>
+                    <div class="placeholder-chart">Chart: Market share waterfall — share gains/losses by brand</div>
+                    <div class="placeholder-table">
+                        <div class="placeholder-table-header"><span>Segment</span><span>Size</span><span>Nurtec Share</span><span>vs STLY</span></div>
+                        <div class="placeholder-table-row"><span>Acute oCGRP</span><span>102K TRx</span><span>41.2%</span><span style="color:var(--up)">+2.3pp</span></div>
+                        <div class="placeholder-table-row"><span>Preventive oCGRP</span><span>74K TRx</span><span>22.7%</span><span style="color:var(--down)">-0.5pp</span></div>
+                        <div class="placeholder-table-row"><span>Total Migraine</span><span>230K TRx</span><span>18.4%</span><span style="color:var(--up)">+0.3pp</span></div>
+                    </div>
+                </div>
+                <div class="sub-panel" id="nl-access">
+                    <div class="sub-panel-title">Access Changes</div>
+                    <div class="sub-panel-desc">Payer access updates and formulary change tracking for the current period.</div>
+                    <div class="placeholder-chart">Chart: Covered lives by formulary tier (preferred, non-preferred, PA required)</div>
+                    <div class="placeholder-table">
+                        <div class="placeholder-table-header"><span>Payer</span><span>Change</span><span>Lives Impacted</span><span>Effective</span></div>
+                        <div class="placeholder-table-row"><span>Aetna Commercial</span><span>Tier upgrade</span><span>4.2M</span><span>Jul 1, 2026</span></div>
+                        <div class="placeholder-table-row"><span>UHC Medicare</span><span>PA removed</span><span>2.8M</span><span>Jun 15, 2026</span></div>
+                        <div class="placeholder-table-row"><span>Cigna Commercial</span><span>Step edit added</span><span>3.1M</span><span>Aug 1, 2026</span></div>
+                    </div>
+                </div>
+                <div class="sub-panel" id="nl-financial">
+                    <div class="sub-panel-title">Financial Summary</div>
+                    <div class="sub-panel-desc">Weekly financial metrics and revenue tracking across portfolio.</div>
+                    <div class="placeholder-chart">Chart: Net revenue trend (weekly) with plan comparison</div>
+                    <div class="placeholder-table">
+                        <div class="placeholder-table-header"><span>Metric</span><span>WTD</span><span>MTD</span><span>YTD</span></div>
+                        <div class="placeholder-table-row"><span>Gross Revenue</span><span>$48.2M</span><span>$196.4M</span><span>$1.14B</span></div>
+                        <div class="placeholder-table-row"><span>Net Revenue</span><span>$31.7M</span><span>$128.9M</span><span>$748M</span></div>
+                        <div class="placeholder-table-row"><span>GTN %</span><span>34.2%</span><span>34.4%</span><span>34.4%</span></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. AGENTS -->
+        <section class="section" id="agents" data-label="CoWork Agents">
+            <div class="section-head"><h2>Snowflake CoWork Agents</h2><p>AI-powered analytical agents for automated insights and conversational data exploration.</p></div>
+            <div class="grid">
+                <a class="card" href="https://app.us-east-1.privatelink.snowflakecomputing.com/pfe/amerprod01/#/ai" target="_blank" rel="noopener"><div class="card-top"><span class="icon-chip chip-s3"><svg viewBox="0 0 24 24"><rect x="6" y="4" width="12" height="7" rx="2"/><path d="M9 11v4M15 11v4M8 18h8M12 15v3M7 4V2M17 4V2"/></svg></span></div><div class="card-title">Migraine NPA Agent</div><div class="card-desc">Conversational NPA data querying and automated insight generation.</div><span class="dest-pill dest-agent"><span class="swatch">&#9632;</span>Cortex Agent</span></a>
+                <a class="card" href="https://app.us-east-1.privatelink.snowflakecomputing.com/pfe/amerprod01/#/ai" target="_blank" rel="noopener"><div class="card-top"><span class="icon-chip chip-s3"><svg viewBox="0 0 24 24"><rect x="6" y="4" width="12" height="7" rx="2"/><path d="M9 11v4M15 11v4M8 18h8M12 15v3M7 4V2M17 4V2"/></svg></span><span class="badge weekly">Weekly</span></div><div class="card-title">LAAD Weekly Agent</div><div class="card-desc">Weekly LAAD data processing and trend surfacing.</div><span class="dest-pill dest-agent"><span class="swatch">&#9632;</span>Cortex Agent</span></a>
+                <a class="card" href="https://app.us-east-1.privatelink.snowflakecomputing.com/pfe/amerprod01/#/ai" target="_blank" rel="noopener"><div class="card-top"><span class="icon-chip chip-s3"><svg viewBox="0 0 24 24"><rect x="6" y="4" width="12" height="7" rx="2"/><path d="M9 11v4M15 11v4M8 18h8M12 15v3M7 4V2M17 4V2"/></svg></span><span class="badge monthly">Monthly</span></div><div class="card-title">eLAAD Monthly Agent</div><div class="card-desc">Monthly eLAAD aggregation and reporting automation.</div><span class="dest-pill dest-agent"><span class="swatch">&#9632;</span>Cortex Agent</span></a>
+            </div>
+        </section>
+
+        <!-- 4. DELIVERABLES -->
+        <section class="section" id="deliverables" data-label="Analytics Deliverables">
+            <div class="section-head"><h2>Analytics Deliverables</h2><p>PowerPoint and Excel deliverables for leadership and cross-functional stakeholders.</p></div>
+            <div class="grid">
+                <a class="card" href="#" target="_blank" rel="noopener"><div class="card-top"><span class="icon-chip chip-s4"><svg viewBox="0 0 24 24"><path d="M4 4h16a1 1 0 011 1v14a1 1 0 01-1 1H4a1 1 0 01-1-1V5a1 1 0 011-1z"/><path d="M8 9h8M8 13h6M8 17h4"/></svg></span></div><div class="card-title">Nurtec Offsite Deck</div><div class="card-desc">Strategic offsite presentation with market overview.</div><span class="dest-pill dest-ppt"><span class="swatch">&#9632;</span>PowerPoint</span></a>
+                <a class="card" href="#" target="_blank" rel="noopener"><div class="card-top"><span class="icon-chip chip-s4"><svg viewBox="0 0 24 24"><circle cx="6" cy="18" r="2"/><circle cx="18" cy="18" r="2"/><circle cx="12" cy="6" r="2"/><path d="M6 16V8l6-2M18 16V8l-6-2"/></svg></span></div><div class="card-title">oCGRP Market Dynamics</div><div class="card-desc">Competitive dynamics and market share analysis.</div><span class="dest-pill dest-ppt"><span class="swatch">&#9632;</span>PPT &middot; Excel</span></a>
+                <a class="card" href="#" target="_blank" rel="noopener"><div class="card-top"><span class="icon-chip chip-s4"><svg viewBox="0 0 24 24"><path d="M14 3v4a1 1 0 001 1h4"/><path d="M17 21H7a2 2 0 01-2-2V5a2 2 0 012-2h7l5 5v11a2 2 0 01-2 2z"/><path d="M9 17v-6M12 17v-1M15 17v-4"/></svg></span></div><div class="card-title">Nurtec Deep-Dives</div><div class="card-desc">Detailed deep-dive analyses across key metrics.</div><span class="dest-pill dest-ppt"><span class="swatch">&#9632;</span>PowerPoint</span></a>
+            </div>
+        </section>
+
+        <!-- 5. DOCS -->
+        <section class="section" id="docs" data-label="Business Rule Docs">
+            <div class="section-head"><h2>Business Rule Documentation</h2><p>Data definitions, metric calculations, business logic, and reporting standards.</p></div>
+            <div class="grid">
+                <a class="card" href="#" target="_blank" rel="noopener"><div class="card-top"><span class="icon-chip chip-s5"><svg viewBox="0 0 24 24"><path d="M3 19a9 9 0 019-9 9 9 0 019 9"/><path d="M3 19h18M12 10V3"/><path d="M7.8 4.8L12 3l4.2 1.8"/></svg></span></div><div class="card-title">Migraine Market Overview</div><div class="card-desc">Market landscape and key therapeutic area definitions.</div><span class="dest-pill dest-doc"><span class="swatch">&#9632;</span>Doc</span></a>
+                <a class="card" href="#" target="_blank" rel="noopener"><div class="card-top"><span class="icon-chip chip-s5"><svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12l2 2 4-4"/></svg></span></div><div class="card-title">BR Alignment</div><div class="card-desc">Cross-functional business rule alignment documentation.</div><span class="dest-pill dest-doc"><span class="swatch">&#9632;</span>Doc</span></a>
+                <a class="card" href="#" target="_blank" rel="noopener"><div class="card-top"><span class="icon-chip chip-s5"><svg viewBox="0 0 24 24"><path d="M12 4L4 8l8 4 8-4-8-4zM4 12l8 4 8-4M4 16l8 4 8-4"/></svg></span></div><div class="card-title">IIS BR Master Deck</div><div class="card-desc">Master business rules deck for IIS analytics.</div><span class="dest-pill dest-ppt"><span class="swatch">&#9632;</span>PowerPoint</span></a>
+                <a class="card" href="#" target="_blank" rel="noopener"><div class="card-top"><span class="icon-chip chip-s5"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="4" r="1.5"/><circle cx="12" cy="20" r="1.5"/><circle cx="4" cy="12" r="1.5"/><circle cx="20" cy="12" r="1.5"/><path d="M12 7v2M12 15v2M7 12h2M15 12h2"/></svg></span></div><div class="card-title">IIS Migraine Data Ecosystem</div><div class="card-desc">Data sources, flows, and ecosystem mapping.</div><span class="dest-pill dest-doc"><span class="swatch">&#9632;</span>Doc</span></a>
+                <a class="card" href="#" target="_blank" rel="noopener"><div class="card-top"><span class="icon-chip chip-s5"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 5V3M12 21v-2M16.95 7.05l1.41-1.41M5.64 18.36l1.41-1.41M19 12h2M3 12h2M16.95 16.95l1.41 1.41M5.64 5.64l1.41 1.41"/></svg></span></div><div class="card-title">Migraine Dashboard BR</div><div class="card-desc">Dashboard-specific metric logic and standards.</div><span class="dest-pill dest-doc"><span class="swatch">&#9632;</span>Doc</span></a>
+            </div>
+        </section>
+
+    </main>
+</div>
+</div>
+
+<script>
+(function() {
+    'use strict';
+
+    // Dropdown
+    window.toggleDropdown = function(id, ev) {
+        ev.stopPropagation();
+        document.querySelectorAll('.dropdown.show').forEach(function(d) { if (d.id !== id) d.classList.remove('show'); });
+        document.getElementById(id).classList.toggle('show');
+    };
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.dropdown-wrap')) {
+            document.querySelectorAll('.dropdown.show').forEach(function(d) { d.classList.remove('show'); });
+        }
+    });
+
+    // Sidebar main navigation
+    var nav = document.getElementById('sidebarNav');
+    var items = nav.querySelectorAll('.nav-item');
+    var sections = {};
+    items.forEach(function(it) { sections[it.dataset.target] = document.getElementById(it.dataset.target); });
+    var newsletterSub = document.getElementById('newsletterSub');
+    var nlGridView = document.getElementById('nl-grid-view');
+    var nlDeepdiveView = document.getElementById('nl-deepdive-view');
+    var heroEl = document.querySelector('.hero');
+    var dividerEl = document.querySelector('.workspace-divider');
+    var inDeepdive = false;
+
+    function setActive(item) {
+        items.forEach(function(i) { i.classList.remove('active'); });
+        item.classList.add('active');
+    }
+
+    function exitDeepdive() {
+        inDeepdive = false;
+        nlGridView.style.display = '';
+        nlDeepdiveView.style.display = 'none';
+        newsletterSub.classList.remove('is-open');
+        heroEl.style.display = '';
+        dividerEl.style.display = '';
+        newsletterSub.querySelectorAll('.nav-sub-item').forEach(function(s) { s.classList.remove('active'); });
+    }
+
+    function enterDeepdive(panelId) {
+        inDeepdive = true;
+        nlGridView.style.display = 'none';
+        nlDeepdiveView.style.display = '';
+        newsletterSub.classList.add('is-open');
+        heroEl.style.display = 'none';
+        dividerEl.style.display = 'none';
+        // Activate the correct sub-panel
+        nlDeepdiveView.querySelectorAll('.sub-panel').forEach(function(p) { p.classList.remove('is-active'); });
+        var target = document.getElementById(panelId);
+        if (target) target.classList.add('is-active');
+        // Activate the correct sub-nav item
+        newsletterSub.querySelectorAll('.nav-sub-item').forEach(function(s) { s.classList.remove('active'); });
+        var matchingSub = newsletterSub.querySelector('[data-panel="' + panelId + '"]');
+        if (matchingSub) matchingSub.classList.add('active');
+    }
+
+    var switching = false;
+    function showSection(id) {
+        if (switching) return;
+        var current = document.querySelector('.section.is-active');
+        var next = sections[id];
+        if (!next || next === current) return;
+        switching = true;
+        if (current) current.classList.remove('is-visible');
+        setTimeout(function() {
+            if (current) current.classList.remove('is-active');
+            var content = document.querySelector('.content');
+            if (content) content.scrollTop = 0;
+            next.classList.add('is-active');
+            void next.offsetWidth;
+            next.classList.add('is-visible');
+            switching = false;
+        }, 220);
+    }
+
+    items.forEach(function(item) {
+        item.addEventListener('click', function(e) {
+            e.preventDefault();
+            setActive(item);
+            showSection(item.dataset.target);
+
+            // When clicking Newsletter from nav, show card grid (reset deepdive)
+            if (item.dataset.target === 'newsletter') {
+                exitDeepdive();
+            } else {
+                newsletterSub.classList.remove('is-open');
+                if (inDeepdive) exitDeepdive();
+            }
+
+            // Restore hero for non-deepdive views
+            if (item.dataset.target !== 'newsletter' || !inDeepdive) {
+                heroEl.style.display = '';
+                dividerEl.style.display = '';
+            }
+        });
+    });
+
+    // Newsletter card clicks → enter deepdive
+    var nlCards = document.querySelectorAll('#nl-grid-view .card[data-nl-panel]');
+    nlCards.forEach(function(card) {
+        card.addEventListener('click', function(e) {
+            e.preventDefault();
+            var panelId = card.dataset.nlPanel;
+            if (panelId) enterDeepdive(panelId);
+        });
+    });
+
+    // Newsletter sub-nav items (sidebar) → switch panels
+    var subItems = newsletterSub.querySelectorAll('.nav-sub-item[data-panel]');
+    subItems.forEach(function(subItem) {
+        subItem.addEventListener('click', function(e) {
+            e.preventDefault();
+            newsletterSub.querySelectorAll('.nav-sub-item').forEach(function(s) { s.classList.remove('active'); });
+            subItem.classList.add('active');
+            nlDeepdiveView.querySelectorAll('.sub-panel').forEach(function(p) { p.classList.remove('is-active'); });
+            var target = document.getElementById(subItem.dataset.panel);
+            if (target) target.classList.add('is-active');
+        });
+    });
+})();
+</script>
+</body>
+</html>
+"""
+
+components.html(html_content, height=920, scrolling=False)
