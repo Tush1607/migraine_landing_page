@@ -393,8 +393,8 @@ a { color: inherit; text-decoration: none; }
 .nl-content .card { background: white; border: 1px solid #e5e7eb; border-radius: 10px; padding: 20px; margin-bottom: 16px; min-height: auto; box-shadow: none; cursor: default; }
 .nl-content .card:hover { transform: none; box-shadow: none; }
 .nl-content .card::after { display: none; }
-.nl-content .card-title { font-size: 14px; font-weight: 600; margin-bottom: 4px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #1a2332; }
-.nl-content .card-subtitle { font-size: 11px; color: #6b7280; margin-bottom: 16px; }
+.nl-content .card-title { font-size: 17px; font-weight: 700; margin-bottom: 6px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #1a2332; }
+.nl-content .card-subtitle { font-size: 12px; color: #4b5563; margin-bottom: 16px; }
 .nl-content .row { display: flex; gap: 16px; margin-bottom: 16px; }
 .nl-content .row > * { flex: 1; }
 .nl-content .stat-tile { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px; }
@@ -414,7 +414,9 @@ a { color: inherit; text-decoration: none; }
 .nl-content .chart-container { position: relative; width: 100%; height: 280px; margin: 16px 0; margin-left: -20px; margin-right: -20px; width: calc(100% + 40px); }
 .nl-content .chart-container-sm { height: 220px; margin-left: -20px; margin-right: -20px; width: calc(100% + 40px); }
 .nl-content svg.chart { width: 100%; height: 100%; }
+.nl-content svg.chart text { fill: #4b5563 !important; font-weight: 500 !important; font-size: 10px !important; }
 .nl-content .legend { display: flex; gap: 16px; justify-content: center; margin-top: 8px; font-size: 11px; flex-wrap: wrap; }
+.nl-content .axis-label { font-size: 10px; font-weight: 600; color: #4b5563; text-align: center; margin-top: -8px; margin-bottom: 8px; }
 .nl-content .legend-item { display: flex; align-items: center; gap: 6px; }
 .nl-content .legend-dot { width: 8px; height: 8px; border-radius: 50%; }
 .nl-content .brand-header { padding: 10px 16px; border-radius: 6px; margin-bottom: 12px; color: white; font-size: 12px; font-weight: 600; display: flex; gap: 16px; }
@@ -446,6 +448,7 @@ a { color: inherit; text-decoration: none; }
 <div class="nl-content">
 <div class="nl-tab active" id="nl-exec-tab">
 <div style="padding:24px 32px;">
+<div class="section-head"><h2>Executive Summary</h2><p>High-level performance overview and key takeaways for the current reporting week.</p></div>
     <div class="card">
       <div class="card-title">Performance Snapshot</div>
       <div class="card-subtitle">Week ending 06/19/2026 · National</div>
@@ -546,6 +549,7 @@ a { color: inherit; text-decoration: none; }
 </div>
 <div class="nl-tab" id="nl-xponent-tab">
 <div style="padding:24px 32px;">
+<div class="section-head"><h2>Xponent Trends</h2><p>Weekly Xponent data trends, segment and channel performance analysis.</p></div>
     <div class="card">
       <div class="card-title">Claims MTD & YTD vs. STLY</div>
       <div class="card-subtitle">Nurtec NRx and TRx claim counts</div>
@@ -576,11 +580,11 @@ a { color: inherit; text-decoration: none; }
             <polyline fill="none" stroke="#16a34a" stroke-width="2" points="50,95 75,94 100,93 125,92 150,91 175,90 200,89 225,88 250,87 275,87 300,86 325,86 350,85"/>
             <polyline fill="none" stroke="#f59e0b" stroke-width="2" points="50,135 75,134 100,133 125,132 150,132 175,131 200,130 225,130 250,129 275,128 300,128 325,127 350,127"/>
             <polyline fill="none" stroke="#9ca3af" stroke-width="2" points="50,148 75,148 100,147 125,147 150,147 175,146 200,146 225,146 250,145 275,145 300,145 325,144 350,144"/>
-            <text x="50" y="196" font-size="8" fill="#9ca3af">W1</text>
-            <text x="130" y="196" font-size="8" fill="#9ca3af">W6</text>
-            <text x="210" y="196" font-size="8" fill="#9ca3af">W11</text>
-            <text x="290" y="196" font-size="8" fill="#9ca3af">W16</text>
-            <text x="350" y="196" font-size="8" fill="#9ca3af">W20</text>
+            <text x="50" y="196" font-size="8" fill="#9ca3af">Wk 1</text>
+            <text x="130" y="196" font-size="8" fill="#9ca3af">Wk 6</text>
+            <text x="210" y="196" font-size="8" fill="#9ca3af">Wk 11</text>
+            <text x="290" y="196" font-size="8" fill="#9ca3af">Wk 16</text>
+            <text x="350" y="196" font-size="8" fill="#9ca3af">Wk 20</text>
           </svg>
         </div>
         <div class="legend" style="font-size:10px;">
@@ -608,11 +612,11 @@ a { color: inherit; text-decoration: none; }
             <polyline fill="none" stroke="#0891b2" stroke-width="2" points="50,55 75,54 100,53 125,52 150,51 175,50 200,50 225,49 250,49 275,48 300,48 325,47 350,47"/>
             <polyline fill="none" stroke="#7c3aed" stroke-width="2" points="50,120 75,119 100,118 125,117 150,116 175,115 200,114 225,114 250,113 275,112 300,112 325,111 350,111"/>
             <polyline fill="none" stroke="#9ca3af" stroke-width="2" points="50,145 75,145 100,144 125,144 150,144 175,143 200,143 225,143 250,142 275,142 300,142 325,142 350,141"/>
-            <text x="50" y="196" font-size="8" fill="#9ca3af">W1</text>
-            <text x="130" y="196" font-size="8" fill="#9ca3af">W6</text>
-            <text x="210" y="196" font-size="8" fill="#9ca3af">W11</text>
-            <text x="290" y="196" font-size="8" fill="#9ca3af">W16</text>
-            <text x="350" y="196" font-size="8" fill="#9ca3af">W20</text>
+            <text x="50" y="196" font-size="8" fill="#9ca3af">Wk 1</text>
+            <text x="130" y="196" font-size="8" fill="#9ca3af">Wk 6</text>
+            <text x="210" y="196" font-size="8" fill="#9ca3af">Wk 11</text>
+            <text x="290" y="196" font-size="8" fill="#9ca3af">Wk 16</text>
+            <text x="350" y="196" font-size="8" fill="#9ca3af">Wk 20</text>
           </svg>
         </div>
         <div class="legend" style="font-size:10px;">
@@ -659,6 +663,7 @@ a { color: inherit; text-decoration: none; }
 </div>
 <div class="nl-tab" id="nl-market-tab">
 <div style="padding:24px 32px;">
+<div class="section-head"><h2>NPA Performance</h2><p>National prescription audit competitive view across CGRP brands.</p></div>
     <div class="pill-group" id="npa-subtabs">
       <div class="pill active" onclick="switchNpaSubtab('retail')">NPA Retail</div>
       <div class="pill" onclick="switchNpaSubtab('acute-prev')">NPA Acute / Preventive Split</div>
@@ -695,13 +700,13 @@ a { color: inherit; text-decoration: none; }
             <polyline fill="none" stroke="#f59e0b" stroke-width="2" stroke-dasharray="6" points="80,110 108,112 136,110 164,113 192,112 220,114 248,113 276,114 304,113 332,114 360,115 388,115 416,116 444,116 472,117 500,117 528,118 556,118 584,119 612,119 640,120 668,120 696,121 724,121 752,121"/>
             <polyline fill="none" stroke="#3b82f6" stroke-width="2" points="80,145 108,147 136,148 164,150 192,152 220,154 248,155 276,157 304,158 332,160 360,161 388,162 416,163 444,164 472,165 500,166 528,167 556,168 584,169 612,170 640,170 668,171 696,171 724,172 752,172"/>
             <polyline fill="none" stroke="#3b82f6" stroke-width="2" stroke-dasharray="6" points="80,160 108,162 136,163 164,164 192,166 220,167 248,168 276,170 304,171 332,172 360,173 388,174 416,175 444,176 472,177 500,178 528,178 556,179 584,180 612,180 640,181 668,181 696,182 724,182 752,182"/>
-            <text x="80" y="240" text-anchor="middle" font-size="9" fill="#9ca3af">W1</text>
-            <text x="192" y="240" text-anchor="middle" font-size="9" fill="#9ca3af">W5</text>
-            <text x="304" y="240" text-anchor="middle" font-size="9" fill="#9ca3af">W9</text>
-            <text x="416" y="240" text-anchor="middle" font-size="9" fill="#9ca3af">W13</text>
-            <text x="528" y="240" text-anchor="middle" font-size="9" fill="#9ca3af">W17</text>
-            <text x="640" y="240" text-anchor="middle" font-size="9" fill="#9ca3af">W21</text>
-            <text x="752" y="240" text-anchor="middle" font-size="9" fill="#9ca3af">W26</text>
+            <text x="80" y="240" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 1</text>
+            <text x="192" y="240" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 5</text>
+            <text x="304" y="240" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 9</text>
+            <text x="416" y="240" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 13</text>
+            <text x="528" y="240" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 17</text>
+            <text x="640" y="240" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 21</text>
+            <text x="752" y="240" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 26</text>
           </svg>
         </div>
         <div class="legend">
@@ -712,6 +717,7 @@ a { color: inherit; text-decoration: none; }
           <div class="legend-item"><div class="legend-dot" style="background:#3b82f6"></div>Qulipta Actuals</div>
           <div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#3b82f6" stroke-width="2" stroke-dasharray="3"/></svg>Qulipta STLY</div>
         </div>
+        <div class="axis-label">Week (2026 YTD)</div>
         <div class="footnote">Time period reference: Actuals 2026 w.e. 06/05/2026 · Same Time Last Year w.e. 06/06/2025</div>
       </div>
 
@@ -782,10 +788,10 @@ a { color: inherit; text-decoration: none; }
                   <polyline fill="none" stroke="#16a34a" stroke-width="2" stroke-dasharray="4" points="50,62 75,65 100,60 125,58 150,56 175,55 200,53 225,52 250,51 275,50 300,49 325,48 350,47"/>
                   <polyline fill="none" stroke="#f59e0b" stroke-width="2" points="50,90 75,92 100,88 125,87 150,86 175,85 200,84 225,84 250,83 275,82 300,82 325,81 350,80"/>
                   <polyline fill="none" stroke="#f59e0b" stroke-width="2" stroke-dasharray="4" points="50,98 75,100 100,97 125,96 150,95 175,95 200,94 225,94 250,93 275,93 300,92 325,92 350,92"/>
-                  <text x="50" y="196" font-size="8" fill="#9ca3af">W1</text>
-                  <text x="150" y="196" font-size="8" fill="#9ca3af">W9</text>
-                  <text x="250" y="196" font-size="8" fill="#9ca3af">W17</text>
-                  <text x="350" y="196" font-size="8" fill="#9ca3af">W26</text>
+                  <text x="50" y="196" font-size="8" fill="#9ca3af">Wk 1</text>
+                  <text x="150" y="196" font-size="8" fill="#9ca3af">Wk 9</text>
+                  <text x="250" y="196" font-size="8" fill="#9ca3af">Wk 17</text>
+                  <text x="350" y="196" font-size="8" fill="#9ca3af">Wk 26</text>
                 </svg>
               </div>
             </div>
@@ -805,10 +811,10 @@ a { color: inherit; text-decoration: none; }
                   <polyline fill="none" stroke="#16a34a" stroke-width="2" stroke-dasharray="4" points="50,72 75,74 100,70 125,68 150,66 175,64 200,63 225,62 250,61 275,60 300,59 325,58 350,57"/>
                   <polyline fill="none" stroke="#f59e0b" stroke-width="2" points="50,105 75,107 100,103 125,102 150,100 175,99 200,98 225,97 250,96 275,96 300,95 325,95 350,94"/>
                   <polyline fill="none" stroke="#f59e0b" stroke-width="2" stroke-dasharray="4" points="50,115 75,116 100,113 125,112 150,111 175,110 200,110 225,109 250,109 275,108 300,108 325,108 350,107"/>
-                  <text x="50" y="196" font-size="8" fill="#9ca3af">W1</text>
-                  <text x="150" y="196" font-size="8" fill="#9ca3af">W9</text>
-                  <text x="250" y="196" font-size="8" fill="#9ca3af">W17</text>
-                  <text x="350" y="196" font-size="8" fill="#9ca3af">W26</text>
+                  <text x="50" y="196" font-size="8" fill="#9ca3af">Wk 1</text>
+                  <text x="150" y="196" font-size="8" fill="#9ca3af">Wk 9</text>
+                  <text x="250" y="196" font-size="8" fill="#9ca3af">Wk 17</text>
+                  <text x="350" y="196" font-size="8" fill="#9ca3af">Wk 26</text>
                 </svg>
               </div>
             </div>
@@ -898,10 +904,10 @@ a { color: inherit; text-decoration: none; }
                   <polyline fill="none" stroke="#16a34a" stroke-width="2" stroke-dasharray="4" points="50,130 75,128 100,126 125,124 150,122 175,120 200,118 225,116 250,115 275,113 300,112 325,110 350,109"/>
                   <polyline fill="none" stroke="#3b82f6" stroke-width="2" points="50,85 75,82 100,78 125,74 150,70 175,66 200,62 225,58 250,54 275,50 300,46 325,42 350,38"/>
                   <polyline fill="none" stroke="#3b82f6" stroke-width="2" stroke-dasharray="4" points="50,100 75,97 100,94 125,90 150,87 175,84 200,80 225,77 250,74 275,71 300,68 325,66 350,63"/>
-                  <text x="50" y="196" font-size="8" fill="#9ca3af">W1</text>
-                  <text x="150" y="196" font-size="8" fill="#9ca3af">W9</text>
-                  <text x="250" y="196" font-size="8" fill="#9ca3af">W17</text>
-                  <text x="350" y="196" font-size="8" fill="#9ca3af">W26</text>
+                  <text x="50" y="196" font-size="8" fill="#9ca3af">Wk 1</text>
+                  <text x="150" y="196" font-size="8" fill="#9ca3af">Wk 9</text>
+                  <text x="250" y="196" font-size="8" fill="#9ca3af">Wk 17</text>
+                  <text x="350" y="196" font-size="8" fill="#9ca3af">Wk 26</text>
                 </svg>
               </div>
             </div>
@@ -921,10 +927,10 @@ a { color: inherit; text-decoration: none; }
                   <polyline fill="none" stroke="#16a34a" stroke-width="2" stroke-dasharray="4" points="50,135 75,133 100,130 125,128 150,126 175,124 200,122 225,120 250,118 275,117 300,115 325,114 350,113"/>
                   <polyline fill="none" stroke="#3b82f6" stroke-width="2" points="50,90 75,86 100,82 125,78 150,74 175,70 200,66 225,62 250,58 275,54 300,50 325,46 350,42"/>
                   <polyline fill="none" stroke="#3b82f6" stroke-width="2" stroke-dasharray="4" points="50,105 75,102 100,98 125,95 150,92 175,89 200,86 225,83 250,80 275,77 300,74 325,72 350,70"/>
-                  <text x="50" y="196" font-size="8" fill="#9ca3af">W1</text>
-                  <text x="150" y="196" font-size="8" fill="#9ca3af">W9</text>
-                  <text x="250" y="196" font-size="8" fill="#9ca3af">W17</text>
-                  <text x="350" y="196" font-size="8" fill="#9ca3af">W26</text>
+                  <text x="50" y="196" font-size="8" fill="#9ca3af">Wk 1</text>
+                  <text x="150" y="196" font-size="8" fill="#9ca3af">Wk 9</text>
+                  <text x="250" y="196" font-size="8" fill="#9ca3af">Wk 17</text>
+                  <text x="350" y="196" font-size="8" fill="#9ca3af">Wk 26</text>
                 </svg>
               </div>
             </div>
@@ -995,6 +1001,7 @@ a { color: inherit; text-decoration: none; }
 </div>
 <div class="nl-tab" id="nl-access-tab">
 <div style="padding:24px 32px;">
+<div class="section-head"><h2>Access Summary</h2><p>Payer access changes, formulary tracking, and covered lives analysis.</p></div>
     <div class="card">
       <div class="card-header-row">
         <div>
@@ -1111,6 +1118,7 @@ a { color: inherit; text-decoration: none; }
 </div>
 <div class="nl-tab" id="nl-financial-tab">
 <div style="padding:24px 32px;">
+<div class="section-head"><h2>Financial Tracker</h2><p>Weekly gross and net sales performance vs. budget and plan attainment.</p></div>
     <div class="pill-group" id="financial-toggle">
       <div class="pill active" onclick="switchFinancial('gross')">Gross Sales</div>
       <div class="pill" onclick="switchFinancial('net')">Net Sales</div>
@@ -1178,20 +1186,20 @@ a { color: inherit; text-decoration: none; }
           <rect x="692" y="50" width="18" height="180" fill="#d1d5db" rx="2"/>
           <rect x="722" y="42" width="18" height="188" fill="#1e3a5f" rx="2"/>
           <rect x="742" y="48" width="18" height="182" fill="#d1d5db" rx="2"/>
-          <text x="88" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">W1</text>
-          <text x="138" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">W2</text>
-          <text x="188" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">W3</text>
-          <text x="238" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">W4</text>
-          <text x="288" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">W5</text>
-          <text x="338" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">W6</text>
-          <text x="388" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">W7</text>
-          <text x="438" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">W8</text>
-          <text x="488" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">W9</text>
-          <text x="538" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">W10</text>
-          <text x="588" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">W11</text>
-          <text x="638" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">W12</text>
-          <text x="688" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">W13</text>
-          <text x="738" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">W14</text>
+          <text x="88" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 1</text>
+          <text x="138" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 2</text>
+          <text x="188" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 3</text>
+          <text x="238" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 4</text>
+          <text x="288" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 5</text>
+          <text x="338" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 6</text>
+          <text x="388" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 7</text>
+          <text x="438" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 8</text>
+          <text x="488" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 9</text>
+          <text x="538" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 10</text>
+          <text x="588" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 11</text>
+          <text x="638" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 12</text>
+          <text x="688" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 13</text>
+          <text x="738" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 14</text>
         </svg>
       </div>
       <div class="legend">
@@ -1279,20 +1287,20 @@ a { color: inherit; text-decoration: none; }
           <rect x="692" y="50" width="18" height="180" fill="#d1d5db" rx="2"/>
           <rect x="722" y="42" width="18" height="188" fill="#1e3a5f" rx="2"/>
           <rect x="742" y="48" width="18" height="182" fill="#d1d5db" rx="2"/>
-          <text x="88" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">W1</text>
-          <text x="138" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">W2</text>
-          <text x="188" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">W3</text>
-          <text x="238" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">W4</text>
-          <text x="288" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">W5</text>
-          <text x="338" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">W6</text>
-          <text x="388" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">W7</text>
-          <text x="438" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">W8</text>
-          <text x="488" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">W9</text>
-          <text x="538" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">W10</text>
-          <text x="588" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">W11</text>
-          <text x="638" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">W12</text>
-          <text x="688" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">W13</text>
-          <text x="738" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">W14</text>
+          <text x="88" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 1</text>
+          <text x="138" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 2</text>
+          <text x="188" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 3</text>
+          <text x="238" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 4</text>
+          <text x="288" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 5</text>
+          <text x="338" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 6</text>
+          <text x="388" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 7</text>
+          <text x="438" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 8</text>
+          <text x="488" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 9</text>
+          <text x="538" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 10</text>
+          <text x="588" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 11</text>
+          <text x="638" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 12</text>
+          <text x="688" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 13</text>
+          <text x="738" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 14</text>
         </svg>
       </div>
       <div class="legend">
