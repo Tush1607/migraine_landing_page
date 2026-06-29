@@ -695,6 +695,9 @@ a { color: inherit; text-decoration: none; }
             <text x="528" y="240" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 17</text>
             <text x="640" y="240" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 21</text>
             <text x="752" y="240" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 26</text>
+          
+            <!-- Goal line -->
+            <polyline fill="none" stroke="#f472b6" stroke-width="2" stroke-dasharray="8,4" points="80,88 108,88 136,87 164,87 192,86 220,86 248,85 276,85 304,84 332,84 360,83 388,83 416,82 444,82 472,81 500,81 528,80 556,80 584,79 612,79 640,78 668,78 696,77 724,77 752,76"/>
           </svg>
         </div>
         <div class="axis-info"><span>Y-Axis: TRx Volume (K)</span><span>X-Axis: Time Period (Week)</span></div>
@@ -705,6 +708,7 @@ a { color: inherit; text-decoration: none; }
           <div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#f59e0b" stroke-width="2" stroke-dasharray="3"/></svg>Ubrelvy STLY</div>
           <div class="legend-item"><div class="legend-dot" style="background:#3b82f6"></div>Qulipta Actuals</div>
           <div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#3b82f6" stroke-width="2" stroke-dasharray="3"/></svg>Qulipta STLY</div>
+          <div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#f472b6" stroke-width="2" stroke-dasharray="4,2"/></svg>Goal</div>
         </div>
         
         <div class="footnote">Time period reference: Actuals 2026 w.e. 06/05/2026 · Same Time Last Year w.e. 06/06/2025</div>
@@ -754,6 +758,9 @@ a { color: inherit; text-decoration: none; }
             <text x="508" y="240" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 17</text>
             <text x="620" y="240" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 21</text>
             <text x="732" y="240" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 26</text>
+          
+            <!-- Goal line -->
+            <polyline fill="none" stroke="#f472b6" stroke-width="2" stroke-dasharray="8,4" points="60,92 88,91 116,90 144,89 172,88 200,87 228,86 256,85 284,84 312,83 340,82 368,81 396,80 424,79 452,78 480,77 508,76 536,75 564,74 592,73 620,72 648,71 676,70 704,69 732,68"/>
           </svg>
         </div>
         <div class="axis-info"><span>Y-Axis: TRx Volume (K)</span><span>X-Axis: Time Period (Week)</span></div>
@@ -764,6 +771,7 @@ a { color: inherit; text-decoration: none; }
           <div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#7c3aed" stroke-width="2" stroke-dasharray="3"/></svg>Mail-Order STLY</div>
           <div class="legend-item"><div class="legend-dot" style="background:#9ca3af"></div>LTC Actuals</div>
           <div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#9ca3af" stroke-width="2" stroke-dasharray="3"/></svg>LTC STLY</div>
+          <div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#f472b6" stroke-width="2" stroke-dasharray="4,2"/></svg>Goal</div>
         </div>
         <div class="footnote">Time period reference: Actuals 2026 w.e. 06/05/2026 · Same Time Last Year w.e. 06/06/2025</div>
       </div>
