@@ -484,32 +484,6 @@ a { color: inherit; text-decoration: none; }
           <div><strong>Goal attainment 93.6% YTD</strong> — $112K behind pace; Q2 historically strongest quarter to close.</div>
         </div>
       </div>
-
-      <div class="card">
-        <div class="card-title">Top 3 Alert Lines</div>
-        <div class="card-subtitle">Signal · Anchor — drops out entirely if no material alert</div>
-        <div class="alert-item">
-          <svg class="alert-icon" viewBox="0 0 24 24" fill="#f59e0b"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
-          <div>
-            <div class="alert-signal">Texas (Medicaid): NBRx rejection rate +3.2pp MoM</div>
-            <div class="alert-anchor">Anchor: Medicaid plan formulary restriction</div>
-          </div>
-        </div>
-        <div class="alert-item">
-          <svg class="alert-icon" viewBox="0 0 24 24" fill="#f59e0b"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
-          <div>
-            <div class="alert-signal">Walgreens (national): Reversal rate -1.8pp WoW</div>
-            <div class="alert-anchor">Anchor: eVoucher activity increase</div>
-          </div>
-        </div>
-        <div class="alert-item">
-          <svg class="alert-icon" viewBox="0 0 24 24" fill="#f59e0b"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
-          <div>
-            <div class="alert-signal">NY/NJ region: NBRx share -0.8pp vs. STLY</div>
-            <div class="alert-anchor">Anchor: Qulipta gaining preventive writers</div>
-          </div>
-        </div>
-      </div>
     </div>
 
     <div class="row">
@@ -532,19 +506,11 @@ a { color: inherit; text-decoration: none; }
         <div style="font-size:11px;color:#6b7280;">$112K behind pace</div>
       </div>
 
-      <div class="card">
-        <div class="card-title">Sub-National Signals</div>
-        <div class="card-subtitle">DOppLR — full table linked from email</div>
-        <table class="sub-signal-table">
-          <tbody>
-            <tr><td><strong>Texas · Medicaid</strong></td><td style="text-align:right">NBRx reject +3.2pp MoM</td></tr>
-            <tr><td><strong>Walgreens · National</strong></td><td style="text-align:right">Reversal -1.8pp WoW</td></tr>
-            <tr><td><strong>NY/NJ</strong></td><td style="text-align:right">NBRx share -0.8pp vs STLY</td></tr>
-            <tr><td><strong>Florida · Commercial</strong></td><td style="text-align:right">TRx +4.1% WoW</td></tr>
-          </tbody>
-        </table>
-      </div>
+      
     </div>
+
+    
+
   </div>
 </div>
 <div class="nl-tab" id="nl-xponent-tab">
@@ -553,7 +519,10 @@ a { color: inherit; text-decoration: none; }
     <div class="card">
       <div class="card-title">Claims MTD & YTD vs. STLY</div>
       <div class="card-subtitle">Nurtec NRx and TRx claim counts</div>
-      <div class="row">
+      
+    
+
+<div class="row">
         <div class="stat-tile"><div class="label">NRX MTD</div><div class="value">486K</div><div class="sub delta-pos">+15.6%</div></div>
         <div class="stat-tile"><div class="label">NRX YTD</div><div class="value">2.85M</div><div class="sub delta-pos">+16.1%</div></div>
         <div class="stat-tile"><div class="label">TRX MTD</div><div class="value">2.41M</div><div class="sub delta-pos">+16.5%</div></div>
