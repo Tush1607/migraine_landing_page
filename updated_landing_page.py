@@ -724,36 +724,36 @@ a { color: inherit; text-decoration: none; }
         
         </div>
         <div class="chart-container">
-          <svg class="chart" viewBox="0 0 800 250">
-            <line x1="60" y1="220" x2="780" y2="220" stroke="#e5e7eb" stroke-width="1"/>
-            <line x1="60" y1="170" x2="780" y2="170" stroke="#f3f4f6" stroke-width="1" stroke-dasharray="4"/>
-            <line x1="60" y1="120" x2="780" y2="120" stroke="#f3f4f6" stroke-width="1" stroke-dasharray="4"/>
-            <line x1="60" y1="70" x2="780" y2="70" stroke="#f3f4f6" stroke-width="1" stroke-dasharray="4"/>
-            <line x1="60" y1="20" x2="780" y2="20" stroke="#f3f4f6" stroke-width="1" stroke-dasharray="4"/>
-            <text x="50" y="224" text-anchor="end" font-size="10" fill="#9ca3af">0K</text>
-            <text x="50" y="174" text-anchor="end" font-size="10" fill="#9ca3af">20K</text>
-            <text x="50" y="124" text-anchor="end" font-size="10" fill="#9ca3af">40K</text>
-            <text x="50" y="74" text-anchor="end" font-size="10" fill="#9ca3af">60K</text>
-            <text x="50" y="24" text-anchor="end" font-size="10" fill="#9ca3af">80K</text>
+          <svg class="chart" preserveAspectRatio="none" viewBox="-10 0 810 250">
+            <line x1="40" y1="220" x2="790" y2="220" stroke="#e5e7eb" stroke-width="1"/>
+            <line x1="40" y1="170" x2="790" y2="170" stroke="#f3f4f6" stroke-width="1" stroke-dasharray="4"/>
+            <line x1="40" y1="120" x2="790" y2="120" stroke="#f3f4f6" stroke-width="1" stroke-dasharray="4"/>
+            <line x1="40" y1="70" x2="790" y2="70" stroke="#f3f4f6" stroke-width="1" stroke-dasharray="4"/>
+            <line x1="40" y1="20" x2="790" y2="20" stroke="#f3f4f6" stroke-width="1" stroke-dasharray="4"/>
+            <text x="30" y="224" text-anchor="end" font-size="10" fill="#9ca3af">0K</text>
+            <text x="30" y="174" text-anchor="end" font-size="10" fill="#9ca3af">20K</text>
+            <text x="30" y="124" text-anchor="end" font-size="10" fill="#9ca3af">40K</text>
+            <text x="30" y="74" text-anchor="end" font-size="10" fill="#9ca3af">60K</text>
+            <text x="30" y="24" text-anchor="end" font-size="10" fill="#9ca3af">80K</text>
             <!-- Retail Actuals (solid) -->
-            <polyline fill="none" stroke="#0891b2" stroke-width="2" points="80,40 108,42 136,40 164,38 192,36 220,35 248,34 276,33 304,32 332,30 360,29 388,28 416,27 444,26 472,25 500,24 528,23 556,22 584,22 612,21 640,20 668,20 696,19 724,19 752,18"/>
+            <polyline fill="none" stroke="#0891b2" stroke-width="2" points="60,40 88,42 116,40 144,38 172,36 200,35 228,34 256,33 284,32 312,30 340,29 368,28 396,27 424,26 452,25 480,24 508,23 536,22 564,22 592,21 620,20 648,20 676,19 704,19 732,18"/>
             <!-- Retail STLY (dashed) -->
-            <polyline fill="none" stroke="#0891b2" stroke-width="2" stroke-dasharray="6" points="80,55 108,57 136,55 164,53 192,52 220,50 248,49 276,48 304,47 332,46 360,45 388,44 416,43 444,42 472,42 500,41 528,40 556,40 584,39 612,39 640,38 668,38 696,37 724,37 752,36"/>
+            <polyline fill="none" stroke="#0891b2" stroke-width="2" stroke-dasharray="6" points="60,55 88,57 116,55 144,53 172,52 200,50 228,49 256,48 284,47 312,46 340,45 368,44 396,43 424,42 452,42 480,41 508,40 536,40 564,39 592,39 620,38 648,38 676,37 704,37 732,36"/>
             <!-- Mail-Order Actuals (solid) -->
-            <polyline fill="none" stroke="#7c3aed" stroke-width="2" points="80,130 108,128 136,126 164,125 192,123 220,122 248,120 276,118 304,117 332,115 360,114 388,112 416,111 444,110 472,108 500,107 528,106 556,105 584,104 612,103 640,102 668,101 696,100 724,99 752,98"/>
+            <polyline fill="none" stroke="#7c3aed" stroke-width="2" points="60,130 88,128 116,126 144,125 172,123 200,122 228,120 256,118 284,117 312,115 340,114 368,112 396,111 424,110 452,108 480,107 508,106 536,105 564,104 592,103 620,102 648,101 676,100 704,99 732,98"/>
             <!-- Mail-Order STLY (dashed) -->
-            <polyline fill="none" stroke="#7c3aed" stroke-width="2" stroke-dasharray="6" points="80,142 108,140 136,139 164,138 192,136 220,135 248,134 276,133 304,132 332,131 360,130 388,129 416,128 444,128 472,127 500,126 528,126 556,125 584,125 612,124 640,124 668,123 696,123 724,122 752,122"/>
+            <polyline fill="none" stroke="#7c3aed" stroke-width="2" stroke-dasharray="6" points="60,142 88,140 116,139 144,138 172,136 200,135 228,134 256,133 284,132 312,131 340,130 368,129 396,128 424,128 452,127 480,126 508,126 536,125 564,125 592,124 620,124 648,123 676,123 704,122 732,122"/>
             <!-- LTC Actuals (solid) -->
-            <polyline fill="none" stroke="#9ca3af" stroke-width="2" points="80,175 108,176 136,177 164,178 192,178 220,179 248,179 276,180 304,180 332,181 360,181 388,182 416,182 444,183 472,183 500,184 528,184 556,184 584,185 612,185 640,185 668,186 696,186 724,186 752,187"/>
+            <polyline fill="none" stroke="#9ca3af" stroke-width="2" points="60,175 88,176 116,177 144,178 172,178 200,179 228,179 256,180 284,180 312,181 340,181 368,182 396,182 424,183 452,183 480,184 508,184 536,184 564,185 592,185 620,185 648,186 676,186 704,186 732,187"/>
             <!-- LTC STLY (dashed) -->
-            <polyline fill="none" stroke="#9ca3af" stroke-width="2" stroke-dasharray="6" points="80,180 108,181 136,181 164,182 192,182 220,183 248,183 276,184 304,184 332,184 360,185 388,185 416,185 444,186 472,186 500,186 528,187 556,187 584,187 612,187 640,188 668,188 696,188 724,188 752,188"/>
-            <text x="80" y="240" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 1</text>
-            <text x="192" y="240" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 5</text>
-            <text x="304" y="240" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 9</text>
-            <text x="416" y="240" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 13</text>
-            <text x="528" y="240" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 17</text>
-            <text x="640" y="240" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 21</text>
-            <text x="752" y="240" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 26</text>
+            <polyline fill="none" stroke="#9ca3af" stroke-width="2" stroke-dasharray="6" points="60,180 88,181 116,181 144,182 172,182 200,183 228,183 256,184 284,184 312,184 340,185 368,185 396,185 424,186 452,186 480,186 508,187 536,187 564,187 592,187 620,188 648,188 676,188 704,188 732,188"/>
+            <text x="60" y="240" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 1</text>
+            <text x="172" y="240" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 5</text>
+            <text x="284" y="240" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 9</text>
+            <text x="396" y="240" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 13</text>
+            <text x="508" y="240" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 17</text>
+            <text x="620" y="240" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 21</text>
+            <text x="732" y="240" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 26</text>
           </svg>
         </div>
         <div class="axis-info"><span>Y-Axis: TRx Volume (K)</span><span>X-Axis: Time Period (Week)</span></div>
