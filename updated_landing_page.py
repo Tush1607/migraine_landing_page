@@ -619,7 +619,7 @@ a { color: inherit; text-decoration: none; }
       <div class="card-subtitle">NRx & TRx share % · Latest Wk / WoW pp / MTD / vs. STLY / vs. Budget</div>
       <table>
         <thead>
-          <tr><th>CUT</th><th style="text-align:right">NRX %</th><th style="text-align:right">WOW PP</th><th style="text-align:right">TRX %</th><th style="text-align:right">WOW PP</th><th style="text-align:right">MTD TRX</th><th style="text-align:right">VS STLY</th><th style="text-align:right">VS BUDGET</th></tr>
+          <tr><th>CUT</th><th style="text-align:right">NRX %</th><th style="text-align:right">WoW %</th><th style="text-align:right">TRX %</th><th style="text-align:right">WoW %</th><th style="text-align:right">MTD TRX</th><th style="text-align:right">VS STLY</th><th style="text-align:right">VS BUDGET</th></tr>
         </thead>
         <tbody>
           <tr><td><strong>National</strong></td><td style="text-align:right">33.4%</td><td style="text-align:right"><span class="delta-pos">+0.2%</span></td><td style="text-align:right">38.7%</td><td style="text-align:right"><span class="delta-pos">+0.1%</span></td><td style="text-align:right">38.5%</td><td style="text-align:right"><span class="delta-pos">+1.4%</span></td><td style="text-align:right"><span class="delta-neg">-1.1%</span></td></tr>
@@ -636,7 +636,7 @@ a { color: inherit; text-decoration: none; }
       <div class="card-subtitle">NRx & TRx share % · Latest Wk / WoW pp / MTD / vs. STLY / vs. Budget</div>
       <table>
         <thead>
-          <tr><th>CUT</th><th style="text-align:right">NRX %</th><th style="text-align:right">WOW PP</th><th style="text-align:right">TRX %</th><th style="text-align:right">WOW PP</th><th style="text-align:right">MTD TRX</th><th style="text-align:right">VS STLY</th><th style="text-align:right">VS BUDGET</th></tr>
+          <tr><th>CUT</th><th style="text-align:right">NRX %</th><th style="text-align:right">WoW %</th><th style="text-align:right">TRX %</th><th style="text-align:right">WoW %</th><th style="text-align:right">MTD TRX</th><th style="text-align:right">VS STLY</th><th style="text-align:right">VS BUDGET</th></tr>
         </thead>
         <tbody>
           <tr><td><strong>National</strong></td><td style="text-align:right">33.4%</td><td style="text-align:right"><span class="delta-pos">+0.2%</span></td><td style="text-align:right">38.7%</td><td style="text-align:right"><span class="delta-pos">+0.1%</span></td><td style="text-align:right">38.5%</td><td style="text-align:right"><span class="delta-pos">+1.4%</span></td><td style="text-align:right"><span class="delta-neg">-1.1%</span></td></tr>
@@ -710,7 +710,7 @@ a { color: inherit; text-decoration: none; }
         <div class="footnote">Time period reference: Actuals 2026 w.e. 06/05/2026 · Same Time Last Year w.e. 06/06/2025</div>
       </div>
 
-      <div class="card" style="margin-top:24px;">
+      <div class="card">
         <div class="card-header-row">
           <div>
             <div class="card-title" data-metric-toggle="Nurtec NPA — Channel Performance View ({M})">Nurtec NPA — Channel Performance View (TRx)</div>
