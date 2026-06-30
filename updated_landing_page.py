@@ -734,33 +734,33 @@ a { color: inherit; text-decoration: none; }
 
     <div class="card">
       <div class="card-title">Payer Performance</div>
-      <div class="card-subtitle">NRx & TRx share % · Latest Wk / WoW % / MTD / vs. STLY</div>
+      <div class="card-subtitle">Share % · Latest Wk / WoW % / MTD / vs. STLY</div>
       <table>
         <thead>
-          <tr><th>CUT</th><th style="text-align:right">NRX %</th><th style="text-align:right">WoW %</th><th style="text-align:right">TRX %</th><th style="text-align:right">WoW %</th><th style="text-align:right">MTD TRX</th><th style="text-align:right">VS STLY</th></tr>
+          <tr><th>CUT</th><th style="text-align:right" data-xp-metric="{XM} %">TRx %</th><th style="text-align:right">WoW %</th><th style="text-align:right" data-xp-metric="MTD {XM}">MTD TRx</th><th style="text-align:right">VS STLY</th></tr>
         </thead>
         <tbody>
-          <tr><td><strong>National</strong></td><td style="text-align:right">33.4%</td><td style="text-align:right"><span class="delta-pos">+0.2%</span></td><td style="text-align:right">38.7%</td><td style="text-align:right"><span class="delta-pos">+0.1%</span></td><td style="text-align:right">38.5%</td><td style="text-align:right"><span class="delta-pos">+1.4%</span></td></tr>
-          <tr><td><strong>Commercial</strong></td><td style="text-align:right">36.1%</td><td style="text-align:right"><span class="delta-pos">+0.3%</span></td><td style="text-align:right">41.2%</td><td style="text-align:right"><span class="delta-pos">+0.2%</span></td><td style="text-align:right">41.0%</td><td style="text-align:right"><span class="delta-pos">+1.8%</span></td></tr>
-          <tr><td><strong>Medicare</strong></td><td style="text-align:right">31.4%</td><td style="text-align:right"><span class="delta-pos">+0.1%</span></td><td style="text-align:right">36.5%</td><td style="text-align:right"><span class="delta-pos">+0.1%</span></td><td style="text-align:right">36.3%</td><td style="text-align:right"><span class="delta-pos">+2.1%</span></td></tr>
-          <tr><td><strong>Medicaid</strong></td><td style="text-align:right">22.8%</td><td style="text-align:right"><span class="delta-neg">-0.4%</span></td><td style="text-align:right">26.4%</td><td style="text-align:right"><span class="delta-neg">-0.3%</span></td><td style="text-align:right">26.5%</td><td style="text-align:right"><span class="delta-neg">-0.7%</span></td></tr>
-          <tr><td><strong>Other</strong></td><td style="text-align:right">19.6%</td><td style="text-align:right"><span class="delta-pos">+0.0%</span></td><td style="text-align:right">22.1%</td><td style="text-align:right"><span class="delta-pos">+0.0%</span></td><td style="text-align:right">22.0%</td><td style="text-align:right"><span class="delta-pos">+0.4%</span></td></tr>
+          <tr><td><strong>National</strong></td><td style="text-align:right">38.7%</td><td style="text-align:right"><span class="delta-pos">+0.1%</span></td><td style="text-align:right">38.5%</td><td style="text-align:right"><span class="delta-pos">+1.4%</span></td></tr>
+          <tr><td><strong>Commercial</strong></td><td style="text-align:right">41.2%</td><td style="text-align:right"><span class="delta-pos">+0.2%</span></td><td style="text-align:right">41.0%</td><td style="text-align:right"><span class="delta-pos">+1.8%</span></td></tr>
+          <tr><td><strong>Medicare</strong></td><td style="text-align:right">36.5%</td><td style="text-align:right"><span class="delta-pos">+0.1%</span></td><td style="text-align:right">36.3%</td><td style="text-align:right"><span class="delta-pos">+2.1%</span></td></tr>
+          <tr><td><strong>Medicaid</strong></td><td style="text-align:right">26.4%</td><td style="text-align:right"><span class="delta-neg">-0.3%</span></td><td style="text-align:right">26.5%</td><td style="text-align:right"><span class="delta-neg">-0.7%</span></td></tr>
+          <tr><td><strong>Other</strong></td><td style="text-align:right">22.1%</td><td style="text-align:right"><span class="delta-pos">+0.0%</span></td><td style="text-align:right">22.0%</td><td style="text-align:right"><span class="delta-pos">+0.4%</span></td></tr>
         </tbody>
       </table>
     </div>
 
     <div class="card">
       <div class="card-title">Channel Performance</div>
-      <div class="card-subtitle">NRx & TRx share % · Latest Wk / WoW % / MTD / vs. STLY</div>
+      <div class="card-subtitle">Share % · Latest Wk / WoW % / MTD / vs. STLY</div>
       <table>
         <thead>
-          <tr><th>CUT</th><th style="text-align:right">NRX %</th><th style="text-align:right">WoW %</th><th style="text-align:right">TRX %</th><th style="text-align:right">WoW %</th><th style="text-align:right">MTD TRX</th><th style="text-align:right">VS STLY</th></tr>
+          <tr><th>CUT</th><th style="text-align:right" data-xp-metric="{XM} %">TRx %</th><th style="text-align:right">WoW %</th><th style="text-align:right" data-xp-metric="MTD {XM}">MTD TRx</th><th style="text-align:right">VS STLY</th></tr>
         </thead>
         <tbody>
-          <tr><td><strong>National</strong></td><td style="text-align:right">33.4%</td><td style="text-align:right"><span class="delta-pos">+0.2%</span></td><td style="text-align:right">38.7%</td><td style="text-align:right"><span class="delta-pos">+0.1%</span></td><td style="text-align:right">38.5%</td><td style="text-align:right"><span class="delta-pos">+1.4%</span></td></tr>
-          <tr><td><strong>Retail</strong></td><td style="text-align:right">34.0%</td><td style="text-align:right"><span class="delta-pos">+0.2%</span></td><td style="text-align:right">39.4%</td><td style="text-align:right"><span class="delta-pos">+0.1%</span></td><td style="text-align:right">39.2%</td><td style="text-align:right"><span class="delta-pos">+1.5%</span></td></tr>
-          <tr><td><strong>Mail-Order</strong></td><td style="text-align:right">27.6%</td><td style="text-align:right"><span class="delta-pos">+0.4%</span></td><td style="text-align:right">31.8%</td><td style="text-align:right"><span class="delta-pos">+0.3%</span></td><td style="text-align:right">31.6%</td><td style="text-align:right"><span class="delta-pos">+2.3%</span></td></tr>
-          <tr><td><strong>LTC</strong></td><td style="text-align:right">18.2%</td><td style="text-align:right"><span class="delta-neg">-0.1%</span></td><td style="text-align:right">21.4%</td><td style="text-align:right"><span class="delta-neg">-0.1%</span></td><td style="text-align:right">21.5%</td><td style="text-align:right"><span class="delta-neg">-0.3%</span></td></tr>
+          <tr><td><strong>National</strong></td><td style="text-align:right">38.7%</td><td style="text-align:right"><span class="delta-pos">+0.1%</span></td><td style="text-align:right">38.5%</td><td style="text-align:right"><span class="delta-pos">+1.4%</span></td></tr>
+          <tr><td><strong>Retail</strong></td><td style="text-align:right">39.4%</td><td style="text-align:right"><span class="delta-pos">+0.1%</span></td><td style="text-align:right">39.2%</td><td style="text-align:right"><span class="delta-pos">+1.5%</span></td></tr>
+          <tr><td><strong>Mail-Order</strong></td><td style="text-align:right">31.8%</td><td style="text-align:right"><span class="delta-pos">+0.3%</span></td><td style="text-align:right">31.6%</td><td style="text-align:right"><span class="delta-pos">+2.3%</span></td></tr>
+          <tr><td><strong>LTC</strong></td><td style="text-align:right">21.4%</td><td style="text-align:right"><span class="delta-neg">-0.1%</span></td><td style="text-align:right">21.5%</td><td style="text-align:right"><span class="delta-neg">-0.3%</span></td></tr>
         </tbody>
       </table>
     </div>
