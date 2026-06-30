@@ -659,9 +659,15 @@ a { color: inherit; text-decoration: none; }
       </div>
     </div>
 
-    <div class="row">
+    <div class="card" style="background:#f8fafd; border:1px solid rgba(15,23,42,0.06); padding:20px 24px;">
+      <div class="pill-group" id="xponent-metric-toggle" style="margin-bottom:16px;">
+        <div class="pill pill-sm active" id="xp-trx-pill" onclick="switchXponentMetric('trx')">TRx</div>
+        <div class="pill pill-sm" id="xp-nbrx-pill" onclick="switchXponentMetric('nbrx')">NBRx</div>
+      </div>
+      <div class="row" style="margin-bottom:0;">
+      
       <div class="card">
-        <div class="card-title">TRx Share Trend by Segment</div>
+        <div class="card-title" data-xp-metric="{XM} Share Trend by Segment">TRx Share Trend by Segment</div>
         <div class="card-subtitle">Commercial / Medicare / Medicaid / Other · weekly</div>
         <div class="chart-container chart-container-sm">
           <svg class="chart" preserveAspectRatio="none" viewBox="0 0 380 200">
@@ -682,7 +688,7 @@ a { color: inherit; text-decoration: none; }
             <text x="130" y="196" font-size="8" fill="#9ca3af">Wk 6</text>
             <text x="210" y="196" font-size="8" fill="#9ca3af">Wk 11</text>
             <text x="290" y="196" font-size="8" fill="#9ca3af">Wk 16</text>
-            <text x="350" y="196" font-size="8" fill="#9ca3af">Wk 20</text>
+            <text x="350" y="196" font-size="8" fill="#9ca3af"></text>
           </svg>
         </div>
         <div class="axis-info"><span>Y-Axis: TRx Share %</span><span>X-Axis: Time Period (Week)</span></div>
@@ -695,7 +701,7 @@ a { color: inherit; text-decoration: none; }
       </div>
 
       <div class="card">
-        <div class="card-title">TRx Share by Channel</div>
+        <div class="card-title" data-xp-metric="{XM} Share by Channel">TRx Share by Channel</div>
         <div class="card-subtitle">Retail / Mail-Order / LTC · weekly</div>
         <div class="chart-container chart-container-sm">
           <svg class="chart" preserveAspectRatio="none" viewBox="0 0 380 200">
@@ -715,7 +721,7 @@ a { color: inherit; text-decoration: none; }
             <text x="130" y="196" font-size="8" fill="#9ca3af">Wk 6</text>
             <text x="210" y="196" font-size="8" fill="#9ca3af">Wk 11</text>
             <text x="290" y="196" font-size="8" fill="#9ca3af">Wk 16</text>
-            <text x="350" y="196" font-size="8" fill="#9ca3af">Wk 20</text>
+            <text x="350" y="196" font-size="8" fill="#9ca3af"></text>
           </svg>
         </div>
         <div class="axis-info"><span>Y-Axis: TRx Share %</span><span>X-Axis: Time Period (Week)</span></div>
@@ -724,6 +730,7 @@ a { color: inherit; text-decoration: none; }
           <div class="legend-item"><div class="legend-dot" style="background:#7c3aed"></div>Mail-Order</div>
           <div class="legend-item"><div class="legend-dot" style="background:#9ca3af"></div>LTC</div>
         </div>
+      </div>
       </div>
     </div>
 
@@ -1712,6 +1719,16 @@ a { color: inherit; text-decoration: none; }
         }
     };
     
+    
+    window.switchXponentMetric = function(metric) {
+        document.getElementById('xp-trx-pill').classList.toggle('active', metric === 'trx');
+        document.getElementById('xp-nbrx-pill').classList.toggle('active', metric === 'nbrx');
+        var label = metric === 'trx' ? 'TRx' : 'NBRx';
+        document.querySelectorAll('[data-xp-metric]').forEach(function(el) {
+            var template = el.getAttribute('data-xp-metric');
+            el.textContent = template.replace('{XM}', label);
+        });
+    };
     window.switchChannelBrand = function(brand) {
         document.getElementById('channel-nurtec').classList.toggle('active', brand === 'nurtec');
         document.getElementById('channel-ubrelvy').classList.toggle('active', brand === 'ubrelvy');
