@@ -1187,7 +1187,7 @@ a { color: inherit; text-decoration: none; }
         <div class="card">
           <div class="card-header-row">
             <div>
-              <div class="card-title">Nurtec Preventive &#8212; Channel Performance View</div>
+              <div class="card-title" id="prev-ch-title">Nurtec Preventive &#8212; Channel Performance View</div>
               <div class="card-subtitle">National &middot; IQVIA NPA &middot; Retail / Mail-Order / LTC &middot; Actuals 2026 vs STLY</div>
             </div>
             <div class="pill-group" style="margin-bottom:0;">
