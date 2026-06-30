@@ -1006,6 +1006,68 @@ a { color: inherit; text-decoration: none; }
           </div>
         </div>
 
+        
+        <div class="card">
+          <div class="card-header-row">
+            <div>
+              <div class="card-title">Nurtec Acute &#8212; Channel Performance View</div>
+              <div class="card-subtitle">National &middot; IQVIA NPA &middot; Retail / Mail-Order / LTC &middot; Actuals 2026 vs STLY</div>
+            </div>
+            <div class="pill-group" style="margin-bottom:0;">
+              <div class="pill pill-sm active" id="acute-ch-nurtec" onclick="switchAcuteChannel('nurtec')">Nurtec</div>
+              <div class="pill pill-sm" id="acute-ch-ubrelvy" onclick="switchAcuteChannel('ubrelvy')">Ubrelvy</div>
+            </div>
+          </div>
+          <div class="split-section">
+            <div class="split-col">
+              <div class="section-label">TRx</div>
+              <div class="chart-container chart-container-sm">
+                <svg class="chart" preserveAspectRatio="none" viewBox="0 0 380 200">
+                  <line x1="40" y1="180" x2="370" y2="180" stroke="#e5e7eb" stroke-width="1"/>
+                  <line x1="40" y1="100" x2="370" y2="100" stroke="#f3f4f6" stroke-width="1" stroke-dasharray="3"/>
+                  <text x="35" y="184" text-anchor="end" font-size="9" fill="#9ca3af">0K</text>
+                  <text x="35" y="104" text-anchor="end" font-size="9" fill="#9ca3af">30K</text>
+                  <text x="35" y="24" text-anchor="end" font-size="9" fill="#9ca3af">60K</text>
+                  <polyline fill="none" stroke="#0891b2" stroke-width="2" points="50,50 75,48 100,46 125,44 150,42 175,40 200,38 225,36 250,34 275,32 300,30 325,28 350,26"/>
+                  <polyline fill="none" stroke="#0891b2" stroke-width="2" stroke-dasharray="4" points="50,62 75,60 100,58 125,56 150,54 175,52 200,50 225,48 250,46 275,44 300,42 325,40 350,38"/>
+                  <polyline fill="none" stroke="#7c3aed" stroke-width="2" points="50,120 75,118 100,116 125,114 150,112 175,110 200,108 225,106 250,104 275,102 300,100 325,98 350,96"/>
+                  <polyline fill="none" stroke="#7c3aed" stroke-width="2" stroke-dasharray="4" points="50,130 75,129 100,127 125,126 150,124 175,123 200,121 225,120 250,118 275,117 300,115 325,113 350,112"/>
+                  <polyline fill="none" stroke="#9ca3af" stroke-width="2" points="50,155 75,155 100,154 125,154 150,153 175,153 200,152 225,152 250,151 275,151 300,150 325,150 350,149"/>
+                  <polyline fill="none" stroke="#9ca3af" stroke-width="2" stroke-dasharray="4" points="50,160 75,160 100,159 125,159 150,158 175,158 200,157 225,157 250,156 275,156 300,155 325,155 350,154"/>
+                  <text x="50" y="196" font-size="8" fill="#9ca3af">Wk 1</text><text x="150" y="196" font-size="8" fill="#9ca3af">Wk 9</text><text x="250" y="196" font-size="8" fill="#9ca3af">Wk 17</text><text x="350" y="196" font-size="8" fill="#9ca3af">Wk 26</text>
+                </svg>
+              </div>
+            </div>
+            <div class="split-col">
+              <div class="section-label">NBRx</div>
+              <div class="chart-container chart-container-sm">
+                <svg class="chart" preserveAspectRatio="none" viewBox="0 0 380 200">
+                  <line x1="40" y1="180" x2="370" y2="180" stroke="#e5e7eb" stroke-width="1"/>
+                  <line x1="40" y1="100" x2="370" y2="100" stroke="#f3f4f6" stroke-width="1" stroke-dasharray="3"/>
+                  <text x="35" y="184" text-anchor="end" font-size="9" fill="#9ca3af">0K</text>
+                  <text x="35" y="104" text-anchor="end" font-size="9" fill="#9ca3af">16K</text>
+                  <text x="35" y="24" text-anchor="end" font-size="9" fill="#9ca3af">32K</text>
+                  <polyline fill="none" stroke="#0891b2" stroke-width="2" points="50,55 75,53 100,50 125,48 150,45 175,43 200,40 225,38 250,35 275,33 300,30 325,28 350,25"/>
+                  <polyline fill="none" stroke="#0891b2" stroke-width="2" stroke-dasharray="4" points="50,68 75,66 100,64 125,62 150,60 175,58 200,56 225,54 250,52 275,50 300,48 325,46 350,44"/>
+                  <polyline fill="none" stroke="#7c3aed" stroke-width="2" points="50,125 75,123 100,121 125,119 150,117 175,115 200,113 225,111 250,109 275,107 300,105 325,103 350,101"/>
+                  <polyline fill="none" stroke="#7c3aed" stroke-width="2" stroke-dasharray="4" points="50,135 75,134 100,132 125,130 150,129 175,127 200,126 225,124 250,123 275,121 300,120 325,118 350,117"/>
+                  <polyline fill="none" stroke="#9ca3af" stroke-width="2" points="50,158 75,157 100,156 125,155 150,154 175,153 200,152 225,151 250,150 275,149 300,148 325,147 350,146"/>
+                  <polyline fill="none" stroke="#9ca3af" stroke-width="2" stroke-dasharray="4" points="50,163 75,163 100,162 125,162 150,161 175,161 200,160 225,160 250,159 275,159 300,158 325,158 350,157"/>
+                  <text x="50" y="196" font-size="8" fill="#9ca3af">Wk 1</text><text x="150" y="196" font-size="8" fill="#9ca3af">Wk 9</text><text x="250" y="196" font-size="8" fill="#9ca3af">Wk 17</text><text x="350" y="196" font-size="8" fill="#9ca3af">Wk 26</text>
+                </svg>
+              </div>
+            </div>
+          </div>
+          <div class="legend">
+            <div class="legend-item"><div class="legend-dot" style="background:#0891b2"></div>Retail Actuals</div>
+            <div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#0891b2" stroke-width="2" stroke-dasharray="3"/></svg>Retail STLY</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#7c3aed"></div>Mail-Order Actuals</div>
+            <div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#7c3aed" stroke-width="2" stroke-dasharray="3"/></svg>Mail-Order STLY</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#9ca3af"></div>LTC Actuals</div>
+            <div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#9ca3af" stroke-width="2" stroke-dasharray="3"/></svg>LTC STLY</div>
+          </div>
+        </div>
+
         <!-- Brand Tables: TRx left, NBRx right — aligned with charts above -->
         <div class="split-section">
           <div class="split-col">
@@ -1118,6 +1180,68 @@ a { color: inherit; text-decoration: none; }
             <div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#16a34a" stroke-width="2" stroke-dasharray="3"/></svg>Nurtec Prev STLY</div>
             <div class="legend-item"><div class="legend-dot" style="background:#3b82f6"></div>Qulipta Prev Actuals</div>
             <div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#3b82f6" stroke-width="2" stroke-dasharray="3"/></svg>Qulipta Prev STLY</div>
+          </div>
+        </div>
+
+        
+        <div class="card">
+          <div class="card-header-row">
+            <div>
+              <div class="card-title">Nurtec Preventive &#8212; Channel Performance View</div>
+              <div class="card-subtitle">National &middot; IQVIA NPA &middot; Retail / Mail-Order / LTC &middot; Actuals 2026 vs STLY</div>
+            </div>
+            <div class="pill-group" style="margin-bottom:0;">
+              <div class="pill pill-sm active" id="prev-ch-nurtec" onclick="switchPreventiveChannel('nurtec')">Nurtec</div>
+              <div class="pill pill-sm" id="prev-ch-qulipta" onclick="switchPreventiveChannel('ubrelvy')">Qulipta</div>
+            </div>
+          </div>
+          <div class="split-section">
+            <div class="split-col">
+              <div class="section-label">TRx</div>
+              <div class="chart-container chart-container-sm">
+                <svg class="chart" preserveAspectRatio="none" viewBox="0 0 380 200">
+                  <line x1="40" y1="180" x2="370" y2="180" stroke="#e5e7eb" stroke-width="1"/>
+                  <line x1="40" y1="100" x2="370" y2="100" stroke="#f3f4f6" stroke-width="1" stroke-dasharray="3"/>
+                  <text x="35" y="184" text-anchor="end" font-size="9" fill="#9ca3af">0K</text>
+                  <text x="35" y="104" text-anchor="end" font-size="9" fill="#9ca3af">30K</text>
+                  <text x="35" y="24" text-anchor="end" font-size="9" fill="#9ca3af">60K</text>
+                  <polyline fill="none" stroke="#0891b2" stroke-width="2" points="50,50 75,48 100,46 125,44 150,42 175,40 200,38 225,36 250,34 275,32 300,30 325,28 350,26"/>
+                  <polyline fill="none" stroke="#0891b2" stroke-width="2" stroke-dasharray="4" points="50,62 75,60 100,58 125,56 150,54 175,52 200,50 225,48 250,46 275,44 300,42 325,40 350,38"/>
+                  <polyline fill="none" stroke="#7c3aed" stroke-width="2" points="50,120 75,118 100,116 125,114 150,112 175,110 200,108 225,106 250,104 275,102 300,100 325,98 350,96"/>
+                  <polyline fill="none" stroke="#7c3aed" stroke-width="2" stroke-dasharray="4" points="50,130 75,129 100,127 125,126 150,124 175,123 200,121 225,120 250,118 275,117 300,115 325,113 350,112"/>
+                  <polyline fill="none" stroke="#9ca3af" stroke-width="2" points="50,155 75,155 100,154 125,154 150,153 175,153 200,152 225,152 250,151 275,151 300,150 325,150 350,149"/>
+                  <polyline fill="none" stroke="#9ca3af" stroke-width="2" stroke-dasharray="4" points="50,160 75,160 100,159 125,159 150,158 175,158 200,157 225,157 250,156 275,156 300,155 325,155 350,154"/>
+                  <text x="50" y="196" font-size="8" fill="#9ca3af">Wk 1</text><text x="150" y="196" font-size="8" fill="#9ca3af">Wk 9</text><text x="250" y="196" font-size="8" fill="#9ca3af">Wk 17</text><text x="350" y="196" font-size="8" fill="#9ca3af">Wk 26</text>
+                </svg>
+              </div>
+            </div>
+            <div class="split-col">
+              <div class="section-label">NBRx</div>
+              <div class="chart-container chart-container-sm">
+                <svg class="chart" preserveAspectRatio="none" viewBox="0 0 380 200">
+                  <line x1="40" y1="180" x2="370" y2="180" stroke="#e5e7eb" stroke-width="1"/>
+                  <line x1="40" y1="100" x2="370" y2="100" stroke="#f3f4f6" stroke-width="1" stroke-dasharray="3"/>
+                  <text x="35" y="184" text-anchor="end" font-size="9" fill="#9ca3af">0K</text>
+                  <text x="35" y="104" text-anchor="end" font-size="9" fill="#9ca3af">16K</text>
+                  <text x="35" y="24" text-anchor="end" font-size="9" fill="#9ca3af">32K</text>
+                  <polyline fill="none" stroke="#0891b2" stroke-width="2" points="50,55 75,53 100,50 125,48 150,45 175,43 200,40 225,38 250,35 275,33 300,30 325,28 350,25"/>
+                  <polyline fill="none" stroke="#0891b2" stroke-width="2" stroke-dasharray="4" points="50,68 75,66 100,64 125,62 150,60 175,58 200,56 225,54 250,52 275,50 300,48 325,46 350,44"/>
+                  <polyline fill="none" stroke="#7c3aed" stroke-width="2" points="50,125 75,123 100,121 125,119 150,117 175,115 200,113 225,111 250,109 275,107 300,105 325,103 350,101"/>
+                  <polyline fill="none" stroke="#7c3aed" stroke-width="2" stroke-dasharray="4" points="50,135 75,134 100,132 125,130 150,129 175,127 200,126 225,124 250,123 275,121 300,120 325,118 350,117"/>
+                  <polyline fill="none" stroke="#9ca3af" stroke-width="2" points="50,158 75,157 100,156 125,155 150,154 175,153 200,152 225,151 250,150 275,149 300,148 325,147 350,146"/>
+                  <polyline fill="none" stroke="#9ca3af" stroke-width="2" stroke-dasharray="4" points="50,163 75,163 100,162 125,162 150,161 175,161 200,160 225,160 250,159 275,159 300,158 325,158 350,157"/>
+                  <text x="50" y="196" font-size="8" fill="#9ca3af">Wk 1</text><text x="150" y="196" font-size="8" fill="#9ca3af">Wk 9</text><text x="250" y="196" font-size="8" fill="#9ca3af">Wk 17</text><text x="350" y="196" font-size="8" fill="#9ca3af">Wk 26</text>
+                </svg>
+              </div>
+            </div>
+          </div>
+          <div class="legend">
+            <div class="legend-item"><div class="legend-dot" style="background:#0891b2"></div>Retail Actuals</div>
+            <div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#0891b2" stroke-width="2" stroke-dasharray="3"/></svg>Retail STLY</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#7c3aed"></div>Mail-Order Actuals</div>
+            <div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#7c3aed" stroke-width="2" stroke-dasharray="3"/></svg>Mail-Order STLY</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#9ca3af"></div>LTC Actuals</div>
+            <div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#9ca3af" stroke-width="2" stroke-dasharray="3"/></svg>LTC STLY</div>
           </div>
         </div>
 
@@ -1727,6 +1851,15 @@ a { color: inherit; text-decoration: none; }
             var template = el.getAttribute('data-xp-metric');
             el.textContent = template.replace('{XM}', label);
         });
+    };
+    
+    window.switchAcuteChannel = function(brand) {
+        document.getElementById('acute-ch-nurtec').classList.toggle('active', brand === 'nurtec');
+        document.getElementById('acute-ch-ubrelvy').classList.toggle('active', brand === 'ubrelvy');
+    };
+    window.switchPrevChannel = function(brand) {
+        document.getElementById('prev-ch-nurtec').classList.toggle('active', brand === 'nurtec');
+        document.getElementById('prev-ch-qulipta').classList.toggle('active', brand === 'qulipta');
     };
     window.switchChannelBrand = function(brand) {
         document.getElementById('channel-nurtec').classList.toggle('active', brand === 'nurtec');
