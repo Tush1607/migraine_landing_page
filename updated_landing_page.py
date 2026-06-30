@@ -255,6 +255,97 @@ a { color: inherit; text-decoration: none; }
 @media (max-width: 760px) { :root { --sidebar-w: 60px; } .sidebar-brand .title, .sidebar-brand .subtitle, .sidebar-section-label, .sidebar-meta, .nav-item .nav-label, .nav-item .nav-count, .nav-sub { display: none; } .nav-item { justify-content: center; padding: 0.6rem 0; } .nav { padding: 0 0.3rem; } }
 @media (max-width: 560px) { .grid { grid-template-columns: 1fr; } body { overflow: auto; } .app { height: auto; grid-template-columns: 1fr; padding: 0; gap: 0; } .sidebar { display: none; } .main { border-radius: 0; border: none; } .main, .content { overflow: visible; } .hero-kpis { grid-template-columns: repeat(2, 1fr); } .hero-title { font-size: 1.35rem; } .hero { padding: 1.4rem 1.2rem 1.2rem; } .hero-header { flex-direction: column; gap: 0.6rem; } }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; } }
+
+/* ????? TOOLBAR ????? */
+.toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.7rem 1.4rem;
+    border-bottom: 1px solid var(--hairline);
+    flex-shrink: 0;
+    z-index: 5;
+}
+.toolbar-title {
+    font-family: 'Manrope', sans-serif;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+.toolbar-title strong { color: var(--text); font-weight: 600; }
+.toolbar-actions { display: flex; align-items: center; gap: 0.45rem; }
+
+/* ????? KPI STRIP ????? */
+.kpis-head {
+    font-family: 'Manrope', sans-serif;
+    font-size: 0.62rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--text-muted);
+    margin-bottom: 0.55rem;
+}
+.kpi-row {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0.85rem;
+    margin-bottom: 1.6rem;
+}
+.kpi {
+    background: var(--surface);
+    border-radius: 14px;
+    padding: 1rem 1.15rem 1.05rem;
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.25s var(--ease-out), box-shadow 0.25s var(--ease);
+    position: relative;
+    overflow: hidden;
+}
+.kpi::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0) 60%, rgba(28,79,192,0.04) 100%);
+    opacity: 0;
+    transition: opacity 0.25s var(--ease);
+    pointer-events: none;
+}
+.kpi:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.kpi:hover::before { opacity: 1; }
+.kpi .kpi-label {
+    font-size: 0.74rem;
+    color: var(--text-muted);
+    font-weight: 500;
+    margin-bottom: 0.3rem;
+}
+.kpi .kpi-value {
+    font-family: 'Manrope', sans-serif;
+    font-size: 1.7rem;
+    font-weight: 700;
+    color: var(--navy-900);
+    line-height: 1.05;
+    letter-spacing: -0.025em;
+    font-variant-numeric: tabular-nums;
+    margin-bottom: 0.4rem;
+}
+.kpi .kpi-delta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.74rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+}
+.kpi .kpi-delta.up { color: var(--up); }
+.kpi .kpi-delta.down { color: var(--down); }
+.kpi .kpi-delta.flat { color: var(--flat); }
+.kpi .kpi-delta .tri { font-size: 0.7rem; line-height: 1; }
+.kpi .kpi-delta .vs { color: var(--text-muted); font-weight: 500; }
+
+/* Card enhancements */
+.card:active { transform: translateY(-1px) scale(0.995); transition-duration: 0.08s; }
+.card:hover .icon-chip { transform: scale(1.05) rotate(-2deg); }
+.card:hover .dest-pill { background: rgba(28,79,192,0.10); color: var(--navy-700); }
+.card-updated { font-size: 0.68rem; color: var(--text-muted); font-weight: 500; margin-top: -0.65rem; margin-bottom: 0.7rem; opacity: 0.85; }
 </style>
 </head>
 <body>
@@ -318,7 +409,29 @@ a { color: inherit; text-decoration: none; }
 
 <!-- ═══ MAIN ═══ -->
 <div class="main">
+    
+    <!-- TOOLBAR -->
+    <div class="toolbar">
+        <div class="toolbar-title">Workspace &middot; <strong id="toolbarSection">Deep-Dive Dashboards</strong></div>
+        <div class="toolbar-actions">
+            <button class="icon-btn" title="Help">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 015 0c0 1.5-2.5 2-2.5 4M12 17v.01"/></svg>
+                Help
+            </button>
+        </div>
+    </div>
+
     <main class="content">
+        <!-- KPI STRIP -->
+        <div class="kpis-head">Executive KPIs</div>
+        <div class="kpi-row">
+            <div class="kpi"><div class="kpi-label">Nurtec TRx</div><div class="kpi-value">42.3K</div><div class="kpi-delta up"><span class="tri">&#9650;</span>3.2% <span class="vs">vs PW</span></div></div>
+            <div class="kpi"><div class="kpi-label">Nurtec NBRx</div><div class="kpi-value">8.7K</div><div class="kpi-delta up"><span class="tri">&#9650;</span>1.8% <span class="vs">vs PW</span></div></div>
+            <div class="kpi"><div class="kpi-label">Market Share (TRx)</div><div class="kpi-value">18.4%</div><div class="kpi-delta up"><span class="tri">&#9650;</span>0.3% <span class="vs">vs PW</span></div></div>
+            <div class="kpi"><div class="kpi-label">oCGRP Share</div><div class="kpi-value">34.1%</div><div class="kpi-delta down"><span class="tri">&#9660;</span>0.2% <span class="vs">vs PW</span></div></div>
+            <div class="kpi"><div class="kpi-label">NRx-to-TRx Ratio</div><div class="kpi-value">4.9x</div><div class="kpi-delta flat"><span class="tri">&mdash;</span>Flat <span class="vs">vs PW</span></div></div>
+        </div>
+
 
         <!-- HERO BANNER -->
         <div class="hero">
@@ -1406,8 +1519,8 @@ a { color: inherit; text-decoration: none; }
         <section class="section" id="deliverables" data-label="Analytics Deliverables">
             <div class="section-head"><h2>Analytics Deliverables</h2><p>PowerPoint and Excel deliverables for leadership and cross-functional stakeholders.</p></div>
             <div class="grid">
-                <a class="card" href="#" target="_blank" rel="noopener"><div class="card-top"><span class="icon-chip chip-s4"><svg viewBox="0 0 24 24"><path d="M4 4h16a1 1 0 011 1v14a1 1 0 01-1 1H4a1 1 0 01-1-1V5a1 1 0 011-1z"/><path d="M8 9h8M8 13h6M8 17h4"/></svg></span></div><div class="card-title">Nurtec Offsite Deck</div><div class="card-desc">Strategic offsite presentation with market overview.</div><span class="dest-pill dest-ppt"><span class="swatch">&#9632;</span>PowerPoint</span></a>
-                <a class="card" href="#" target="_blank" rel="noopener"><div class="card-top"><span class="icon-chip chip-s4"><svg viewBox="0 0 24 24"><circle cx="6" cy="18" r="2"/><circle cx="18" cy="18" r="2"/><circle cx="12" cy="6" r="2"/><path d="M6 16V8l6-2M18 16V8l-6-2"/></svg></span></div><div class="card-title">oCGRP Market Dynamics</div><div class="card-desc">Competitive dynamics and market share analysis.</div><span class="dest-pill dest-ppt"><span class="swatch">&#9632;</span>PPT &middot; Excel</span></a>
+                <a class="card" href="https://pfizer.sharepoint.com/:p:/s/MigraineAnalytics/IQA7CzbiZxm9SYbErQAXLG5kASpgzKHmNLmQz8yBenX6kNc?e=KgQ7yz" target="_blank" rel="noopener"><div class="card-top"><span class="icon-chip chip-s4"><svg viewBox="0 0 24 24"><path d="M4 4h16a1 1 0 011 1v14a1 1 0 01-1 1H4a1 1 0 01-1-1V5a1 1 0 011-1z"/><path d="M8 9h8M8 13h6M8 17h4"/></svg></span></div><div class="card-title">Nurtec Offsite Deck</div><div class="card-desc">Strategic offsite presentation with market overview.</div><div class="card-updated">Updated Feb 24, 2026</div><span class="dest-pill dest-ppt"><span class="swatch">&#9632;</span>PowerPoint</span></a>
+                <a class="card" href="https://pfizer.sharepoint.com/:p:/s/MigraineAnalytics/IQBvAxCrDDmeTbpe9RH14ha6AeG6J09GqT4ft1vRBHtmTk8?e=qFF3D9" target="_blank" rel="noopener"><div class="card-top"><span class="icon-chip chip-s4"><svg viewBox="0 0 24 24"><circle cx="6" cy="18" r="2"/><circle cx="18" cy="18" r="2"/><circle cx="12" cy="6" r="2"/><path d="M6 16V8l6-2M18 16V8l-6-2"/></svg></span></div><div class="card-title">oCGRP Market Dynamics</div><div class="card-desc">Competitive dynamics and market share analysis.</div><div class="card-updated">Updated Feb 4, 2026</div><span class="dest-pill dest-ppt"><span class="swatch">&#9632;</span>PPT &middot; Excel</span></a>
                 <a class="card" href="#" target="_blank" rel="noopener"><div class="card-top"><span class="icon-chip chip-s4"><svg viewBox="0 0 24 24"><path d="M14 3v4a1 1 0 001 1h4"/><path d="M17 21H7a2 2 0 01-2-2V5a2 2 0 012-2h7l5 5v11a2 2 0 01-2 2z"/><path d="M9 17v-6M12 17v-1M15 17v-4"/></svg></span></div><div class="card-title">Nurtec Deep-Dives</div><div class="card-desc">Detailed deep-dive analyses across key metrics.</div><span class="dest-pill dest-ppt"><span class="swatch">&#9632;</span>PowerPoint</span></a>
             </div>
         </section>
@@ -1416,11 +1529,11 @@ a { color: inherit; text-decoration: none; }
         <section class="section" id="docs" data-label="Business Rule Docs">
             <div class="section-head"><h2>Business Rule Documentation</h2><p>Data definitions, metric calculations, business logic, and reporting standards.</p></div>
             <div class="grid">
-                <a class="card" href="#" target="_blank" rel="noopener"><div class="card-top"><span class="icon-chip chip-s5"><svg viewBox="0 0 24 24"><path d="M3 19a9 9 0 019-9 9 9 0 019 9"/><path d="M3 19h18M12 10V3"/><path d="M7.8 4.8L12 3l4.2 1.8"/></svg></span></div><div class="card-title">Migraine Market Overview</div><div class="card-desc">Market landscape and key therapeutic area definitions.</div><span class="dest-pill dest-doc"><span class="swatch">&#9632;</span>Doc</span></a>
+                <a class="card" href="https://pfizer.sharepoint.com/:p:/s/MigraineAnalytics/IQBdBFg1vxdFR6HZvdxtKVPZAUdmK-vTwF4Trvm4JdEBru4?e=TG0guS" target="_blank" rel="noopener"><div class="card-top"><span class="icon-chip chip-s5"><svg viewBox="0 0 24 24"><path d="M3 19a9 9 0 019-9 9 9 0 019 9"/><path d="M3 19h18M12 10V3"/><path d="M7.8 4.8L12 3l4.2 1.8"/></svg></span></div><div class="card-title">Migraine Market Overview</div><div class="card-desc">Market landscape and key therapeutic area definitions.</div><div class="card-updated">Updated Dec 23, 2025</div><span class="dest-pill dest-doc"><span class="swatch">&#9632;</span>Doc</span></a>
                 <a class="card" href="#" target="_blank" rel="noopener"><div class="card-top"><span class="icon-chip chip-s5"><svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12l2 2 4-4"/></svg></span></div><div class="card-title">BR Alignment</div><div class="card-desc">Cross-functional business rule alignment documentation.</div><span class="dest-pill dest-doc"><span class="swatch">&#9632;</span>Doc</span></a>
-                <a class="card" href="#" target="_blank" rel="noopener"><div class="card-top"><span class="icon-chip chip-s5"><svg viewBox="0 0 24 24"><path d="M12 4L4 8l8 4 8-4-8-4zM4 12l8 4 8-4M4 16l8 4 8-4"/></svg></span></div><div class="card-title">IIS BR Master Deck</div><div class="card-desc">Master business rules deck for IIS analytics.</div><span class="dest-pill dest-ppt"><span class="swatch">&#9632;</span>PowerPoint</span></a>
-                <a class="card" href="#" target="_blank" rel="noopener"><div class="card-top"><span class="icon-chip chip-s5"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="4" r="1.5"/><circle cx="12" cy="20" r="1.5"/><circle cx="4" cy="12" r="1.5"/><circle cx="20" cy="12" r="1.5"/><path d="M12 7v2M12 15v2M7 12h2M15 12h2"/></svg></span></div><div class="card-title">IIS Migraine Data Ecosystem</div><div class="card-desc">Data sources, flows, and ecosystem mapping.</div><span class="dest-pill dest-doc"><span class="swatch">&#9632;</span>Doc</span></a>
-                <a class="card" href="#" target="_blank" rel="noopener"><div class="card-top"><span class="icon-chip chip-s5"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 5V3M12 21v-2M16.95 7.05l1.41-1.41M5.64 18.36l1.41-1.41M19 12h2M3 12h2M16.95 16.95l1.41 1.41M5.64 5.64l1.41 1.41"/></svg></span></div><div class="card-title">Migraine Dashboard BR</div><div class="card-desc">Dashboard-specific metric logic and standards.</div><span class="dest-pill dest-doc"><span class="swatch">&#9632;</span>Doc</span></a>
+                <a class="card" href="https://pfizer.sharepoint.com/:p:/s/MigraineAnalytics/IQA9ft3L-N9VT4YQzW36UFsXAQU2ZNBXbO3UjFvDwa6NV5E?e=8ytpZI" target="_blank" rel="noopener"><div class="card-top"><span class="icon-chip chip-s5"><svg viewBox="0 0 24 24"><path d="M12 4L4 8l8 4 8-4-8-4zM4 12l8 4 8-4M4 16l8 4 8-4"/></svg></span></div><div class="card-title">IIS BR Master Deck</div><div class="card-desc">Master business rules deck for IIS analytics.</div><div class="card-updated">Updated Jan 1, 2026</div><span class="dest-pill dest-ppt"><span class="swatch">&#9632;</span>PowerPoint</span></a>
+                <a class="card" href="https://pfizer.sharepoint.com/:p:/s/MigraineAnalytics/IQBOAt2MOv_OTqhwLardlsHPAZdTa2hsvBq5pUuZfNbVWTM?e=tDWmaa" target="_blank" rel="noopener"><div class="card-top"><span class="icon-chip chip-s5"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="4" r="1.5"/><circle cx="12" cy="20" r="1.5"/><circle cx="4" cy="12" r="1.5"/><circle cx="20" cy="12" r="1.5"/><path d="M12 7v2M12 15v2M7 12h2M15 12h2"/></svg></span></div><div class="card-title">IIS Migraine Data Ecosystem</div><div class="card-desc">Data sources, flows, and ecosystem mapping.</div><div class="card-updated">Updated Jan 1, 2026</div><span class="dest-pill dest-doc"><span class="swatch">&#9632;</span>Doc</span></a>
+                <a class="card" href="https://pfizer.sharepoint.com/:p:/s/MigraineAnalytics/IQADCiim_iD7QbxZE7Fm3F89Ab8O10p4xzPmog3z4X7KQ2g?e=jA6LCi" target="_blank" rel="noopener"><div class="card-top"><span class="icon-chip chip-s5"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 5V3M12 21v-2M16.95 7.05l1.41-1.41M5.64 18.36l1.41-1.41M19 12h2M3 12h2M16.95 16.95l1.41 1.41M5.64 5.64l1.41 1.41"/></svg></span></div><div class="card-title">Migraine Dashboard BR</div><div class="card-desc">Dashboard-specific metric logic and standards.</div><div class="card-updated">Updated Feb 1, 2026</div><span class="dest-pill dest-doc"><span class="swatch">&#9632;</span>Doc</span></a>
             </div>
         </section>
 
@@ -1449,6 +1562,7 @@ a { color: inherit; text-decoration: none; }
     var items = nav.querySelectorAll('.nav-item');
     var sections = {};
     items.forEach(function(it) { sections[it.dataset.target] = document.getElementById(it.dataset.target); });
+    var toolbarSection = document.getElementById('toolbarSection');
     var newsletterSub = document.getElementById('newsletterSub');
     var nlGridView = document.getElementById('nl-grid-view');
     var nlDeepdiveView = document.getElementById('nl-deepdive-view');
@@ -1489,7 +1603,7 @@ a { color: inherit; text-decoration: none; }
     }
 
     var switching = false;
-    function showSection(id) {
+    function showSection(id, label) {
         if (switching) return;
         var current = document.querySelector('.section.is-active');
         var next = sections[id];
@@ -1503,6 +1617,7 @@ a { color: inherit; text-decoration: none; }
             next.classList.add('is-active');
             void next.offsetWidth;
             next.classList.add('is-visible');
+            if (toolbarSection && label) toolbarSection.textContent = label;
             switching = false;
         }, 220);
     }
@@ -1511,7 +1626,8 @@ a { color: inherit; text-decoration: none; }
         item.addEventListener('click', function(e) {
             e.preventDefault();
             setActive(item);
-            showSection(item.dataset.target);
+            var label = sections[item.dataset.target] ? sections[item.dataset.target].dataset.label : '';
+            showSection(item.dataset.target, label);
 
             // When clicking Newsletter from nav, show card grid (reset deepdive)
             if (item.dataset.target === 'newsletter') {
