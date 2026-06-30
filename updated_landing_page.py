@@ -1808,23 +1808,27 @@ a { color: inherit; text-decoration: none; }
 
     // Newsletter sub-tab functions
     window.switchNpaSubtab = function(subtab) {
-        document.querySelectorAll('#npa-subtabs .pill').forEach(function(el) { el.classList.remove('active'); });
-        event.currentTarget.classList.add('active');
+        var pills = document.querySelectorAll('#npa-subtabs .pill');
+        pills.forEach(function(el) { el.classList.remove('active'); });
         if (subtab === 'retail') {
+            pills[0].classList.add('active');
             document.getElementById('npa-retail').style.display = 'block';
             document.getElementById('npa-acute-prev').style.display = 'none';
         } else {
+            pills[1].classList.add('active');
             document.getElementById('npa-retail').style.display = 'none';
             document.getElementById('npa-acute-prev').style.display = 'block';
         }
     };
     window.switchAcutePrev = function(view) {
-        document.querySelectorAll('#acute-prev-toggle .pill').forEach(function(el) { el.classList.remove('active'); });
-        event.currentTarget.classList.add('active');
+        var pills = document.querySelectorAll('#acute-prev-toggle .pill');
+        pills.forEach(function(el) { el.classList.remove('active'); });
         if (view === 'acute') {
+            pills[0].classList.add('active');
             document.getElementById('acute-view').style.display = 'block';
             document.getElementById('preventive-view').style.display = 'none';
         } else {
+            pills[1].classList.add('active');
             document.getElementById('acute-view').style.display = 'none';
             document.getElementById('preventive-view').style.display = 'block';
         }
