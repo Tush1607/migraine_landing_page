@@ -1191,8 +1191,8 @@ a { color: inherit; text-decoration: none; }
               <div class="card-subtitle">National &middot; IQVIA NPA &middot; Retail / Mail-Order / LTC &middot; Actuals 2026 vs STLY</div>
             </div>
             <div class="pill-group" style="margin-bottom:0;">
-              <div class="pill pill-sm active" id="prev-ch-nurtec" onclick="switchPreventiveChannel('nurtec')">Nurtec</div>
-              <div class="pill pill-sm" id="prev-ch-qulipta" onclick="switchPreventiveChannel('ubrelvy')">Qulipta</div>
+              <div class="pill pill-sm active" id="prev-ch-nurtec" onclick="switchPrevChannel('nurtec')">Nurtec</div>
+              <div class="pill pill-sm" id="prev-ch-qulipta" onclick="switchPrevChannel('qulipta')">Qulipta</div>
             </div>
           </div>
           <div class="split-section">
