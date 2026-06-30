@@ -662,7 +662,7 @@ a { color: inherit; text-decoration: none; }
     <div class="card" style="background:#f8fafd; border:1px solid rgba(15,23,42,0.06); padding:20px 24px;">
       <div class="pill-group" id="xponent-metric-toggle" style="margin-bottom:16px;">
         <div class="pill pill-sm active" id="xp-trx-pill" onclick="switchXponentMetric('trx')">TRx</div>
-        <div class="pill pill-sm" id="xp-nbrx-pill" onclick="switchXponentMetric('nbrx')">NBRx</div>
+        <div class="pill pill-sm" id="xp-nrx-pill" onclick="switchXponentMetric('nrx')">NRx</div>
       </div>
       <div class="row" style="margin-bottom:0;">
       
@@ -1722,8 +1722,8 @@ a { color: inherit; text-decoration: none; }
     
     window.switchXponentMetric = function(metric) {
         document.getElementById('xp-trx-pill').classList.toggle('active', metric === 'trx');
-        document.getElementById('xp-nbrx-pill').classList.toggle('active', metric === 'nbrx');
-        var label = metric === 'trx' ? 'TRx' : 'NBRx';
+        document.getElementById('xp-nrx-pill').classList.toggle('active', metric === 'nrx');
+        var label = metric === 'trx' ? 'TRx' : 'NRx';
         document.querySelectorAll('[data-xp-metric]').forEach(function(el) {
             var template = el.getAttribute('data-xp-metric');
             el.textContent = template.replace('{XM}', label);
