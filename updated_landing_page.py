@@ -422,15 +422,7 @@ a { color: inherit; text-decoration: none; }
     </div>
 
     <main class="content">
-        <!-- KPI STRIP -->
-        <div class="kpis-head" id="kpisHead">Executive KPIs</div>
-        <div class="kpi-row" id="kpiRow">
-            <div class="kpi"><div class="kpi-label">Nurtec TRx</div><div class="kpi-value">42.3K</div><div class="kpi-delta up"><span class="tri">&#9650;</span>3.2% <span class="vs">vs PW</span></div></div>
-            <div class="kpi"><div class="kpi-label">Nurtec NBRx</div><div class="kpi-value">8.7K</div><div class="kpi-delta up"><span class="tri">&#9650;</span>1.8% <span class="vs">vs PW</span></div></div>
-            <div class="kpi"><div class="kpi-label">Market Share (TRx)</div><div class="kpi-value">18.4%</div><div class="kpi-delta up"><span class="tri">&#9650;</span>0.3% <span class="vs">vs PW</span></div></div>
-            <div class="kpi"><div class="kpi-label">oCGRP Share</div><div class="kpi-value">34.1%</div><div class="kpi-delta down"><span class="tri">&#9660;</span>0.2% <span class="vs">vs PW</span></div></div>
-            <div class="kpi"><div class="kpi-label">NRx-to-TRx Ratio</div><div class="kpi-value">4.9x</div><div class="kpi-delta flat"><span class="tri">&mdash;</span>Flat <span class="vs">vs PW</span></div></div>
-        </div>
+        
 
 
         <!-- HERO BANNER -->
@@ -1712,10 +1704,7 @@ a { color: inherit; text-decoration: none; }
         newsletterSub.classList.remove('is-open');
         heroEl.style.display = '';
         dividerEl.style.display = '';
-        var kpisHead = document.getElementById('kpisHead');
-        var kpiRow = document.getElementById('kpiRow');
-        if (kpisHead) kpisHead.style.display = '';
-        if (kpiRow) kpiRow.style.display = '';
+        
         newsletterSub.querySelectorAll('.nav-sub-item').forEach(function(s) { s.classList.remove('active'); });
     }
 
@@ -1726,10 +1715,7 @@ a { color: inherit; text-decoration: none; }
         newsletterSub.classList.add('is-open');
         heroEl.style.display = 'none';
         dividerEl.style.display = 'none';
-        var kpisHead = document.getElementById('kpisHead');
-        var kpiRow = document.getElementById('kpiRow');
-        if (kpisHead) kpisHead.style.display = 'none';
-        if (kpiRow) kpiRow.style.display = 'none';
+        
         // Activate the correct nl-tab
         nlDeepdiveView.querySelectorAll('.nl-tab').forEach(function(p) { p.classList.remove('active'); });
         var target = document.getElementById(panelId + '-tab');
