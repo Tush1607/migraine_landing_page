@@ -1010,7 +1010,7 @@ a { color: inherit; text-decoration: none; }
         <div class="card">
           <div class="card-header-row">
             <div>
-              <div class="card-title">Nurtec Acute &#8212; Channel Performance View</div>
+              <div class="card-title" id="acute-ch-title">Nurtec Acute &#8212; Channel Performance View</div>
               <div class="card-subtitle">National &middot; IQVIA NPA &middot; Retail / Mail-Order / LTC &middot; Actuals 2026 vs STLY</div>
             </div>
             <div class="pill-group" style="margin-bottom:0;">
@@ -1856,15 +1856,22 @@ a { color: inherit; text-decoration: none; }
     window.switchAcuteChannel = function(brand) {
         document.getElementById('acute-ch-nurtec').classList.toggle('active', brand === 'nurtec');
         document.getElementById('acute-ch-ubrelvy').classList.toggle('active', brand === 'ubrelvy');
+        var label = brand === 'nurtec' ? 'Nurtec' : 'Ubrelvy';
+        document.getElementById('acute-ch-title').innerHTML = label + ' Acute &#8212; Channel Performance View';
     };
     window.switchPrevChannel = function(brand) {
         document.getElementById('prev-ch-nurtec').classList.toggle('active', brand === 'nurtec');
         document.getElementById('prev-ch-qulipta').classList.toggle('active', brand === 'qulipta');
+        var label = brand === 'nurtec' ? 'Nurtec' : 'Qulipta';
+        document.getElementById('prev-ch-title').innerHTML = label + ' Preventive &#8212; Channel Performance View';
     };
     window.switchChannelBrand = function(brand) {
         document.getElementById('channel-nurtec').classList.toggle('active', brand === 'nurtec');
         document.getElementById('channel-ubrelvy').classList.toggle('active', brand === 'ubrelvy');
         document.getElementById('channel-qulipta').classList.toggle('active', brand === 'qulipta');
+        var labels = {'nurtec':'Nurtec','ubrelvy':'Ubrelvy','qulipta':'Qulipta'};
+        var el = document.getElementById('overall-ch-title');
+        if (el) el.innerHTML = labels[brand] + ' NPA &#8212; Channel Performance View';
     };
     window.toggleNpaMetric = function(metric) {
         document.getElementById('npa-trx-pill').classList.toggle('active', metric === 'trx');
