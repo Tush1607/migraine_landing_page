@@ -666,7 +666,7 @@ a { color: inherit; text-decoration: none; }
       <div class="row" style="margin-bottom:0;">
       
       <div class="card">
-        <div class="card-title" data-xp-metric="{XM} Share Trend by Segment">TRx Share Trend by Segment</div>
+        <div class="card-title" data-xp-metric="{XM} Share Trend by Payer">TRx Share Trend by Payer</div>
         <div class="card-subtitle">Commercial / Medicare / Medicaid / Other · weekly</div>
         <div class="chart-container chart-container-sm">
           <svg class="chart" preserveAspectRatio="none" viewBox="0 0 380 200">
@@ -732,12 +732,13 @@ a { color: inherit; text-decoration: none; }
       </div>
       </div>
 
-    <div class="card">
+    <div class="row">
+      <div class="card">
       <div class="card-title">Payer Performance</div>
       <div class="card-subtitle">Share % · Latest Wk / WoW % / MTD / vs. STLY</div>
       <table>
         <thead>
-          <tr><th>CUT</th><th style="text-align:right" data-xp-metric="{XM} %">TRx %</th><th style="text-align:right">WoW %</th><th style="text-align:right" data-xp-metric="MTD {XM}">MTD TRx</th><th style="text-align:right">VS STLY</th></tr>
+          <tr><th>CUT</th><th style="text-align:right" data-xp-metric="WoW Mkt Share ({XM})">WoW Mkt Share (TRx)</th><th style="text-align:right" data-xp-metric="WoW Growth ({XM})">WoW Growth (TRx)</th><th style="text-align:right" data-xp-metric="MTD Mkt Share ({XM})">MTD Mkt Share (TRx)</th><th style="text-align:right" data-xp-metric="MTD Growth vs STLY ({XM})">MTD Growth vs STLY (TRx)</th></tr>
         </thead>
         <tbody>
           <tr><td><strong>National</strong></td><td style="text-align:right">38.7%</td><td style="text-align:right"><span class="delta-pos">+0.1%</span></td><td style="text-align:right">38.5%</td><td style="text-align:right"><span class="delta-pos">+1.4%</span></td></tr>
@@ -748,13 +749,12 @@ a { color: inherit; text-decoration: none; }
         </tbody>
       </table>
     </div>
-
-    <div class="card">
+      <div class="card">
       <div class="card-title">Channel Performance</div>
       <div class="card-subtitle">Share % · Latest Wk / WoW % / MTD / vs. STLY</div>
       <table>
         <thead>
-          <tr><th>CUT</th><th style="text-align:right" data-xp-metric="{XM} %">TRx %</th><th style="text-align:right">WoW %</th><th style="text-align:right" data-xp-metric="MTD {XM}">MTD TRx</th><th style="text-align:right">VS STLY</th></tr>
+          <tr><th>CUT</th><th style="text-align:right" data-xp-metric="WoW Mkt Share ({XM})">WoW Mkt Share (TRx)</th><th style="text-align:right" data-xp-metric="WoW Growth ({XM})">WoW Growth (TRx)</th><th style="text-align:right" data-xp-metric="MTD Mkt Share ({XM})">MTD Mkt Share (TRx)</th><th style="text-align:right" data-xp-metric="MTD Growth vs STLY ({XM})">MTD Growth vs STLY (TRx)</th></tr>
         </thead>
         <tbody>
           <tr><td><strong>National</strong></td><td style="text-align:right">38.7%</td><td style="text-align:right"><span class="delta-pos">+0.1%</span></td><td style="text-align:right">38.5%</td><td style="text-align:right"><span class="delta-pos">+1.4%</span></td></tr>
@@ -763,6 +763,7 @@ a { color: inherit; text-decoration: none; }
           <tr><td><strong>LTC</strong></td><td style="text-align:right">21.4%</td><td style="text-align:right"><span class="delta-neg">-0.1%</span></td><td style="text-align:right">21.5%</td><td style="text-align:right"><span class="delta-neg">-0.3%</span></td></tr>
         </tbody>
       </table>
+    </div>
     </div>
   </div>
 </div>
