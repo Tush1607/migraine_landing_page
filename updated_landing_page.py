@@ -423,8 +423,8 @@ a { color: inherit; text-decoration: none; }
 
     <main class="content">
         <!-- KPI STRIP -->
-        <div class="kpis-head">Executive KPIs</div>
-        <div class="kpi-row">
+        <div class="kpis-head" id="kpisHead">Executive KPIs</div>
+        <div class="kpi-row" id="kpiRow">
             <div class="kpi"><div class="kpi-label">Nurtec TRx</div><div class="kpi-value">42.3K</div><div class="kpi-delta up"><span class="tri">&#9650;</span>3.2% <span class="vs">vs PW</span></div></div>
             <div class="kpi"><div class="kpi-label">Nurtec NBRx</div><div class="kpi-value">8.7K</div><div class="kpi-delta up"><span class="tri">&#9650;</span>1.8% <span class="vs">vs PW</span></div></div>
             <div class="kpi"><div class="kpi-label">Market Share (TRx)</div><div class="kpi-value">18.4%</div><div class="kpi-delta up"><span class="tri">&#9650;</span>0.3% <span class="vs">vs PW</span></div></div>
@@ -562,7 +562,7 @@ a { color: inherit; text-decoration: none; }
 </style>
 <div class="nl-content">
 <div class="nl-tab active" id="nl-exec-tab">
-<div style="padding:24px 32px;">
+<div style="padding:8px 32px 24px;">
 <div class="section-head"><h2>Executive Summary</h2><p>High-level performance overview and key takeaways for the current reporting week.</p></div>
     <div class="card">
       <div class="card-title">Performance Snapshot</div>
@@ -643,7 +643,7 @@ a { color: inherit; text-decoration: none; }
   </div>
 </div>
 <div class="nl-tab" id="nl-xponent-tab">
-<div style="padding:24px 32px;">
+<div style="padding:8px 32px 24px;">
 <div class="section-head"><h2>Xponent Trends</h2><p>Weekly Xponent data trends, segment and channel performance analysis.</p></div>
     <div class="card">
       <div class="card-title">Claims MTD & YTD vs. STLY</div>
@@ -762,7 +762,7 @@ a { color: inherit; text-decoration: none; }
   </div>
 </div>
 <div class="nl-tab" id="nl-market-tab">
-<div style="padding:24px 32px;">
+<div style="padding:8px 32px 24px;">
 <div class="section-head"><h2>NPA Performance</h2><p>National prescription audit competitive view across Oral CGRP brands.</p></div>
     <div class="pill-group" id="npa-subtabs">
       <div class="pill active" onclick="switchNpaSubtab('retail')">NPA Overall</div>
@@ -1170,7 +1170,7 @@ a { color: inherit; text-decoration: none; }
   </div>
 </div>
 <div class="nl-tab" id="nl-access-tab">
-<div style="padding:24px 32px;">
+<div style="padding:8px 32px 24px;">
 <div class="section-head"><h2>Access Summary</h2><p>Payer access changes, formulary tracking, and covered lives analysis.</p></div>
     <div class="card">
       <div class="card-header-row">
@@ -1289,7 +1289,7 @@ a { color: inherit; text-decoration: none; }
   </div>
 </div>
 <div class="nl-tab" id="nl-financial-tab">
-<div style="padding:24px 32px;">
+<div style="padding:8px 32px 24px;">
 <div class="section-head"><h2>Financial Tracker</h2><p>Weekly gross and net sales performance vs. budget and plan attainment.</p></div>
     <div class="pill-group" id="financial-toggle">
       <div class="pill active" onclick="switchFinancial('gross')">Gross Sales</div>
@@ -1582,6 +1582,10 @@ a { color: inherit; text-decoration: none; }
         newsletterSub.classList.remove('is-open');
         heroEl.style.display = '';
         dividerEl.style.display = '';
+        var kpisHead = document.getElementById('kpisHead');
+        var kpiRow = document.getElementById('kpiRow');
+        if (kpisHead) kpisHead.style.display = '';
+        if (kpiRow) kpiRow.style.display = '';
         newsletterSub.querySelectorAll('.nav-sub-item').forEach(function(s) { s.classList.remove('active'); });
     }
 
@@ -1592,6 +1596,10 @@ a { color: inherit; text-decoration: none; }
         newsletterSub.classList.add('is-open');
         heroEl.style.display = 'none';
         dividerEl.style.display = 'none';
+        var kpisHead = document.getElementById('kpisHead');
+        var kpiRow = document.getElementById('kpiRow');
+        if (kpisHead) kpisHead.style.display = 'none';
+        if (kpiRow) kpiRow.style.display = 'none';
         // Activate the correct nl-tab
         nlDeepdiveView.querySelectorAll('.nl-tab').forEach(function(p) { p.classList.remove('active'); });
         var target = document.getElementById(panelId + '-tab');
