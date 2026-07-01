@@ -7,72 +7,25 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
 
-# --- Data (cached from Snowflake) ---
+# --- Data (Live from Snowflake via DSS) ---
+import pandas as pd
 import plotly.graph_objects as go
 from datetime import datetime
+from data_queries_live import fetch_brand_data, fetch_channel_data
 
 def week_to_date(wid):
-    return datetime.strptime(str(wid), '%Y%m%d')
+    return datetime.strptime(str(int(wid)), '%Y%m%d')
 
-import pandas as pd
+@st.cache_data(ttl=3600)
+def load_brand_data(segment):
+    return fetch_brand_data(segment=segment, rx_classification="Overall", channel_type="Overall")
 
-# Hardcoded data from VAW_AMER_DESIGN.USMIGRAINEIISANALYTICSETL table
-# Segment=TRx, RX_Classification=Overall, Channel_Type=Overall
-_raw_data = [
-(20250704,"NURTEC",61633,53391,61633),(20250704,"QULIPTA",33634,25603,None),(20250704,"UBRELVY",46915,39150,None),
-(20250711,"NURTEC",67966,58994,67966),(20250711,"QULIPTA",38203,29529,None),(20250711,"UBRELVY",52669,44302,None),
-(20250718,"NURTEC",67562,58946,67562),(20250718,"QULIPTA",37644,29278,None),(20250718,"UBRELVY",52451,44240,None),
-(20250725,"NURTEC",65796,59314,65796),(20250725,"QULIPTA",37185,29334,None),(20250725,"UBRELVY",52006,44582,None),
-(20250801,"NURTEC",65714,58462,65714),(20250801,"QULIPTA",37095,28234,None),(20250801,"UBRELVY",51675,43628,None),
-(20250808,"NURTEC",65365,59650,65365),(20250808,"QULIPTA",36942,29028,None),(20250808,"UBRELVY",51154,44216,None),
-(20250815,"NURTEC",66882,60095,66882),(20250815,"QULIPTA",37849,29928,None),(20250815,"UBRELVY",52212,44777,None),
-(20250822,"NURTEC",67608,60531,67608),(20250822,"QULIPTA",38149,29928,None),(20250822,"UBRELVY",53120,44819,None),
-(20250829,"NURTEC",69191,60935,69191),(20250829,"QULIPTA",38023,30057,None),(20250829,"UBRELVY",53583,44289,None),
-(20250905,"NURTEC",60769,55116,60769),(20250905,"QULIPTA",35039,26744,None),(20250905,"UBRELVY",47297,39483,None),
-(20250912,"NURTEC",67510,60739,67510),(20250912,"QULIPTA",38967,30413,None),(20250912,"UBRELVY",52711,45540,None),
-(20250919,"NURTEC",68602,62115,68602),(20250919,"QULIPTA",39040,30650,None),(20250919,"UBRELVY",54052,45601,None),
-(20250926,"NURTEC",68280,61745,68280),(20250926,"QULIPTA",38815,30081,None),(20250926,"UBRELVY",53081,44449,None),
-(20251003,"NURTEC",69840,61813,69840),(20251003,"QULIPTA",39233,30558,None),(20251003,"UBRELVY",53805,44835,None),
-(20251010,"NURTEC",67912,62495,67912),(20251010,"QULIPTA",38954,30670,None),(20251010,"UBRELVY",52775,44811,None),
-(20251017,"NURTEC",68988,62319,68988),(20251017,"QULIPTA",39189,31475,None),(20251017,"UBRELVY",54010,45335,None),
-(20251024,"NURTEC",69403,64365,69403),(20251024,"QULIPTA",39930,31795,None),(20251024,"UBRELVY",55008,45758,None),
-(20251031,"NURTEC",70011,63643,70011),(20251031,"QULIPTA",40231,31621,None),(20251031,"UBRELVY",54929,45449,None),
-(20251107,"NURTEC",70960,64055,70960),(20251107,"QULIPTA",40003,32674,None),(20251107,"UBRELVY",55489,47539,None),
-(20251114,"NURTEC",70014,62964,70014),(20251114,"QULIPTA",40091,32377,None),(20251114,"UBRELVY",55467,47213,None),
-(20251121,"NURTEC",72906,66055,72906),(20251121,"QULIPTA",41490,33221,None),(20251121,"UBRELVY",57248,48299,None),
-(20251128,"NURTEC",64262,55570,64262),(20251128,"QULIPTA",36278,28882,None),(20251128,"UBRELVY",49838,41099,None),
-(20251205,"NURTEC",73270,67251,73270),(20251205,"QULIPTA",42007,34148,None),(20251205,"UBRELVY",57811,48388,None),
-(20251212,"NURTEC",73996,66896,73996),(20251212,"QULIPTA",42236,33867,None),(20251212,"UBRELVY",58371,49246,None),
-(20251219,"NURTEC",77555,69590,77555),(20251219,"QULIPTA",42543,34136,None),(20251219,"UBRELVY",60601,50484,None),
-(20251226,"NURTEC",63536,55614,63536),(20251226,"QULIPTA",35298,27511,None),(20251226,"UBRELVY",49217,39785,None),
-(20260102,"NURTEC",68731,59319,78175),(20260102,"QULIPTA",37053,30140,None),(20260102,"UBRELVY",52618,44260,None),
-(20260109,"NURTEC",69764,56980,72032),(20260109,"QULIPTA",40706,31507,None),(20260109,"UBRELVY",54573,43267,None),
-(20260116,"NURTEC",69687,60519,72032),(20260116,"QULIPTA",40780,33620,None),(20260116,"UBRELVY",54353,46706,None),
-(20260123,"NURTEC",70457,56644,72032),(20260123,"QULIPTA",41470,30743,None),(20260123,"UBRELVY",55027,43088,None),
-(20260130,"NURTEC",62355,58628,72032),(20260130,"QULIPTA",35431,31464,None),(20260130,"UBRELVY",47301,44898,None),
-(20260206,"NURTEC",70067,60522,75304),(20260206,"QULIPTA",41358,33150,None),(20260206,"UBRELVY",53573,45493,None),
-(20260213,"NURTEC",71499,60346,75850),(20260213,"QULIPTA",41026,33283,None),(20260213,"UBRELVY",54464,45433,None),
-(20260220,"NURTEC",69277,59520,75850),(20260220,"QULIPTA",40385,32506,None),(20260220,"UBRELVY",53437,45234,None),
-(20260227,"NURTEC",70339,62384,75850),(20260227,"QULIPTA",40033,33813,None),(20260227,"UBRELVY",53369,47267,None),
-(20260306,"NURTEC",72613,62893,77022),(20260306,"QULIPTA",41422,33886,None),(20260306,"UBRELVY",54970,47604,None),
-(20260313,"NURTEC",73214,63338,77218),(20260313,"QULIPTA",42697,34389,None),(20260313,"UBRELVY",54939,48043,None),
-(20260320,"NURTEC",72345,62528,77218),(20260320,"QULIPTA",41453,34109,None),(20260320,"UBRELVY",53714,47274,None),
-(20260327,"NURTEC",72508,63232,77218),(20260327,"QULIPTA",41814,34269,None),(20260327,"UBRELVY",53945,47926,None),
-(20260403,"NURTEC",71782,63023,77775),(20260403,"QULIPTA",41720,33903,None),(20260403,"UBRELVY",53044,47788,None),
-(20260410,"NURTEC",70691,62700,78518),(20260410,"QULIPTA",41456,34893,None),(20260410,"UBRELVY",51575,47814,None),
-(20260417,"NURTEC",73227,62376,78518),(20260417,"QULIPTA",42623,34522,None),(20260417,"UBRELVY",54232,47927,None),
-(20260424,"NURTEC",74885,62313,78518),(20260424,"QULIPTA",42420,34622,None),(20260424,"UBRELVY",54656,47151,None),
-(20260501,"NURTEC",73688,64735,78561),(20260501,"QULIPTA",42918,35937,None),(20260501,"UBRELVY",54327,49885,None),
-(20260508,"NURTEC",74693,64135,78818),(20260508,"QULIPTA",42950,35657,None),(20260508,"UBRELVY",54526,49386,None),
-(20260515,"NURTEC",74581,64252,78818),(20260515,"QULIPTA",43211,35870,None),(20260515,"UBRELVY",54493,49495,None),
-(20260522,"NURTEC",76699,66021,78818),(20260522,"QULIPTA",44190,36020,None),(20260522,"UBRELVY",55613,50514,None),
-(20260529,"NURTEC",71941,59801,78818),(20260529,"QULIPTA",41111,33300,None),(20260529,"UBRELVY",52066,45657,None),
-(20260605,"NURTEC",78461,66867,80758),(20260605,"QULIPTA",45077,36716,None),(20260605,"UBRELVY",57235,51394,None),
-(20260612,"NURTEC",77911,66514,81534),(20260612,"QULIPTA",44585,36816,None),(20260612,"UBRELVY",56792,50990,None),
-(20260619,"NURTEC",77737,66493,81534),(20260619,"QULIPTA",44775,36259,None),(20260619,"UBRELVY",56372,51297,None),
-]
+@st.cache_data(ttl=3600)
+def load_channel_data(segment, brand):
+    return fetch_channel_data(segment=segment, rx_classification="Overall", brand=brand)
 
-npa_brand_df = pd.DataFrame(_raw_data, columns=['WEEK_ID','BRAND','ACTUALS','STLY','LATEST_GOAL'])
+# Fetch TRx brand data
+npa_brand_df = load_brand_data("TRx")
 weeks = sorted(npa_brand_df['WEEK_ID'].unique())
 nurtec_data = npa_brand_df[npa_brand_df['BRAND'] == 'NURTEC'].sort_values('WEEK_ID')
 ubrelvy_data = npa_brand_df[npa_brand_df['BRAND'] == 'UBRELVY'].sort_values('WEEK_ID')
@@ -81,216 +34,29 @@ qulipta_data = npa_brand_df[npa_brand_df['BRAND'] == 'QULIPTA'].sort_values('WEE
 all_vals = [v for v in list(nurtec_data['ACTUALS']) + list(ubrelvy_data['ACTUALS']) + list(qulipta_data['ACTUALS']) + list(nurtec_data['STLY']) + list(ubrelvy_data['STLY']) + list(qulipta_data['STLY']) if v is not None and v > 0]
 max_val = max(all_vals) if all_vals else 80000
 
-def scale_pts(vals, mx=None):
-    if mx is None: mx = max_val
-    pts = []
-    n = len(vals)
-    for i, v in enumerate(vals):
-        if v is None or v <= 0: v = 0
-        x = 80 + (752 - 80) * i / (n - 1) if n > 1 else 80
-        y = 220 - (v / mx) * 200 if mx > 0 else 120
-        pts.append(f"{int(x)},{int(y)}")
-    return " ".join(pts)
+# Fetch NBRx brand data
+nbrx_brand_df = load_brand_data("NBRx")
+nbrx_nurtec = nbrx_brand_df[nbrx_brand_df['BRAND'] == 'NURTEC'].sort_values('WEEK_ID')
+nbrx_ubrelvy = nbrx_brand_df[nbrx_brand_df['BRAND'] == 'UBRELVY'].sort_values('WEEK_ID')
+nbrx_qulipta = nbrx_brand_df[nbrx_brand_df['BRAND'] == 'QULIPTA'].sort_values('WEEK_ID')
 
-nurtec_act = scale_pts(list(nurtec_data['ACTUALS']))
-nurtec_stl = scale_pts(list(nurtec_data['STLY']))
-ubrelvy_act = scale_pts(list(ubrelvy_data['ACTUALS']))
-ubrelvy_stl = scale_pts(list(ubrelvy_data['STLY']))
-qulipta_act = scale_pts(list(qulipta_data['ACTUALS']))
-qulipta_stl = scale_pts(list(qulipta_data['STLY']))
-goal_line = scale_pts([v if v is not None else 0 for v in list(nurtec_data['LATEST_GOAL'])])
+# Fetch Channel data for all brands (TRx + NBRx)
+def get_channel_dict(segment):
+    result = {}
+    for brand in ['NURTEC', 'UBRELVY', 'QULIPTA']:
+        ch_df = load_channel_data(segment, brand)
+        retail_df = ch_df[ch_df['CHANNEL_TYPE'] == 'Retail'].sort_values('WEEK_ID')
+        mail_df = ch_df[ch_df['CHANNEL_TYPE'] == 'MAIL'].sort_values('WEEK_ID')
+        result[brand] = {
+            "Retail": {"actuals": list(retail_df['ACTUALS']), "stly": list(retail_df['STLY'])},
+            "Mail": {"actuals": list(mail_df['ACTUALS']), "stly": list(mail_df['STLY'])},
+        }
+    return result
 
-y_svg = ""
-for i in range(5):
-    val = max_val * i / 4
-    y = int(220 - (val / max_val) * 200)
-    lbl = f"{int(val/1000)}K" if val >= 1000 else f"{int(val)}"
-    y_svg += f'<text x="50" y="{y+4}" text-anchor="end" font-size="10" fill="#9ca3af">{lbl}</text>'
-    y_svg += f'<line x1="60" y1="{y}" x2="780" y2="{y}" stroke="#f3f4f6" stroke-width="1" stroke-dasharray="4"/>'
+_channel_trx_data = get_channel_dict("TRx")
+_channel_nbrx_data = get_channel_dict("NBRx")
 
-nw = len(weeks)
-x_svg = '<line x1="60" y1="220" x2="780" y2="220" stroke="#e5e7eb" stroke-width="1"/>'
-for idx in [0, nw//5, 2*nw//5, 3*nw//5, 4*nw//5, nw-1]:
-    if idx < nw:
-        x = int(80 + (752-80)*idx/(nw-1)) if nw > 1 else 80
-        x_svg += f'<text x="{x}" y="240" text-anchor="middle" font-size="9" fill="#9ca3af">Wk {idx+1}</text>'
-
-brand_chart_svg = x_svg + y_svg + f'<polyline fill="none" stroke="#16a34a" stroke-width="2" points="{nurtec_act}"/><polyline fill="none" stroke="#16a34a" stroke-width="2" stroke-dasharray="6" points="{nurtec_stl}"/><polyline fill="none" stroke="#f59e0b" stroke-width="2" points="{ubrelvy_act}"/><polyline fill="none" stroke="#f59e0b" stroke-width="2" stroke-dasharray="6" points="{ubrelvy_stl}"/><polyline fill="none" stroke="#3b82f6" stroke-width="2" points="{qulipta_act}"/><polyline fill="none" stroke="#3b82f6" stroke-width="2" stroke-dasharray="6" points="{qulipta_stl}"/><polyline fill="none" stroke="#f472b6" stroke-width="2" stroke-dasharray="8,4" points="{goal_line}"/>'
 DATA_LOADED = True
-
-# --- NBRx Data ---
-_nbrx_data = [
-(20250704,"NURTEC",7509,6719,None),(20250704,"QULIPTA",3832,2846,None),(20250704,"UBRELVY",6623,5480,None),
-(20250711,"NURTEC",8327,7691,None),(20250711,"QULIPTA",4287,3499,None),(20250711,"UBRELVY",7204,6232,None),
-(20250718,"NURTEC",8859,8084,None),(20250718,"QULIPTA",4624,3793,None),(20250718,"UBRELVY",7573,6776,None),
-(20250725,"NURTEC",8557,8313,None),(20250725,"QULIPTA",4507,3915,None),(20250725,"UBRELVY",7708,6741,None),
-(20250801,"NURTEC",8806,8595,None),(20250801,"QULIPTA",4488,3756,None),(20250801,"UBRELVY",7877,6892,None),
-(20250808,"NURTEC",8676,8826,None),(20250808,"QULIPTA",4395,3857,None),(20250808,"UBRELVY",7441,6818,None),
-(20250815,"NURTEC",8684,8893,None),(20250815,"QULIPTA",4811,4107,None),(20250815,"UBRELVY",7740,6973,None),
-(20250822,"NURTEC",8979,8689,None),(20250822,"QULIPTA",4875,4309,None),(20250822,"UBRELVY",8094,7210,None),
-(20250829,"NURTEC",8903,9031,None),(20250829,"QULIPTA",4529,4256,None),(20250829,"UBRELVY",7984,6961,None),
-(20250905,"NURTEC",6964,7029,None),(20250905,"QULIPTA",3754,3387,None),(20250905,"UBRELVY",6005,5630,None),
-(20250912,"NURTEC",8395,8453,None),(20250912,"QULIPTA",4815,4237,None),(20250912,"UBRELVY",7363,6931,None),
-(20250919,"NURTEC",8747,8731,None),(20250919,"QULIPTA",4834,4268,None),(20250919,"UBRELVY",8035,7033,None),
-(20250926,"NURTEC",9073,8813,None),(20250926,"QULIPTA",4840,4239,None),(20250926,"UBRELVY",7942,7041,None),
-(20251003,"NURTEC",9150,8912,None),(20251003,"QULIPTA",5001,4214,None),(20251003,"UBRELVY",8071,6810,None),
-(20251010,"NURTEC",8891,8841,None),(20251010,"QULIPTA",4725,4021,None),(20251010,"UBRELVY",7646,6910,None),
-(20251017,"NURTEC",8977,8311,None),(20251017,"QULIPTA",4758,4202,None),(20251017,"UBRELVY",7882,6758,None),
-(20251024,"NURTEC",8977,9098,None),(20251024,"QULIPTA",4851,4480,None),(20251024,"UBRELVY",7923,7002,None),
-(20251031,"NURTEC",9280,9235,None),(20251031,"QULIPTA",4829,4562,None),(20251031,"UBRELVY",7993,7350,None),
-(20251107,"NURTEC",9159,8747,None),(20251107,"QULIPTA",4707,4462,None),(20251107,"UBRELVY",7892,7300,None),
-(20251114,"NURTEC",9193,8525,None),(20251114,"QULIPTA",4978,4264,None),(20251114,"UBRELVY",7971,7041,None),
-(20251121,"NURTEC",9543,9290,None),(20251121,"QULIPTA",5098,4548,None),(20251121,"UBRELVY",8236,7404,None),
-(20251128,"NURTEC",7864,7186,None),(20251128,"QULIPTA",3945,3474,None),(20251128,"UBRELVY",6803,5664,None),
-(20251205,"NURTEC",8287,7686,None),(20251205,"QULIPTA",4112,3568,None),(20251205,"UBRELVY",7098,6167,None),
-(20251212,"NURTEC",8999,8987,None),(20251212,"QULIPTA",4503,4105,None),(20251212,"UBRELVY",7753,6847,None),
-(20251219,"NURTEC",9439,8882,None),(20251219,"QULIPTA",4747,4132,None),(20251219,"UBRELVY",8024,6710,None),
-(20251226,"NURTEC",6799,6019,None),(20251226,"QULIPTA",3273,2605,None),(20251226,"UBRELVY",5654,4491,None),
-(20260102,"NURTEC",6594,5621,None),(20260102,"QULIPTA",2712,2568,None),(20260102,"UBRELVY",5328,4434,None),
-(20260109,"NURTEC",7904,6898,None),(20260109,"QULIPTA",3892,3513,None),(20260109,"UBRELVY",6518,5536,None),
-(20260116,"NURTEC",9259,8342,None),(20260116,"QULIPTA",4661,4217,None),(20260116,"UBRELVY",7438,6808,None),
-(20260123,"NURTEC",9571,8152,None),(20260123,"QULIPTA",4682,4184,None),(20260123,"UBRELVY",8077,6432,None),
-(20260130,"NURTEC",8606,8758,None),(20260130,"QULIPTA",4188,4444,None),(20260130,"UBRELVY",6808,7135,None),
-(20260206,"NURTEC",9413,8746,None),(20260206,"QULIPTA",4817,4402,None),(20260206,"UBRELVY",7745,7182,None),
-(20260213,"NURTEC",9910,8971,None),(20260213,"QULIPTA",4716,4527,None),(20260213,"UBRELVY",8073,7367,None),
-(20260220,"NURTEC",9694,8775,None),(20260220,"QULIPTA",4696,4368,None),(20260220,"UBRELVY",7872,7335,None),
-(20260227,"NURTEC",10037,9397,None),(20260227,"QULIPTA",4925,4662,None),(20260227,"UBRELVY",8240,7591,None),
-(20260306,"NURTEC",10043,9205,None),(20260306,"QULIPTA",4933,4587,None),(20260306,"UBRELVY",8119,7717,None),
-(20260313,"NURTEC",10000,8989,None),(20260313,"QULIPTA",4977,4553,None),(20260313,"UBRELVY",8394,7759,None),
-(20260320,"NURTEC",9828,9100,None),(20260320,"QULIPTA",4927,4509,None),(20260320,"UBRELVY",8142,7370,None),
-(20260327,"NURTEC",9959,9121,None),(20260327,"QULIPTA",5080,4538,None),(20260327,"UBRELVY",8164,7567,None),
-(20260403,"NURTEC",9811,8985,None),(20260403,"QULIPTA",4749,4348,None),(20260403,"UBRELVY",7948,7285,None),
-(20260410,"NURTEC",8999,8662,None),(20260410,"QULIPTA",4598,4491,None),(20260410,"UBRELVY",7651,7141,None),
-(20260417,"NURTEC",9788,8706,None),(20260417,"QULIPTA",4772,4309,None),(20260417,"UBRELVY",8039,7245,None),
-(20260424,"NURTEC",10259,8549,None),(20260424,"QULIPTA",4849,4213,None),(20260424,"UBRELVY",8169,7251,None),
-(20260501,"NURTEC",9944,8682,None),(20260501,"QULIPTA",4895,4563,None),(20260501,"UBRELVY",8318,7359,None),
-(20260508,"NURTEC",9874,8694,None),(20260508,"QULIPTA",4754,4459,None),(20260508,"UBRELVY",8172,7368,None),
-(20260515,"NURTEC",9840,8582,None),(20260515,"QULIPTA",4868,4336,None),(20260515,"UBRELVY",7921,7392,None),
-(20260522,"NURTEC",9792,8547,None),(20260522,"QULIPTA",4738,4425,None),(20260522,"UBRELVY",7797,7319,None),
-(20260529,"NURTEC",8277,7044,None),(20260529,"QULIPTA",3811,3523,None),(20260529,"UBRELVY",6603,5937,None),
-(20260605,"NURTEC",9712,8681,None),(20260605,"QULIPTA",4964,4190,None),(20260605,"UBRELVY",7932,7372,None),
-(20260612,"NURTEC",9775,8996,None),(20260612,"QULIPTA",4852,4343,None),(20260612,"UBRELVY",7929,7503,None),
-(20260619,"NURTEC",9881,8514,None),(20260619,"QULIPTA",4785,4438,None),(20260619,"UBRELVY",8338,7315,None),
-]
-
-nbrx_df = pd.DataFrame(_nbrx_data, columns=['WEEK_ID','BRAND','ACTUALS','STLY','LATEST_GOAL'])
-nbrx_nurtec = nbrx_df[nbrx_df['BRAND'] == 'NURTEC'].sort_values('WEEK_ID')
-nbrx_ubrelvy = nbrx_df[nbrx_df['BRAND'] == 'UBRELVY'].sort_values('WEEK_ID')
-nbrx_qulipta = nbrx_df[nbrx_df['BRAND'] == 'QULIPTA'].sort_values('WEEK_ID')
-
-# Generate NBRx Plotly chart
-fig_nbrx = go.Figure()
-nbrx_dates = [week_to_date(w) for w in nbrx_nurtec['WEEK_ID']]
-
-fig_nbrx.add_trace(go.Scatter(x=nbrx_dates, y=list(nbrx_nurtec['ACTUALS']), mode='lines', name='Nurtec Actuals', line=dict(color='#16a34a', width=2.5), hovertemplate='Nurtec Actuals<br>Week: %{x|%d %b %y}<br>NBRx: %{y:,.0f}<extra></extra>'))
-fig_nbrx.add_trace(go.Scatter(x=nbrx_dates, y=list(nbrx_nurtec['STLY']), mode='lines', name='Nurtec STLY', line=dict(color='#16a34a', width=2, dash='dash'), hovertemplate='Nurtec STLY<br>STLY Week: %{x|%d %b} 25<br>NBRx: %{y:,.0f}<extra></extra>'))
-fig_nbrx.add_trace(go.Scatter(x=nbrx_dates, y=list(nbrx_ubrelvy['ACTUALS']), mode='lines', name='Ubrelvy Actuals', line=dict(color='#f59e0b', width=2.5), hovertemplate='Ubrelvy Actuals<br>Week: %{x|%d %b %y}<br>NBRx: %{y:,.0f}<extra></extra>'))
-fig_nbrx.add_trace(go.Scatter(x=nbrx_dates, y=list(nbrx_ubrelvy['STLY']), mode='lines', name='Ubrelvy STLY', line=dict(color='#f59e0b', width=2, dash='dash'), hovertemplate='Ubrelvy STLY<br>STLY Week: %{x|%d %b} 25<br>NBRx: %{y:,.0f}<extra></extra>'))
-fig_nbrx.add_trace(go.Scatter(x=nbrx_dates, y=list(nbrx_qulipta['ACTUALS']), mode='lines', name='Qulipta Actuals', line=dict(color='#3b82f6', width=2.5), hovertemplate='Qulipta Actuals<br>Week: %{x|%d %b %y}<br>NBRx: %{y:,.0f}<extra></extra>'))
-fig_nbrx.add_trace(go.Scatter(x=nbrx_dates, y=list(nbrx_qulipta['STLY']), mode='lines', name='Qulipta STLY', line=dict(color='#3b82f6', width=2, dash='dash'), hovertemplate='Qulipta STLY<br>STLY Week: %{x|%d %b} 25<br>NBRx: %{y:,.0f}<extra></extra>'))
-
-fig_nbrx.update_layout(
-    height=340,
-    margin=dict(l=60, r=20, t=35, b=100),
-    plot_bgcolor='white',
-    paper_bgcolor='white',
-    xaxis=dict(
-        tickfont=dict(size=9, color='#374151', family='Inter, sans-serif'),
-        tickformat='%d %b %y',
-        tickangle=-90,
-        dtick=7*24*60*60*1000,
-        gridcolor='rgba(0,0,0,0.04)',
-        showgrid=False,
-        hoverformat='',
-    ),
-    yaxis=dict(
-        title=dict(text='NBRx Volume', font=dict(size=10, color='#4b5563')),
-        tickfont=dict(size=9, color='#374151', family='Inter, sans-serif'),
-        gridcolor='rgba(0,0,0,0.06)',
-        showgrid=False,
-        tickformat=',',
-        rangemode='tozero',
-    ),
-    legend=dict(
-        orientation='h',
-        yanchor='top',
-        y=-0.35,
-        xanchor='center',
-        x=0.5,
-        font=dict(size=9),
-    ),
-    hovermode='closest',
-    hoverlabel=dict(
-        bgcolor='white',
-        font=dict(size=11, color='#1a2332', family='Inter, sans-serif'),
-        bordercolor='rgba(0,0,0,0)',
-    ),
-)
-
-nbrx_chart_html = fig_nbrx.to_html(full_html=False, include_plotlyjs=False, config={'displayModeBar': False, 'responsive': True})
-nbrx_chart_html = nbrx_chart_html.replace('class="plotly-graph-div" style="', 'class="plotly-graph-div" style="width:100%;')
-nbrx_chart_svg = nbrx_chart_html
-
-# --- Channel Performance Data ---
-# TRx Channel data (Retail + Mail-Order for each brand)
-_channel_trx_data = {
-    "NURTEC": {
-        "Retail": {"actuals": [57448,63144,62982,60988,60934,60494,61896,62658,64004,56357,62600,63511,63525,64903,63205,64220,64590,65180,65902,64857,67692,59697,67763,68678,71830,59032,63926,64139,64130,65405,57296,64547,65982,63880,64805,67086,67851,66783,67212,66675,65316,67761,69083,68349,68854,68557,70949,66596,72387,71557,72015], "stly": [47298,52847,53320,53771,52719,53199,53871,54311,54049,49200,54499,55060,54477,55374,55164,55712,56092,55224,56205,56641,58240,49427,58907,59804,61934,49597,54082,53057,56450,52581,54908,56628,56279,55788,58121,58599,59199,58459,58870,58960,58382,58261,58066,60409,59518,59829,61248,55614,62024,62220,62024]},
-        "Mail": {"actuals": [3139,3580,3486,3647,3629,3668,3753,3770,4018,3308,3682,3811,3576,3738,3534,3522,3524,3654,3707,3791,3871,3431,4013,3924,4304,3288,3534,4135,4168,3815,3781,4053,4090,4036,4117,3994,3952,4101,3928,3542,3955,3993,4355,3954,4389,4588,4363,3876,4531,4881,4352], "stly": [4356,5245,4672,4611,4756,5516,5217,5281,5910,5050,5272,6114,6327,5422,6328,5597,7316,7402,6819,5358,6825,5293,7268,6056,6662,5168,4282,2914,2992,3110,2708,2851,3008,2772,3232,3279,2992,3042,3292,2997,3300,3073,3190,3200,3582,3327,3592,3140,3646,3192,3387]},
-    },
-    "UBRELVY": {
-        "Retail": {"actuals": [43472,48674,48432,47984,47750,47301,48194,48929,49502,43698,48864,50015,49120,49739,48818,49673,50514,50399,51141,50933,52624,46135,52781,53738,55448,45302,48631,49932,49969,50864,42954,49022,50177,49242,49096,50731,50784,49726,49371,48837,47231,49560,49610,49857,50089,49733,50710,47719,52580,51900,51841], "stly": [37145,41790,41833,42225,41122,41579,42222,42062,41634,37224,42774,42610,41735,42159,41748,42423,42691,42452,44519,44135,45183,38687,45206,45981,47128,37231,41508,40248,43539,40200,41782,42355,42316,42102,44151,44486,44750,43999,44520,44739,44240,44609,43902,46241,45864,45815,46640,42240,47702,47143,47430]},
-        "Mail": {"actuals": [2803,3291,3295,3271,3141,3137,3300,3426,3300,2948,3077,3334,3193,3291,3159,3547,3718,3703,3463,3632,3747,2949,4062,3776,4187,3221,3131,3807,3425,3323,3545,3677,3398,3328,3367,3336,3254,3076,3611,3286,3415,3822,4101,3605,3462,3806,3868,3510,3727,3979,3499], "stly": [1468,1884,1755,1685,1882,2000,1934,2139,2047,1687,2092,2352,2077,2072,2377,2231,2419,2327,2318,2404,2413,1917,2478,2599,2629,2054,2148,2347,2447,2303,2422,2496,2450,2528,2400,2423,2580,2642,2654,2380,2905,2686,2625,2941,2851,2922,3142,2788,2989,3165,3164]},
-    },
-    "QULIPTA": {
-        "Retail": {"actuals": [31001,35306,34733,34094,34044,33968,34958,35142,35056,32219,35911,35977,35664,36057,35824,36149,36596,36887,36687,36793,37954,33426,38424,38885,38991,32356,34104,37561,37481,38195,32175,37996,37827,37046,36707,38242,39072,38088,38325,38295,37895,38893,38816,39248,39147,39400,40419,37372,41176,40796,40708], "stly": [23831,27402,27216,27305,26367,26942,27697,27785,27879,24783,28270,28423,27896,28376,28299,29167,29445,29277,30257,29941,30703,26791,31585,31394,31583,25470,27927,29291,31227,28426,29015,30698,30863,30147,31291,31384,31966,31706,31685,31464,32223,32049,31936,33260,32886,33063,33181,30718,33829,33990,33580]},
-        "Mail": {"actuals": [1909,2155,2147,2219,2228,2193,2107,2150,2113,2058,2241,2168,2298,2247,2276,2178,2421,2464,2312,2329,2497,1984,2484,2301,2513,2088,1969,2149,2205,2195,2241,2310,2128,2335,2208,2167,2516,2300,2327,2337,2475,2620,2497,2526,2723,2698,2629,2623,2824,2640,2911], "stly": [1257,1567,1500,1523,1354,1536,1620,1536,1600,1415,1580,1642,1617,1614,1738,1696,1788,1725,1810,1820,1899,1528,1868,1810,1881,1498,1560,1562,1700,1674,1713,1762,1717,1664,1806,1727,1723,1673,1837,1732,1961,1780,1887,1940,2067,2028,2029,1859,2093,2058,1946]},
-    },
-}
-
-def build_channel_chart(brand_data, metric_label, dates):
-    fig_ch = go.Figure()
-    retail_act = brand_data["Retail"]["actuals"]
-    retail_stl = brand_data["Retail"]["stly"]
-    mail_act = brand_data["Mail"]["actuals"]
-    mail_stl = brand_data["Mail"]["stly"]
-    
-    fig_ch.add_trace(go.Scatter(x=dates, y=retail_act, mode='lines', name='Retail Actuals', line=dict(color='#0891b2', width=2.5), hovertemplate='Retail Actuals<br>Week: %{x|%d %b %y}<br>' + metric_label + ': %{y:,.0f}<extra></extra>'))
-    fig_ch.add_trace(go.Scatter(x=dates, y=retail_stl, mode='lines', name='Retail STLY', line=dict(color='#0891b2', width=2, dash='dash'), hovertemplate='Retail STLY<br>STLY Week: %{x|%d %b} 25<br>' + metric_label + ': %{y:,.0f}<extra></extra>'))
-    fig_ch.add_trace(go.Scatter(x=dates, y=mail_act, mode='lines', name='Mail-Order Actuals', line=dict(color='#7c3aed', width=2.5), hovertemplate='Mail-Order Actuals<br>Week: %{x|%d %b %y}<br>' + metric_label + ': %{y:,.0f}<extra></extra>'))
-    fig_ch.add_trace(go.Scatter(x=dates, y=mail_stl, mode='lines', name='Mail-Order STLY', line=dict(color='#7c3aed', width=2, dash='dash'), hovertemplate='Mail-Order STLY<br>STLY Week: %{x|%d %b} 25<br>' + metric_label + ': %{y:,.0f}<extra></extra>'))
-    
-    fig_ch.update_layout(
-        height=340,
-        margin=dict(l=60, r=20, t=35, b=100),
-        plot_bgcolor='white', paper_bgcolor='white',
-        xaxis=dict(tickfont=dict(size=9, color='#374151', family='Inter, sans-serif'), tickformat='%d %b %y', tickangle=-90, dtick=7*24*60*60*1000, showgrid=False, hoverformat=''),
-        yaxis=dict(title=dict(text=metric_label + ' Volume', font=dict(size=10, color='#4b5563')), tickfont=dict(size=9, color='#374151', family='Inter, sans-serif'), showgrid=False, tickformat=',', rangemode='tozero'),
-        legend=dict(orientation='h', yanchor='top', y=-0.35, xanchor='center', x=0.5, font=dict(size=9)),
-        hovermode='closest',
-        hoverlabel=dict(bgcolor='white', font=dict(size=11, color='#1a2332', family='Inter, sans-serif'), bordercolor='rgba(0,0,0,0)'),
-    )
-    ch_html = fig_ch.to_html(full_html=False, include_plotlyjs=False, config={'displayModeBar': False, 'responsive': True})
-    ch_html = ch_html.replace('class="plotly-graph-div" style="', 'class="plotly-graph-div" style="width:100%;')
-    return ch_html
-
-# Build 6 channel charts (3 brands x TRx/NBRx)
-channel_dates = [week_to_date(w) for w in weeks]
-ch_nurtec_trx = build_channel_chart(_channel_trx_data["NURTEC"], "TRx", channel_dates)
-ch_ubrelvy_trx = build_channel_chart(_channel_trx_data["UBRELVY"], "TRx", channel_dates)
-ch_qulipta_trx = build_channel_chart(_channel_trx_data["QULIPTA"], "TRx", channel_dates)
-
-# NBRx channel - use scaled down values (approximate from retail ratio)
-_channel_nbrx_data = {
-    "NURTEC": {"Retail": {"actuals": [v//8 for v in _channel_trx_data["NURTEC"]["Retail"]["actuals"]], "stly": [v//8 for v in _channel_trx_data["NURTEC"]["Retail"]["stly"]]}, "Mail": {"actuals": [v//8 for v in _channel_trx_data["NURTEC"]["Mail"]["actuals"]], "stly": [v//8 for v in _channel_trx_data["NURTEC"]["Mail"]["stly"]]}},
-    "UBRELVY": {"Retail": {"actuals": [v//7 for v in _channel_trx_data["UBRELVY"]["Retail"]["actuals"]], "stly": [v//7 for v in _channel_trx_data["UBRELVY"]["Retail"]["stly"]]}, "Mail": {"actuals": [v//7 for v in _channel_trx_data["UBRELVY"]["Mail"]["actuals"]], "stly": [v//7 for v in _channel_trx_data["UBRELVY"]["Mail"]["stly"]]}},
-    "QULIPTA": {"Retail": {"actuals": [v//8 for v in _channel_trx_data["QULIPTA"]["Retail"]["actuals"]], "stly": [v//8 for v in _channel_trx_data["QULIPTA"]["Retail"]["stly"]]}, "Mail": {"actuals": [v//8 for v in _channel_trx_data["QULIPTA"]["Mail"]["actuals"]], "stly": [v//8 for v in _channel_trx_data["QULIPTA"]["Mail"]["stly"]]}},
-}
-ch_nurtec_nbrx = build_channel_chart(_channel_nbrx_data["NURTEC"], "NBRx", channel_dates)
-ch_ubrelvy_nbrx = build_channel_chart(_channel_nbrx_data["UBRELVY"], "NBRx", channel_dates)
-ch_qulipta_nbrx = build_channel_chart(_channel_nbrx_data["QULIPTA"], "NBRx", channel_dates)
-
-
 
 # --- Generate Interactive Chart with Plotly ---
 
