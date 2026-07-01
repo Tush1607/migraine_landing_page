@@ -53,7 +53,8 @@ def get_channel_dict(segment):
         ch_df = load_channel_data(segment, brand)
         retail_df = ch_df[ch_df['CHANNEL_TYPE'] == 'Retail'].sort_values('WEEK_ID')
         mail_df = ch_df[ch_df['CHANNEL_TYPE'] == 'MAIL'].sort_values('WEEK_ID')
-        result[brand] = {"Retail": {"actuals": list(retail_df['ACTUALS']), "stly": list(retail_df['STLY'])}, "Mail": {"actuals": list(mail_df['ACTUALS']), "stly": list(mail_df['STLY'])}}
+        ltc_df = ch_df[ch_df['CHANNEL_TYPE'] == 'Long term'].sort_values('WEEK_ID')
+        result[brand] = {"Retail": {"actuals": list(retail_df['ACTUALS']), "stly": list(retail_df['STLY'])}, "Mail": {"actuals": list(mail_df['ACTUALS']), "stly": list(mail_df['STLY'])}, "LTC": {"actuals": list(ltc_df['ACTUALS']) if len(ltc_df) > 0 else [0]*len(retail_df), "stly": list(ltc_df['STLY']) if len(ltc_df) > 0 else [0]*len(retail_df)}}
     return result
 
 _channel_trx_data = get_channel_dict("TRx")
@@ -96,11 +97,16 @@ def build_ap_channel_chart_live(segment, rx_class, brand, metric_label, dates_li
     ch_df = load_acute_prev_channel_data(segment, rx_class, brand)
     retail_df = ch_df[ch_df['CHANNEL_TYPE'] == 'Retail'].sort_values('WEEK_ID')
     mail_df = ch_df[ch_df['CHANNEL_TYPE'] == 'MAIL'].sort_values('WEEK_ID')
+    ltc_df = ch_df[ch_df['CHANNEL_TYPE'] == 'Long term'].sort_values('WEEK_ID')
     fig_ch = go.Figure()
     fig_ch.add_trace(go.Scatter(x=dates_list, y=list(retail_df['ACTUALS']), mode='lines', name='Retail Actuals', line=dict(color='#0891b2', width=2.5), hovertemplate='Retail Actuals<br>Week: %{x|%d %b %y}<br>' + metric_label + ': %{y:,.0f}<extra></extra>'))
     fig_ch.add_trace(go.Scatter(x=dates_list, y=list(retail_df['STLY']), mode='lines', name='Retail STLY', line=dict(color='#0891b2', width=2, dash='dash'), hovertemplate='Retail STLY<br>Week: %{x|%d %b %y}<br>' + metric_label + ': %{y:,.0f}<extra></extra>'))
     fig_ch.add_trace(go.Scatter(x=dates_list, y=list(mail_df['ACTUALS']), mode='lines', name='Mail-Order Actuals', line=dict(color='#7c3aed', width=2.5), hovertemplate='Mail-Order Actuals<br>Week: %{x|%d %b %y}<br>' + metric_label + ': %{y:,.0f}<extra></extra>'))
     fig_ch.add_trace(go.Scatter(x=dates_list, y=list(mail_df['STLY']), mode='lines', name='Mail-Order STLY', line=dict(color='#7c3aed', width=2, dash='dash'), hovertemplate='Mail-Order STLY<br>Week: %{x|%d %b %y}<br>' + metric_label + ': %{y:,.0f}<extra></extra>'))
+    ltc_act = list(ltc_df['ACTUALS']) if len(ltc_df) > 0 else [0]*len(dates_list)
+    ltc_stl = list(ltc_df['STLY']) if len(ltc_df) > 0 else [0]*len(dates_list)
+    fig_ch.add_trace(go.Scatter(x=dates_list, y=ltc_act, mode='lines', name='LTC Actuals', line=dict(color='#9ca3af', width=2.5), hovertemplate='LTC Actuals<br>Week: %{x|%d %b %y}<br>' + metric_label + ': %{y:,.0f}<extra></extra>'))
+    fig_ch.add_trace(go.Scatter(x=dates_list, y=ltc_stl, mode='lines', name='LTC STLY', line=dict(color='#9ca3af', width=2, dash='dash'), hovertemplate='LTC STLY<br>Week: %{x|%d %b %y}<br>' + metric_label + ': %{y:,.0f}<extra></extra>'))
     fig_ch.update_layout(
         height=300, margin=dict(l=50, r=10, t=10, b=80),
         plot_bgcolor='white', paper_bgcolor='white',
@@ -237,10 +243,14 @@ def build_channel_chart(brand_data, metric_label, dates):
     retail_stl = brand_data["Retail"]["stly"]
     mail_act = brand_data["Mail"]["actuals"]
     mail_stl = brand_data["Mail"]["stly"]
+    ltc_act = brand_data.get("LTC", {}).get("actuals", [0]*len(dates))
+    ltc_stl = brand_data.get("LTC", {}).get("stly", [0]*len(dates))
     fig_ch.add_trace(go.Scatter(x=dates, y=retail_act, mode='lines', name='Retail Actuals', line=dict(color='#0891b2', width=2.5), hovertemplate='Retail Actuals<br>Week: %{x|%d %b %y}<br>' + metric_label + ': %{y:,.0f}<extra></extra>'))
     fig_ch.add_trace(go.Scatter(x=dates, y=retail_stl, mode='lines', name='Retail STLY', line=dict(color='#0891b2', width=2, dash='dash'), hovertemplate='Retail STLY<br>STLY Week: %{x|%d %b} 25<br>' + metric_label + ': %{y:,.0f}<extra></extra>'))
     fig_ch.add_trace(go.Scatter(x=dates, y=mail_act, mode='lines', name='Mail-Order Actuals', line=dict(color='#7c3aed', width=2.5), hovertemplate='Mail-Order Actuals<br>Week: %{x|%d %b %y}<br>' + metric_label + ': %{y:,.0f}<extra></extra>'))
     fig_ch.add_trace(go.Scatter(x=dates, y=mail_stl, mode='lines', name='Mail-Order STLY', line=dict(color='#7c3aed', width=2, dash='dash'), hovertemplate='Mail-Order STLY<br>STLY Week: %{x|%d %b} 25<br>' + metric_label + ': %{y:,.0f}<extra></extra>'))
+    fig_ch.add_trace(go.Scatter(x=dates, y=ltc_act, mode='lines', name='LTC Actuals', line=dict(color='#9ca3af', width=2.5), hovertemplate='LTC Actuals<br>Week: %{x|%d %b %y}<br>' + metric_label + ': %{y:,.0f}<extra></extra>'))
+    fig_ch.add_trace(go.Scatter(x=dates, y=ltc_stl, mode='lines', name='LTC STLY', line=dict(color='#9ca3af', width=2, dash='dash'), hovertemplate='LTC STLY<br>STLY Week: %{x|%d %b} 25<br>' + metric_label + ': %{y:,.0f}<extra></extra>'))
     fig_ch.update_layout(
         height=340, margin=dict(l=60, r=20, t=35, b=100),
         plot_bgcolor='white', paper_bgcolor='white',
@@ -1925,14 +1935,14 @@ channel_html += '<div id="ch-ubrelvy-nbrx" style="width:100%;overflow:hidden;dis
 channel_html += '<div id="ch-qulipta-trx" style="width:100%;overflow:hidden;display:none;">' + ch_qulipta_trx + '</div>'
 channel_html += '<div id="ch-qulipta-nbrx" style="width:100%;overflow:hidden;display:none;">' + ch_qulipta_nbrx + '</div>'
 # Acute Channel chart injection (brand toggle: nurtec/ubrelvy, side by side TRx|NBRx)
-acute_ch_legend = '<div class="legend" style="margin-top:8px;justify-content:center;"><div class="legend-item"><div class="legend-dot" style="background:#0891b2"></div>Retail Actuals</div><div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#0891b2" stroke-width="2" stroke-dasharray="3"/></svg>Retail STLY</div><div class="legend-item"><div class="legend-dot" style="background:#7c3aed"></div>Mail-Order Actuals</div><div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#7c3aed" stroke-width="2" stroke-dasharray="3"/></svg>Mail-Order STLY</div></div>'
+acute_ch_legend = '<div class="legend" style="margin-top:8px;justify-content:center;"><div class="legend-item"><div class="legend-dot" style="background:#0891b2"></div>Retail Actuals</div><div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#0891b2" stroke-width="2" stroke-dasharray="3"/></svg>Retail STLY</div><div class="legend-item"><div class="legend-dot" style="background:#7c3aed"></div>Mail-Order Actuals</div><div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#7c3aed" stroke-width="2" stroke-dasharray="3"/></svg>Mail-Order STLY</div><div class="legend-item"><div class="legend-dot" style="background:#9ca3af"></div>LTC Actuals</div><div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#9ca3af" stroke-width="2" stroke-dasharray="3"/></svg>LTC STLY</div></div>'
 acute_ch_html = '<div id="ap-ch-nurtec-acute" style="width:100%;"><div class="split-section"><div class="split-col"><div class="section-label">TRx</div>' + ap_ch_nurtec_acute_trx + '</div><div class="split-col"><div class="section-label">NBRx</div>' + ap_ch_nurtec_acute_nbrx + '</div></div></div>'
 acute_ch_html += '<div id="ap-ch-ubrelvy-acute" style="width:100%;display:none;"><div class="split-section"><div class="split-col"><div class="section-label">TRx</div>' + ap_ch_ubrelvy_acute_trx + '</div><div class="split-col"><div class="section-label">NBRx</div>' + ap_ch_ubrelvy_acute_nbrx + '</div></div></div>'
 acute_ch_html += acute_ch_legend
 html_content = html_content.replace('ACUTE_CHANNEL_CHART_PLACEHOLDER', acute_ch_html)
 
 # Preventive Channel chart injection (brand toggle: nurtec/qulipta, side by side TRx|NBRx)
-prev_ch_legend = '<div class="legend" style="margin-top:8px;justify-content:center;"><div class="legend-item"><div class="legend-dot" style="background:#0891b2"></div>Retail Actuals</div><div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#0891b2" stroke-width="2" stroke-dasharray="3"/></svg>Retail STLY</div><div class="legend-item"><div class="legend-dot" style="background:#7c3aed"></div>Mail-Order Actuals</div><div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#7c3aed" stroke-width="2" stroke-dasharray="3"/></svg>Mail-Order STLY</div></div>'
+prev_ch_legend = '<div class="legend" style="margin-top:8px;justify-content:center;"><div class="legend-item"><div class="legend-dot" style="background:#0891b2"></div>Retail Actuals</div><div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#0891b2" stroke-width="2" stroke-dasharray="3"/></svg>Retail STLY</div><div class="legend-item"><div class="legend-dot" style="background:#7c3aed"></div>Mail-Order Actuals</div><div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#7c3aed" stroke-width="2" stroke-dasharray="3"/></svg>Mail-Order STLY</div><div class="legend-item"><div class="legend-dot" style="background:#9ca3af"></div>LTC Actuals</div><div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#9ca3af" stroke-width="2" stroke-dasharray="3"/></svg>LTC STLY</div></div>'
 prev_ch_html = '<div id="ap-ch-nurtec-prev" style="width:100%;"><div class="split-section"><div class="split-col"><div class="section-label">TRx</div>' + ap_ch_nurtec_prev_trx + '</div><div class="split-col"><div class="section-label">NBRx</div>' + ap_ch_nurtec_prev_nbrx + '</div></div></div>'
 prev_ch_html += '<div id="ap-ch-qulipta-prev" style="width:100%;display:none;"><div class="split-section"><div class="split-col"><div class="section-label">TRx</div>' + ap_ch_qulipta_prev_trx + '</div><div class="split-col"><div class="section-label">NBRx</div>' + ap_ch_qulipta_prev_nbrx + '</div></div></div>'
 prev_ch_html += prev_ch_legend

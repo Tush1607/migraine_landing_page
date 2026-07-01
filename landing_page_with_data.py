@@ -232,19 +232,22 @@ nbrx_chart_html = nbrx_chart_html.replace('class="plotly-graph-div" style="', 'c
 nbrx_chart_svg = nbrx_chart_html
 
 # --- Channel Performance Data ---
-# TRx Channel data (Retail + Mail-Order for each brand)
+# TRx Channel data (Retail + Mail-Order + LTC for each brand)
 _channel_trx_data = {
     "NURTEC": {
         "Retail": {"actuals": [57448,63144,62982,60988,60934,60494,61896,62658,64004,56357,62600,63511,63525,64903,63205,64220,64590,65180,65902,64857,67692,59697,67763,68678,71830,59032,63926,64139,64130,65405,57296,64547,65982,63880,64805,67086,67851,66783,67212,66675,65316,67761,69083,68349,68854,68557,70949,66596,72387,71557,72015], "stly": [47298,52847,53320,53771,52719,53199,53871,54311,54049,49200,54499,55060,54477,55374,55164,55712,56092,55224,56205,56641,58240,49427,58907,59804,61934,49597,54082,53057,56450,52581,54908,56628,56279,55788,58121,58599,59199,58459,58870,58960,58382,58261,58066,60409,59518,59829,61248,55614,62024,62220,62024]},
         "Mail": {"actuals": [3139,3580,3486,3647,3629,3668,3753,3770,4018,3308,3682,3811,3576,3738,3534,3522,3524,3654,3707,3791,3871,3431,4013,3924,4304,3288,3534,4135,4168,3815,3781,4053,4090,4036,4117,3994,3952,4101,3928,3542,3955,3993,4355,3954,4389,4588,4363,3876,4531,4881,4352], "stly": [4356,5245,4672,4611,4756,5516,5217,5281,5910,5050,5272,6114,6327,5422,6328,5597,7316,7402,6819,5358,6825,5293,7268,6056,6662,5168,4282,2914,2992,3110,2708,2851,3008,2772,3232,3279,2992,3042,3292,2997,3300,3073,3190,3200,3582,3327,3592,3140,3646,3192,3387]},
+        "LTC": {"actuals": [1046,1242,1094,1161,1151,1203,1233,1180,1169,1104,1228,1280,1179,1199,1173,1246,1289,1177,1351,1366,1343,1134,1494,1394,1421,1216,1271,1490,1389,1237,1278,1467,1427,1361,1417,1533,1411,1461,1368,1565,1420,1473,1447,1385,1450,1436,1387,1469,1543,1473,1370], "stly": [1737,902,954,932,987,935,1007,939,976,866,968,941,941,1017,1003,1010,957,1017,1031,965,990,850,1076,1036,994,849,955,1009,1077,953,1012,1043,1059,960,1031,1015,1147,1027,1070,1066,1018,1042,1057,1126,1035,1096,1181,1047,1197,1102,1082]},
     },
     "UBRELVY": {
         "Retail": {"actuals": [43472,48674,48432,47984,47750,47301,48194,48929,49502,43698,48864,50015,49120,49739,48818,49673,50514,50399,51141,50933,52624,46135,52781,53738,55448,45302,48631,49932,49969,50864,42954,49022,50177,49242,49096,50731,50784,49726,49371,48837,47231,49560,49610,49857,50089,49733,50710,47719,52580,51900,51841], "stly": [37145,41790,41833,42225,41122,41579,42222,42062,41634,37224,42774,42610,41735,42159,41748,42423,42691,42452,44519,44135,45183,38687,45206,45981,47128,37231,41508,40248,43539,40200,41782,42355,42316,42102,44151,44486,44750,43999,44520,44739,44240,44609,43902,46241,45864,45815,46640,42240,47702,47143,47430]},
         "Mail": {"actuals": [2803,3291,3295,3271,3141,3137,3300,3426,3300,2948,3077,3334,3193,3291,3159,3547,3718,3703,3463,3632,3747,2949,4062,3776,4187,3221,3131,3807,3425,3323,3545,3677,3398,3328,3367,3336,3254,3076,3611,3286,3415,3822,4101,3605,3462,3806,3868,3510,3727,3979,3499], "stly": [1468,1884,1755,1685,1882,2000,1934,2139,2047,1687,2092,2352,2077,2072,2377,2231,2419,2327,2318,2404,2413,1917,2478,2599,2629,2054,2148,2347,2447,2303,2422,2496,2450,2528,2400,2423,2580,2642,2654,2380,2905,2686,2625,2941,2851,2922,3142,2788,2989,3165,3164]},
+        "LTC": {"actuals": [640,704,724,751,784,716,718,765,781,651,770,703,768,775,798,790,776,827,885,902,877,754,968,857,966,694,856,834,959,840,802,874,889,867,906,903,901,912,963,921,929,850,945,865,975,954,1035,837,928,913,1032], "stly": [537,628,652,672,624,637,621,618,608,572,674,639,637,604,686,681,648,670,702,674,703,495,704,666,727,500,604,672,720,585,694,642,667,604,716,695,713,633,752,669,669,632,624,703,671,758,732,629,703,682,703]},
     },
     "QULIPTA": {
         "Retail": {"actuals": [31001,35306,34733,34094,34044,33968,34958,35142,35056,32219,35911,35977,35664,36057,35824,36149,36596,36887,36687,36793,37954,33426,38424,38885,38991,32356,34104,37561,37481,38195,32175,37996,37827,37046,36707,38242,39072,38088,38325,38295,37895,38893,38816,39248,39147,39400,40419,37372,41176,40796,40708], "stly": [23831,27402,27216,27305,26367,26942,27697,27785,27879,24783,28270,28423,27896,28376,28299,29167,29445,29277,30257,29941,30703,26791,31585,31394,31583,25470,27927,29291,31227,28426,29015,30698,30863,30147,31291,31384,31966,31706,31685,31464,32223,32049,31936,33260,32886,33063,33181,30718,33829,33990,33580]},
         "Mail": {"actuals": [1909,2155,2147,2219,2228,2193,2107,2150,2113,2058,2241,2168,2298,2247,2276,2178,2421,2464,2312,2329,2497,1984,2484,2301,2513,2088,1969,2149,2205,2195,2241,2310,2128,2335,2208,2167,2516,2300,2327,2337,2475,2620,2497,2526,2723,2698,2629,2623,2824,2640,2911], "stly": [1257,1567,1500,1523,1354,1536,1620,1536,1600,1415,1580,1642,1617,1614,1738,1696,1788,1725,1810,1820,1899,1528,1868,1810,1881,1498,1560,1562,1700,1674,1713,1762,1717,1664,1806,1727,1723,1673,1837,1732,1961,1780,1887,1940,2067,2028,2029,1859,2093,2058,1946]},
+        "LTC": {"actuals": [724,742,764,872,823,781,784,857,854,762,815,895,853,929,854,862,913,880,1004,969,1039,868,1099,1050,1039,854,980,996,1094,1080,1015,1052,1071,1004,1118,1013,1109,1065,1162,1088,1086,1110,1107,1144,1080,1113,1142,1116,1077,1149,1156], "stly": [515,560,562,506,513,550,611,607,578,546,563,585,568,568,633,612,562,619,607,616,619,563,695,663,672,543,653,654,693,643,736,690,703,695,716,775,700,730,747,707,709,693,799,737,704,779,810,723,794,768,733]},
     },
 }
 
@@ -254,11 +257,15 @@ def build_channel_chart(brand_data, metric_label, dates):
     retail_stl = brand_data["Retail"]["stly"]
     mail_act = brand_data["Mail"]["actuals"]
     mail_stl = brand_data["Mail"]["stly"]
+    ltc_act = brand_data.get("LTC", {}).get("actuals", [0]*len(dates))
+    ltc_stl = brand_data.get("LTC", {}).get("stly", [0]*len(dates))
     
     fig_ch.add_trace(go.Scatter(x=dates, y=retail_act, mode='lines', name='Retail Actuals', line=dict(color='#0891b2', width=2.5), hovertemplate='Retail Actuals<br>Week: %{x|%d %b %y}<br>' + metric_label + ': %{y:,.0f}<extra></extra>'))
     fig_ch.add_trace(go.Scatter(x=dates, y=retail_stl, mode='lines', name='Retail STLY', line=dict(color='#0891b2', width=2, dash='dash'), hovertemplate='Retail STLY<br>STLY Week: %{x|%d %b} 25<br>' + metric_label + ': %{y:,.0f}<extra></extra>'))
     fig_ch.add_trace(go.Scatter(x=dates, y=mail_act, mode='lines', name='Mail-Order Actuals', line=dict(color='#7c3aed', width=2.5), hovertemplate='Mail-Order Actuals<br>Week: %{x|%d %b %y}<br>' + metric_label + ': %{y:,.0f}<extra></extra>'))
     fig_ch.add_trace(go.Scatter(x=dates, y=mail_stl, mode='lines', name='Mail-Order STLY', line=dict(color='#7c3aed', width=2, dash='dash'), hovertemplate='Mail-Order STLY<br>STLY Week: %{x|%d %b} 25<br>' + metric_label + ': %{y:,.0f}<extra></extra>'))
+    fig_ch.add_trace(go.Scatter(x=dates, y=ltc_act, mode='lines', name='LTC Actuals', line=dict(color='#9ca3af', width=2.5), hovertemplate='LTC Actuals<br>Week: %{x|%d %b %y}<br>' + metric_label + ': %{y:,.0f}<extra></extra>'))
+    fig_ch.add_trace(go.Scatter(x=dates, y=ltc_stl, mode='lines', name='LTC STLY', line=dict(color='#9ca3af', width=2, dash='dash'), hovertemplate='LTC STLY<br>STLY Week: %{x|%d %b} 25<br>' + metric_label + ': %{y:,.0f}<extra></extra>'))
     
     fig_ch.update_layout(
         height=340,
@@ -280,11 +287,11 @@ ch_nurtec_trx = build_channel_chart(_channel_trx_data["NURTEC"], "TRx", channel_
 ch_ubrelvy_trx = build_channel_chart(_channel_trx_data["UBRELVY"], "TRx", channel_dates)
 ch_qulipta_trx = build_channel_chart(_channel_trx_data["QULIPTA"], "TRx", channel_dates)
 
-# NBRx channel - use scaled down values (approximate from retail ratio)
+# NBRx channel - use scaled down values (approximate from retail ratio), LTC is 0 for NBRx
 _channel_nbrx_data = {
-    "NURTEC": {"Retail": {"actuals": [v//8 for v in _channel_trx_data["NURTEC"]["Retail"]["actuals"]], "stly": [v//8 for v in _channel_trx_data["NURTEC"]["Retail"]["stly"]]}, "Mail": {"actuals": [v//8 for v in _channel_trx_data["NURTEC"]["Mail"]["actuals"]], "stly": [v//8 for v in _channel_trx_data["NURTEC"]["Mail"]["stly"]]}},
-    "UBRELVY": {"Retail": {"actuals": [v//7 for v in _channel_trx_data["UBRELVY"]["Retail"]["actuals"]], "stly": [v//7 for v in _channel_trx_data["UBRELVY"]["Retail"]["stly"]]}, "Mail": {"actuals": [v//7 for v in _channel_trx_data["UBRELVY"]["Mail"]["actuals"]], "stly": [v//7 for v in _channel_trx_data["UBRELVY"]["Mail"]["stly"]]}},
-    "QULIPTA": {"Retail": {"actuals": [v//8 for v in _channel_trx_data["QULIPTA"]["Retail"]["actuals"]], "stly": [v//8 for v in _channel_trx_data["QULIPTA"]["Retail"]["stly"]]}, "Mail": {"actuals": [v//8 for v in _channel_trx_data["QULIPTA"]["Mail"]["actuals"]], "stly": [v//8 for v in _channel_trx_data["QULIPTA"]["Mail"]["stly"]]}},
+    "NURTEC": {"Retail": {"actuals": [v//8 for v in _channel_trx_data["NURTEC"]["Retail"]["actuals"]], "stly": [v//8 for v in _channel_trx_data["NURTEC"]["Retail"]["stly"]]}, "Mail": {"actuals": [v//8 for v in _channel_trx_data["NURTEC"]["Mail"]["actuals"]], "stly": [v//8 for v in _channel_trx_data["NURTEC"]["Mail"]["stly"]]}, "LTC": {"actuals": [0]*51, "stly": [0]*51}},
+    "UBRELVY": {"Retail": {"actuals": [v//7 for v in _channel_trx_data["UBRELVY"]["Retail"]["actuals"]], "stly": [v//7 for v in _channel_trx_data["UBRELVY"]["Retail"]["stly"]]}, "Mail": {"actuals": [v//7 for v in _channel_trx_data["UBRELVY"]["Mail"]["actuals"]], "stly": [v//7 for v in _channel_trx_data["UBRELVY"]["Mail"]["stly"]]}, "LTC": {"actuals": [0]*51, "stly": [0]*51}},
+    "QULIPTA": {"Retail": {"actuals": [v//8 for v in _channel_trx_data["QULIPTA"]["Retail"]["actuals"]], "stly": [v//8 for v in _channel_trx_data["QULIPTA"]["Retail"]["stly"]]}, "Mail": {"actuals": [v//8 for v in _channel_trx_data["QULIPTA"]["Mail"]["actuals"]], "stly": [v//8 for v in _channel_trx_data["QULIPTA"]["Mail"]["stly"]]}, "LTC": {"actuals": [0]*51, "stly": [0]*51}},
 }
 ch_nurtec_nbrx = build_channel_chart(_channel_nbrx_data["NURTEC"], "NBRx", channel_dates)
 ch_ubrelvy_nbrx = build_channel_chart(_channel_nbrx_data["UBRELVY"], "NBRx", channel_dates)
@@ -376,13 +383,28 @@ _qulipta_prev_nbrx_retail = [3644,4037,4317,4238,4273,4174,4597,4685,4327,3606,4
 _qulipta_prev_nbrx_retail_stly = [2686,3332,3629,3732,3616,3679,3936,4092,4090,3214,4062,4041,4040,4032,3801,3981,4301,4368,4236,4081,4322,3371,3390,3939,3921,2480,2442,3387,3994,3966,4206,4172,4303,4160,4418,4375,4341,4321,4281,4158,4257,4114,4006,4330,4197,4125,4194,3341,4013,4156,4274]
 _qulipta_prev_nbrx_mail = [191,252,317,262,215,220,214,190,210,152,187,192,248,223,209,212,227,243,216,266,269,158,225,208,234,137,108,172,218,216,226,248,217,214,293,216,268,253,244,231,278,256,252,233,231,245,222,248,236,211,265]
 _qulipta_prev_nbrx_mail_stly = [164,169,165,176,138,178,168,207,170,175,175,230,199,181,220,221,174,197,226,185,227,105,184,163,205,128,125,132,218,226,234,235,229,207,247,213,212,184,250,191,242,197,199,234,269,209,235,184,177,187,164]
+# LTC channel data for Acute/Preventive (TRx only - NBRx is 0)
+_nurtec_acute_trx_ltc = [714,848,753,790,786,824,841,805,796,743,835,872,799,816,797,842,878,794,905,909,895,751,1001,946,961,821,858,1003,935,830,858,982,953,903,947,1028,952,984,925,1045,941,996,978,934,978,968,935,996,1046,998,929]
+_nurtec_acute_trx_ltc_stly = [1186,616,652,636,677,640,686,643,671,592,661,639,642,696,682,688,653,695,703,659,677,579,742,729,700,597,664,695,740,654,696,711,725,653,704,693,785,705,736,730,696,710,722,767,703,748,808,710,816,753,740]
+_ubrelvy_acute_trx_ltc = [640,704,724,751,784,716,718,765,781,651,770,703,768,775,798,790,776,827,885,902,877,754,968,857,966,694,856,834,959,840,802,874,889,867,906,903,901,912,963,921,929,850,945,865,975,954,1035,837,928,913,1032]
+_ubrelvy_acute_trx_ltc_stly = [537,628,652,672,624,637,621,618,608,572,674,639,637,604,686,681,648,670,702,674,703,495,704,666,727,500,604,672,720,585,694,642,667,604,716,695,713,633,752,669,669,632,624,703,671,758,732,629,703,682,703]
+_nurtec_prev_trx_ltc = [332,394,341,371,365,379,392,375,373,361,393,408,380,383,376,404,411,383,446,457,448,383,493,448,460,395,413,487,454,407,420,485,474,458,470,505,459,477,443,520,479,477,469,451,472,468,452,473,497,475,441]
+_nurtec_prev_trx_ltc_stly = [551,286,302,296,310,295,321,296,305,274,307,302,299,321,321,322,304,322,328,306,313,271,334,307,294,252,291,314,337,299,316,332,334,307,327,322,362,322,334,336,322,332,335,359,332,348,373,337,381,349,342]
+_qulipta_prev_trx_ltc = [724,742,764,872,823,781,784,857,854,762,815,895,853,929,854,862,913,880,1004,969,1039,868,1099,1050,1039,854,980,996,1094,1080,1015,1052,1071,1004,1118,1013,1109,1065,1162,1088,1086,1110,1107,1144,1080,1113,1142,1116,1077,1149,1156]
+_qulipta_prev_trx_ltc_stly = [515,560,562,506,513,550,611,607,578,546,563,585,568,568,633,612,562,619,607,616,619,563,695,663,672,543,653,654,693,643,736,690,703,695,716,775,700,730,747,707,709,693,799,737,704,779,810,723,794,768,733]
 
-def build_ap_channel_chart(retail_act, retail_stly, mail_act, mail_stly, metric_label, dates):
+def build_ap_channel_chart(retail_act, retail_stly, mail_act, mail_stly, metric_label, dates, ltc_act=None, ltc_stly=None):
+    if ltc_act is None:
+        ltc_act = [0]*len(dates)
+    if ltc_stly is None:
+        ltc_stly = [0]*len(dates)
     fig_ch = go.Figure()
     fig_ch.add_trace(go.Scatter(x=dates, y=retail_act, mode='lines', name='Retail Actuals', line=dict(color='#0891b2', width=2.5), hovertemplate='Retail Actuals<br>Week: %{x|%d %b %y}<br>' + metric_label + ': %{y:,.0f}<extra></extra>'))
     fig_ch.add_trace(go.Scatter(x=dates, y=retail_stly, mode='lines', name='Retail STLY', line=dict(color='#0891b2', width=2, dash='dash'), hovertemplate='Retail STLY<br>Week: %{x|%d %b %y}<br>' + metric_label + ': %{y:,.0f}<extra></extra>'))
     fig_ch.add_trace(go.Scatter(x=dates, y=mail_act, mode='lines', name='Mail-Order Actuals', line=dict(color='#7c3aed', width=2.5), hovertemplate='Mail-Order Actuals<br>Week: %{x|%d %b %y}<br>' + metric_label + ': %{y:,.0f}<extra></extra>'))
     fig_ch.add_trace(go.Scatter(x=dates, y=mail_stly, mode='lines', name='Mail-Order STLY', line=dict(color='#7c3aed', width=2, dash='dash'), hovertemplate='Mail-Order STLY<br>Week: %{x|%d %b %y}<br>' + metric_label + ': %{y:,.0f}<extra></extra>'))
+    fig_ch.add_trace(go.Scatter(x=dates, y=ltc_act, mode='lines', name='LTC Actuals', line=dict(color='#9ca3af', width=2.5), hovertemplate='LTC Actuals<br>Week: %{x|%d %b %y}<br>' + metric_label + ': %{y:,.0f}<extra></extra>'))
+    fig_ch.add_trace(go.Scatter(x=dates, y=ltc_stly, mode='lines', name='LTC STLY', line=dict(color='#9ca3af', width=2, dash='dash'), hovertemplate='LTC STLY<br>Week: %{x|%d %b %y}<br>' + metric_label + ': %{y:,.0f}<extra></extra>'))
     fig_ch.update_layout(
         height=300, margin=dict(l=50, r=10, t=10, b=80),
         plot_bgcolor='white', paper_bgcolor='white',
@@ -397,13 +419,13 @@ def build_ap_channel_chart(retail_act, retail_stly, mail_act, mail_stly, metric_
     return ch_html
 
 # Build 8 Acute/Preventive channel charts (4 brands x 2 metrics, side by side TRx|NBRx)
-ap_ch_nurtec_acute_trx = build_ap_channel_chart(_nurtec_acute_trx_retail, _nurtec_acute_trx_retail_stly, _nurtec_acute_trx_mail, _nurtec_acute_trx_mail_stly, 'TRx', ap_dates)
+ap_ch_nurtec_acute_trx = build_ap_channel_chart(_nurtec_acute_trx_retail, _nurtec_acute_trx_retail_stly, _nurtec_acute_trx_mail, _nurtec_acute_trx_mail_stly, 'TRx', ap_dates, _nurtec_acute_trx_ltc, _nurtec_acute_trx_ltc_stly)
 ap_ch_nurtec_acute_nbrx = build_ap_channel_chart(_nurtec_acute_nbrx_retail, _nurtec_acute_nbrx_retail_stly, _nurtec_acute_nbrx_mail, _nurtec_acute_nbrx_mail_stly, 'NBRx', ap_dates)
-ap_ch_ubrelvy_acute_trx = build_ap_channel_chart(_ubrelvy_acute_trx_retail, _ubrelvy_acute_trx_retail_stly, _ubrelvy_acute_trx_mail, _ubrelvy_acute_trx_mail_stly, 'TRx', ap_dates)
+ap_ch_ubrelvy_acute_trx = build_ap_channel_chart(_ubrelvy_acute_trx_retail, _ubrelvy_acute_trx_retail_stly, _ubrelvy_acute_trx_mail, _ubrelvy_acute_trx_mail_stly, 'TRx', ap_dates, _ubrelvy_acute_trx_ltc, _ubrelvy_acute_trx_ltc_stly)
 ap_ch_ubrelvy_acute_nbrx = build_ap_channel_chart(_ubrelvy_acute_nbrx_retail, _ubrelvy_acute_nbrx_retail_stly, _ubrelvy_acute_nbrx_mail, _ubrelvy_acute_nbrx_mail_stly, 'NBRx', ap_dates)
-ap_ch_nurtec_prev_trx = build_ap_channel_chart(_nurtec_prev_trx_retail, _nurtec_prev_trx_retail_stly, _nurtec_prev_trx_mail, _nurtec_prev_trx_mail_stly, 'TRx', ap_dates)
+ap_ch_nurtec_prev_trx = build_ap_channel_chart(_nurtec_prev_trx_retail, _nurtec_prev_trx_retail_stly, _nurtec_prev_trx_mail, _nurtec_prev_trx_mail_stly, 'TRx', ap_dates, _nurtec_prev_trx_ltc, _nurtec_prev_trx_ltc_stly)
 ap_ch_nurtec_prev_nbrx = build_ap_channel_chart(_nurtec_prev_nbrx_retail, _nurtec_prev_nbrx_retail_stly, _nurtec_prev_nbrx_mail, _nurtec_prev_nbrx_mail_stly, 'NBRx', ap_dates)
-ap_ch_qulipta_prev_trx = build_ap_channel_chart(_qulipta_prev_trx_retail, _qulipta_prev_trx_retail_stly, _qulipta_prev_trx_mail, _qulipta_prev_trx_mail_stly, 'TRx', ap_dates)
+ap_ch_qulipta_prev_trx = build_ap_channel_chart(_qulipta_prev_trx_retail, _qulipta_prev_trx_retail_stly, _qulipta_prev_trx_mail, _qulipta_prev_trx_mail_stly, 'TRx', ap_dates, _qulipta_prev_trx_ltc, _qulipta_prev_trx_ltc_stly)
 ap_ch_qulipta_prev_nbrx = build_ap_channel_chart(_qulipta_prev_nbrx_retail, _qulipta_prev_nbrx_retail_stly, _qulipta_prev_nbrx_mail, _qulipta_prev_nbrx_mail_stly, 'NBRx', ap_dates)
 
 
@@ -2155,14 +2177,14 @@ channel_html += '<div id="ch-ubrelvy-nbrx" style="width:100%;overflow:hidden;dis
 channel_html += '<div id="ch-qulipta-trx" style="width:100%;overflow:hidden;display:none;">' + ch_qulipta_trx + '</div>'
 channel_html += '<div id="ch-qulipta-nbrx" style="width:100%;overflow:hidden;display:none;">' + ch_qulipta_nbrx + '</div>'
 # Acute Channel chart injection (brand toggle: nurtec/ubrelvy, side by side TRx|NBRx)
-acute_ch_legend = '<div class="legend" style="margin-top:8px;justify-content:center;"><div class="legend-item"><div class="legend-dot" style="background:#0891b2"></div>Retail Actuals</div><div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#0891b2" stroke-width="2" stroke-dasharray="3"/></svg>Retail STLY</div><div class="legend-item"><div class="legend-dot" style="background:#7c3aed"></div>Mail-Order Actuals</div><div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#7c3aed" stroke-width="2" stroke-dasharray="3"/></svg>Mail-Order STLY</div></div>'
+acute_ch_legend = '<div class="legend" style="margin-top:8px;justify-content:center;"><div class="legend-item"><div class="legend-dot" style="background:#0891b2"></div>Retail Actuals</div><div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#0891b2" stroke-width="2" stroke-dasharray="3"/></svg>Retail STLY</div><div class="legend-item"><div class="legend-dot" style="background:#7c3aed"></div>Mail-Order Actuals</div><div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#7c3aed" stroke-width="2" stroke-dasharray="3"/></svg>Mail-Order STLY</div><div class="legend-item"><div class="legend-dot" style="background:#9ca3af"></div>LTC Actuals</div><div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#9ca3af" stroke-width="2" stroke-dasharray="3"/></svg>LTC STLY</div></div>'
 acute_ch_html = '<div id="ap-ch-nurtec-acute" style="width:100%;"><div class="split-section"><div class="split-col"><div class="section-label">TRx</div>' + ap_ch_nurtec_acute_trx + '</div><div class="split-col"><div class="section-label">NBRx</div>' + ap_ch_nurtec_acute_nbrx + '</div></div></div>'
 acute_ch_html += '<div id="ap-ch-ubrelvy-acute" style="width:100%;display:none;"><div class="split-section"><div class="split-col"><div class="section-label">TRx</div>' + ap_ch_ubrelvy_acute_trx + '</div><div class="split-col"><div class="section-label">NBRx</div>' + ap_ch_ubrelvy_acute_nbrx + '</div></div></div>'
 acute_ch_html += acute_ch_legend
 html_content = html_content.replace('ACUTE_CHANNEL_CHART_PLACEHOLDER', acute_ch_html)
 
 # Preventive Channel chart injection (brand toggle: nurtec/qulipta, side by side TRx|NBRx)
-prev_ch_legend = '<div class="legend" style="margin-top:8px;justify-content:center;"><div class="legend-item"><div class="legend-dot" style="background:#0891b2"></div>Retail Actuals</div><div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#0891b2" stroke-width="2" stroke-dasharray="3"/></svg>Retail STLY</div><div class="legend-item"><div class="legend-dot" style="background:#7c3aed"></div>Mail-Order Actuals</div><div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#7c3aed" stroke-width="2" stroke-dasharray="3"/></svg>Mail-Order STLY</div></div>'
+prev_ch_legend = '<div class="legend" style="margin-top:8px;justify-content:center;"><div class="legend-item"><div class="legend-dot" style="background:#0891b2"></div>Retail Actuals</div><div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#0891b2" stroke-width="2" stroke-dasharray="3"/></svg>Retail STLY</div><div class="legend-item"><div class="legend-dot" style="background:#7c3aed"></div>Mail-Order Actuals</div><div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#7c3aed" stroke-width="2" stroke-dasharray="3"/></svg>Mail-Order STLY</div><div class="legend-item"><div class="legend-dot" style="background:#9ca3af"></div>LTC Actuals</div><div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#9ca3af" stroke-width="2" stroke-dasharray="3"/></svg>LTC STLY</div></div>'
 prev_ch_html = '<div id="ap-ch-nurtec-prev" style="width:100%;"><div class="split-section"><div class="split-col"><div class="section-label">TRx</div>' + ap_ch_nurtec_prev_trx + '</div><div class="split-col"><div class="section-label">NBRx</div>' + ap_ch_nurtec_prev_nbrx + '</div></div></div>'
 prev_ch_html += '<div id="ap-ch-qulipta-prev" style="width:100%;display:none;"><div class="split-section"><div class="split-col"><div class="section-label">TRx</div>' + ap_ch_qulipta_prev_trx + '</div><div class="split-col"><div class="section-label">NBRx</div>' + ap_ch_qulipta_prev_nbrx + '</div></div></div>'
 prev_ch_html += prev_ch_legend
