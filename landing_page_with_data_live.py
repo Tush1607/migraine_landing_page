@@ -7,14 +7,16 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
 
-# --- Data (Live from Snowflake via DSS) ---
-import pandas as pd
+# --- Data (cached from Snowflake) ---
 import plotly.graph_objects as go
 from datetime import datetime
-from data_queries_live import fetch_brand_data, fetch_channel_data
 
 def week_to_date(wid):
-    return datetime.strptime(str(int(wid)), '%Y%m%d')
+    return datetime.strptime(str(wid), '%Y%m%d')
+
+import pandas as pd
+
+from data_queries_live import fetch_brand_data, fetch_channel_data
 
 @st.cache_data(ttl=3600)
 def load_brand_data(segment):
@@ -24,75 +26,6 @@ def load_brand_data(segment):
 def load_channel_data(segment, brand):
     return fetch_channel_data(segment=segment, rx_classification="Overall", brand=brand)
 
-# Fetch TRx brand data
-npa_brand_df = load_brand_data("TRx")
-weeks = sorted(npa_brand_df['WEEK_ID'].unique())
-nurtec_data = npa_brand_df[npa_brand_df['BRAND'] == 'NURTEC'].sort_values('WEEK_ID')
-ubrelvy_data = npa_brand_df[npa_brand_df['BRAND'] == 'UBRELVY'].sort_values('WEEK_ID')
-qulipta_data = npa_brand_df[npa_brand_df['BRAND'] == 'QULIPTA'].sort_values('WEEK_ID')
-
-all_vals = [v for v in list(nurtec_data['ACTUALS']) + list(ubrelvy_data['ACTUALS']) + list(qulipta_data['ACTUALS']) + list(nurtec_data['STLY']) + list(ubrelvy_data['STLY']) + list(qulipta_data['STLY']) if v is not None and v > 0]
-max_val = max(all_vals) if all_vals else 80000
-
-# Fetch NBRx brand data
-nbrx_brand_df = load_brand_data("NBRx")
-nbrx_nurtec = nbrx_brand_df[nbrx_brand_df['BRAND'] == 'NURTEC'].sort_values('WEEK_ID')
-nbrx_ubrelvy = nbrx_brand_df[nbrx_brand_df['BRAND'] == 'UBRELVY'].sort_values('WEEK_ID')
-nbrx_qulipta = nbrx_brand_df[nbrx_brand_df['BRAND'] == 'QULIPTA'].sort_values('WEEK_ID')
-
-# Fetch Channel data for all brands (TRx + NBRx)
-def get_channel_dict(segment):
-    result = {}
-    for brand in ['NURTEC', 'UBRELVY', 'QULIPTA']:
-        ch_df = load_channel_data(segment, brand)
-        retail_df = ch_df[ch_df['CHANNEL_TYPE'] == 'Retail'].sort_values('WEEK_ID')
-        mail_df = ch_df[ch_df['CHANNEL_TYPE'] == 'MAIL'].sort_values('WEEK_ID')
-        result[brand] = {
-            "Retail": {"actuals": list(retail_df['ACTUALS']), "stly": list(retail_df['STLY'])},
-            "Mail": {"actuals": list(mail_df['ACTUALS']), "stly": list(mail_df['STLY'])},
-        }
-    return result
-
-_channel_trx_data = get_channel_dict("TRx")
-_channel_nbrx_data = get_channel_dict("NBRx")
-
-DATA_LOADED = True
-
-# --- Generate Channel Charts (6 total: 3 brands x 2 metrics) ---
-def build_channel_chart(brand_data, metric_label, dates):
-    fig_ch = go.Figure()
-    retail_act = brand_data["Retail"]["actuals"]
-    retail_stl = brand_data["Retail"]["stly"]
-    mail_act = brand_data["Mail"]["actuals"]
-    mail_stl = brand_data["Mail"]["stly"]
-    
-    fig_ch.add_trace(go.Scatter(x=dates, y=retail_act, mode='lines', name='Retail Actuals', line=dict(color='#0891b2', width=2.5), hovertemplate='Retail Actuals<br>Week: %{x|%d %b %y}<br>' + metric_label + ': %{y:,.0f}<extra></extra>'))
-    fig_ch.add_trace(go.Scatter(x=dates, y=retail_stl, mode='lines', name='Retail STLY', line=dict(color='#0891b2', width=2, dash='dash'), hovertemplate='Retail STLY<br>STLY Week: %{x|%d %b} 25<br>' + metric_label + ': %{y:,.0f}<extra></extra>'))
-    fig_ch.add_trace(go.Scatter(x=dates, y=mail_act, mode='lines', name='Mail-Order Actuals', line=dict(color='#7c3aed', width=2.5), hovertemplate='Mail-Order Actuals<br>Week: %{x|%d %b %y}<br>' + metric_label + ': %{y:,.0f}<extra></extra>'))
-    fig_ch.add_trace(go.Scatter(x=dates, y=mail_stl, mode='lines', name='Mail-Order STLY', line=dict(color='#7c3aed', width=2, dash='dash'), hovertemplate='Mail-Order STLY<br>STLY Week: %{x|%d %b} 25<br>' + metric_label + ': %{y:,.0f}<extra></extra>'))
-    
-    fig_ch.update_layout(
-        height=340, margin=dict(l=60, r=20, t=35, b=100),
-        plot_bgcolor='white', paper_bgcolor='white',
-        xaxis=dict(tickfont=dict(size=9, color='#374151', family='Inter, sans-serif'), tickformat='%d %b %y', tickangle=-90, dtick=7*24*60*60*1000, showgrid=False, hoverformat=''),
-        yaxis=dict(title=dict(text=metric_label + ' Volume', font=dict(size=10, color='#4b5563')), tickfont=dict(size=9, color='#374151', family='Inter, sans-serif'), showgrid=False, tickformat=',', rangemode='tozero'),
-        legend=dict(orientation='h', yanchor='top', y=-0.35, xanchor='center', x=0.5, font=dict(size=9)),
-        hovermode='closest',
-        hoverlabel=dict(bgcolor='white', font=dict(size=11, color='#1a2332', family='Inter, sans-serif'), bordercolor='rgba(0,0,0,0)'),
-    )
-    ch_html = fig_ch.to_html(full_html=False, include_plotlyjs=False, config={'displayModeBar': False, 'responsive': True})
-    ch_html = ch_html.replace('class="plotly-graph-div" style="', 'class="plotly-graph-div" style="width:100%;')
-    return ch_html
-
-channel_dates = [week_to_date(w) for w in weeks]
-ch_nurtec_trx = build_channel_chart(_channel_trx_data["NURTEC"], "TRx", channel_dates)
-ch_ubrelvy_trx = build_channel_chart(_channel_trx_data["UBRELVY"], "TRx", channel_dates)
-ch_qulipta_trx = build_channel_chart(_channel_trx_data["QULIPTA"], "TRx", channel_dates)
-ch_nurtec_nbrx = build_channel_chart(_channel_nbrx_data["NURTEC"], "NBRx", channel_dates)
-ch_ubrelvy_nbrx = build_channel_chart(_channel_nbrx_data["UBRELVY"], "NBRx", channel_dates)
-ch_qulipta_nbrx = build_channel_chart(_channel_nbrx_data["QULIPTA"], "NBRx", channel_dates)
-
-# --- Acute/Preventive Brand Competitive View (Live Data) ---
 @st.cache_data(ttl=3600)
 def load_acute_prev_brand_data(segment, rx_class):
     return fetch_brand_data(segment=segment, rx_classification=rx_class, channel_type="Overall")
@@ -101,7 +34,32 @@ def load_acute_prev_brand_data(segment, rx_class):
 def load_acute_prev_channel_data(segment, rx_class, brand):
     return fetch_channel_data(segment=segment, rx_classification=rx_class, brand=brand)
 
-# Fetch Acute/Preventive brand data
+# --- NPA Overall Brand Data ---
+npa_brand_df = load_brand_data("TRx")
+weeks = sorted(npa_brand_df['WEEK_ID'].unique())
+nurtec_data = npa_brand_df[npa_brand_df['BRAND'] == 'NURTEC'].sort_values('WEEK_ID')
+ubrelvy_data = npa_brand_df[npa_brand_df['BRAND'] == 'UBRELVY'].sort_values('WEEK_ID')
+qulipta_data = npa_brand_df[npa_brand_df['BRAND'] == 'QULIPTA'].sort_values('WEEK_ID')
+
+nbrx_brand_df = load_brand_data("NBRx")
+nbrx_nurtec = nbrx_brand_df[nbrx_brand_df['BRAND'] == 'NURTEC'].sort_values('WEEK_ID')
+nbrx_ubrelvy = nbrx_brand_df[nbrx_brand_df['BRAND'] == 'UBRELVY'].sort_values('WEEK_ID')
+nbrx_qulipta = nbrx_brand_df[nbrx_brand_df['BRAND'] == 'QULIPTA'].sort_values('WEEK_ID')
+
+# --- NPA Overall Channel Data ---
+def get_channel_dict(segment):
+    result = {}
+    for brand in ['NURTEC', 'UBRELVY', 'QULIPTA']:
+        ch_df = load_channel_data(segment, brand)
+        retail_df = ch_df[ch_df['CHANNEL_TYPE'] == 'Retail'].sort_values('WEEK_ID')
+        mail_df = ch_df[ch_df['CHANNEL_TYPE'] == 'MAIL'].sort_values('WEEK_ID')
+        result[brand] = {"Retail": {"actuals": list(retail_df['ACTUALS']), "stly": list(retail_df['STLY'])}, "Mail": {"actuals": list(mail_df['ACTUALS']), "stly": list(mail_df['STLY'])}}
+    return result
+
+_channel_trx_data = get_channel_dict("TRx")
+_channel_nbrx_data = get_channel_dict("NBRx")
+
+# --- Acute/Preventive Brand Data ---
 _acute_trx_df = load_acute_prev_brand_data("TRx", "Acute")
 _acute_nbrx_df = load_acute_prev_brand_data("NBRx", "Acute")
 _prev_trx_df = load_acute_prev_brand_data("TRx", "Preventive")
@@ -133,7 +91,7 @@ acute_nbrx_chart = build_acute_prev_chart(_acute_nbrx_df, 'NURTEC', 'UBRELVY', '
 prev_trx_chart = build_acute_prev_chart(_prev_trx_df, 'NURTEC', 'QULIPTA', 'Nurtec Prev', 'Qulipta Prev', '#16a34a', '#3b82f6', 'TRx', ap_dates)
 prev_nbrx_chart = build_acute_prev_chart(_prev_nbrx_df, 'NURTEC', 'QULIPTA', 'Nurtec Prev', 'Qulipta Prev', '#16a34a', '#3b82f6', 'NBRx', ap_dates)
 
-# --- Acute/Preventive Channel Charts (Live Data) ---
+# --- Acute/Preventive Channel Charts ---
 def build_ap_channel_chart_live(segment, rx_class, brand, metric_label, dates_list):
     ch_df = load_acute_prev_channel_data(segment, rx_class, brand)
     retail_df = ch_df[ch_df['CHANNEL_TYPE'] == 'Retail'].sort_values('WEEK_ID')
@@ -163,7 +121,6 @@ ap_ch_nurtec_prev_trx = build_ap_channel_chart_live("TRx", "Preventive", "NURTEC
 ap_ch_nurtec_prev_nbrx = build_ap_channel_chart_live("NBRx", "Preventive", "NURTEC", "NBRx", ap_dates)
 ap_ch_qulipta_prev_trx = build_ap_channel_chart_live("TRx", "Preventive", "QULIPTA", "TRx", ap_dates)
 ap_ch_qulipta_prev_nbrx = build_ap_channel_chart_live("NBRx", "Preventive", "QULIPTA", "NBRx", ap_dates)
-
 
 
 # --- Generate Interactive Chart with Plotly ---
@@ -247,32 +204,6 @@ chart_html = fig.to_html(full_html=False, include_plotlyjs='cdn', config={'displ
 # Make chart div fill container width
 chart_html = chart_html.replace('class="plotly-graph-div" style="', 'class="plotly-graph-div" style="width:100%;')
 brand_chart_svg = chart_html
-
-# --- Generate NBRx Brand Chart ---
-fig_nbrx = go.Figure()
-nbrx_dates = [week_to_date(w) for w in nbrx_nurtec['WEEK_ID']]
-
-fig_nbrx.add_trace(go.Scatter(x=nbrx_dates, y=list(nbrx_nurtec['ACTUALS']), mode='lines', name='Nurtec Actuals', line=dict(color='#16a34a', width=2.5), hovertemplate='Nurtec Actuals<br>Week: %{x|%d %b %y}<br>NBRx: %{y:,.0f}<extra></extra>'))
-fig_nbrx.add_trace(go.Scatter(x=nbrx_dates, y=list(nbrx_nurtec['STLY']), mode='lines', name='Nurtec STLY', line=dict(color='#16a34a', width=2, dash='dash'), hovertemplate='Nurtec STLY<br>STLY Week: %{x|%d %b} 25<br>NBRx: %{y:,.0f}<extra></extra>'))
-fig_nbrx.add_trace(go.Scatter(x=nbrx_dates, y=list(nbrx_ubrelvy['ACTUALS']), mode='lines', name='Ubrelvy Actuals', line=dict(color='#f59e0b', width=2.5), hovertemplate='Ubrelvy Actuals<br>Week: %{x|%d %b %y}<br>NBRx: %{y:,.0f}<extra></extra>'))
-fig_nbrx.add_trace(go.Scatter(x=nbrx_dates, y=list(nbrx_ubrelvy['STLY']), mode='lines', name='Ubrelvy STLY', line=dict(color='#f59e0b', width=2, dash='dash'), hovertemplate='Ubrelvy STLY<br>STLY Week: %{x|%d %b} 25<br>NBRx: %{y:,.0f}<extra></extra>'))
-fig_nbrx.add_trace(go.Scatter(x=nbrx_dates, y=list(nbrx_qulipta['ACTUALS']), mode='lines', name='Qulipta Actuals', line=dict(color='#3b82f6', width=2.5), hovertemplate='Qulipta Actuals<br>Week: %{x|%d %b %y}<br>NBRx: %{y:,.0f}<extra></extra>'))
-fig_nbrx.add_trace(go.Scatter(x=nbrx_dates, y=list(nbrx_qulipta['STLY']), mode='lines', name='Qulipta STLY', line=dict(color='#3b82f6', width=2, dash='dash'), hovertemplate='Qulipta STLY<br>STLY Week: %{x|%d %b} 25<br>NBRx: %{y:,.0f}<extra></extra>'))
-
-fig_nbrx.update_layout(
-    height=340, margin=dict(l=60, r=20, t=35, b=100),
-    plot_bgcolor='white', paper_bgcolor='white',
-    xaxis=dict(tickfont=dict(size=9, color='#374151', family='Inter, sans-serif'), tickformat='%d %b %y', tickangle=-90, dtick=7*24*60*60*1000, showgrid=False, hoverformat=''),
-    yaxis=dict(title=dict(text='NBRx Volume', font=dict(size=10, color='#4b5563')), tickfont=dict(size=9, color='#374151', family='Inter, sans-serif'), showgrid=False, tickformat=',', rangemode='tozero'),
-    legend=dict(orientation='h', yanchor='top', y=-0.35, xanchor='center', x=0.5, font=dict(size=9)),
-    hovermode='closest',
-    hoverlabel=dict(bgcolor='white', font=dict(size=11, color='#1a2332', family='Inter, sans-serif'), bordercolor='rgba(0,0,0,0)'),
-)
-
-nbrx_chart_html = fig_nbrx.to_html(full_html=False, include_plotlyjs=False, config={'displayModeBar': False, 'responsive': True})
-nbrx_chart_html = nbrx_chart_html.replace('class="plotly-graph-div" style="', 'class="plotly-graph-div" style="width:100%;')
-nbrx_chart_svg = nbrx_chart_html
-
 
 
 
@@ -1137,8 +1068,6 @@ BRAND_CHART_DATA_PLACEHOLDER
 
           <!-- TRx (left) and NBRx (right) charts side by side -->
           ACUTE_BRAND_CHART_PLACEHOLDER
-            <div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#f59e0b" stroke-width="2" stroke-dasharray="3"/></svg>Ubrelvy Acute STLY</div>
-          </div>
         </div>
 
         
@@ -1153,9 +1082,7 @@ BRAND_CHART_DATA_PLACEHOLDER
               <div class="pill pill-sm" id="acute-ch-ubrelvy" onclick="switchAcuteChannel('ubrelvy')">Ubrelvy</div>
             </div>
           </div>
-          ACUTE_CHANNEL_CHART_PLACEHOLDERLTC Actuals</div>
-            <div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#9ca3af" stroke-width="2" stroke-dasharray="3"/></svg>LTC STLY</div>
-          </div>
+          ACUTE_CHANNEL_CHART_PLACEHOLDER
         </div>
 
         <!-- Brand Tables: TRx left, NBRx right — aligned with charts above -->
@@ -1217,8 +1144,6 @@ BRAND_CHART_DATA_PLACEHOLDER
           <div class="card-subtitle">National · IQVIA NPA · Actuals 2026 vs Actuals 2025 (Same Time Last Year)</div>
 
           PREV_BRAND_CHART_PLACEHOLDER
-            <div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#3b82f6" stroke-width="2" stroke-dasharray="3"/></svg>Qulipta Prev STLY</div>
-          </div>
         </div>
 
         
@@ -1233,9 +1158,7 @@ BRAND_CHART_DATA_PLACEHOLDER
               <div class="pill pill-sm" id="prev-ch-qulipta" onclick="switchPrevChannel('qulipta')">Qulipta</div>
             </div>
           </div>
-          PREV_CHANNEL_CHART_PLACEHOLDERLTC Actuals</div>
-            <div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#9ca3af" stroke-width="2" stroke-dasharray="3"/></svg>LTC STLY</div>
-          </div>
+          PREV_CHANNEL_CHART_PLACEHOLDER
         </div>
 
         <!-- Preventive tables: TRx left, NBRx right -->
@@ -1809,6 +1732,8 @@ BRAND_CHART_DATA_PLACEHOLDER
             pills[1].classList.add('active');
             document.getElementById('npa-retail').style.display = 'none';
             document.getElementById('npa-acute-prev').style.display = 'block';
+            window.dispatchEvent(new Event('resize'));
+            setTimeout(function(){ window.dispatchEvent(new Event('resize')); }, 300);
         }
     };
     window.switchAcutePrev = function(view) {
@@ -1823,6 +1748,8 @@ BRAND_CHART_DATA_PLACEHOLDER
             document.getElementById('acute-view').style.display = 'none';
             document.getElementById('preventive-view').style.display = 'block';
         }
+        window.dispatchEvent(new Event('resize'));
+        setTimeout(function(){ window.dispatchEvent(new Event('resize')); }, 300);
     };
     
     window.switchFinancial = function(view) {
@@ -1940,7 +1867,24 @@ channel_html += '<div id="ch-ubrelvy-trx" style="width:100%;overflow:hidden;disp
 channel_html += '<div id="ch-ubrelvy-nbrx" style="width:100%;overflow:hidden;display:none;">' + ch_ubrelvy_nbrx + '</div>'
 channel_html += '<div id="ch-qulipta-trx" style="width:100%;overflow:hidden;display:none;">' + ch_qulipta_trx + '</div>'
 channel_html += '<div id="ch-qulipta-nbrx" style="width:100%;overflow:hidden;display:none;">' + ch_qulipta_nbrx + '</div>'
-# Acute/Preventive Brand chart injection - side by side TRx | NBRx
+# Acute Channel chart injection (brand toggle: nurtec/ubrelvy, side by side TRx|NBRx)
+acute_ch_legend = '<div class="legend" style="margin-top:8px;justify-content:center;"><div class="legend-item"><div class="legend-dot" style="background:#0891b2"></div>Retail Actuals</div><div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#0891b2" stroke-width="2" stroke-dasharray="3"/></svg>Retail STLY</div><div class="legend-item"><div class="legend-dot" style="background:#7c3aed"></div>Mail-Order Actuals</div><div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#7c3aed" stroke-width="2" stroke-dasharray="3"/></svg>Mail-Order STLY</div></div>'
+acute_ch_html = '<div id="ap-ch-nurtec-acute" style="width:100%;"><div class="split-section"><div class="split-col"><div class="section-label">TRx</div>' + ap_ch_nurtec_acute_trx + '</div><div class="split-col"><div class="section-label">NBRx</div>' + ap_ch_nurtec_acute_nbrx + '</div></div></div>'
+acute_ch_html += '<div id="ap-ch-ubrelvy-acute" style="width:100%;display:none;"><div class="split-section"><div class="split-col"><div class="section-label">TRx</div>' + ap_ch_ubrelvy_acute_trx + '</div><div class="split-col"><div class="section-label">NBRx</div>' + ap_ch_ubrelvy_acute_nbrx + '</div></div></div>'
+acute_ch_html += acute_ch_legend
+html_content = html_content.replace('ACUTE_CHANNEL_CHART_PLACEHOLDER', acute_ch_html)
+
+# Preventive Channel chart injection (brand toggle: nurtec/qulipta, side by side TRx|NBRx)
+prev_ch_legend = '<div class="legend" style="margin-top:8px;justify-content:center;"><div class="legend-item"><div class="legend-dot" style="background:#0891b2"></div>Retail Actuals</div><div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#0891b2" stroke-width="2" stroke-dasharray="3"/></svg>Retail STLY</div><div class="legend-item"><div class="legend-dot" style="background:#7c3aed"></div>Mail-Order Actuals</div><div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#7c3aed" stroke-width="2" stroke-dasharray="3"/></svg>Mail-Order STLY</div></div>'
+prev_ch_html = '<div id="ap-ch-nurtec-prev" style="width:100%;"><div class="split-section"><div class="split-col"><div class="section-label">TRx</div>' + ap_ch_nurtec_prev_trx + '</div><div class="split-col"><div class="section-label">NBRx</div>' + ap_ch_nurtec_prev_nbrx + '</div></div></div>'
+prev_ch_html += '<div id="ap-ch-qulipta-prev" style="width:100%;display:none;"><div class="split-section"><div class="split-col"><div class="section-label">TRx</div>' + ap_ch_qulipta_prev_trx + '</div><div class="split-col"><div class="section-label">NBRx</div>' + ap_ch_qulipta_prev_nbrx + '</div></div></div>'
+prev_ch_html += prev_ch_legend
+html_content = html_content.replace('PREV_CHANNEL_CHART_PLACEHOLDER', prev_ch_html)
+
+# NPA Overall channel chart injection (must come AFTER acute/prev channel replacements)
+html_content = html_content.replace('CHANNEL_CHART_PLACEHOLDER', channel_html)
+
+# Acute/Preventive chart injection - side by side TRx | NBRx
 acute_legend = '<div class="legend" style="margin-top:8px;justify-content:center;"><div class="legend-item"><div class="legend-dot" style="background:#16a34a"></div>Nurtec Acute Actuals</div><div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#16a34a" stroke-width="2" stroke-dasharray="3"/></svg>Nurtec Acute STLY</div><div class="legend-item"><div class="legend-dot" style="background:#f59e0b"></div>Ubrelvy Acute Actuals</div><div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#f59e0b" stroke-width="2" stroke-dasharray="3"/></svg>Ubrelvy Acute STLY</div></div>'
 acute_html = '<div class="split-section"><div class="split-col"><div class="section-label">TRx</div>' + acute_trx_chart + '</div><div class="split-col"><div class="section-label">NBRx</div>' + acute_nbrx_chart + '</div></div>' + acute_legend
 html_content = html_content.replace('ACUTE_BRAND_CHART_PLACEHOLDER', acute_html)
@@ -1949,19 +1893,4 @@ prev_legend = '<div class="legend" style="margin-top:8px;justify-content:center;
 prev_html = '<div class="split-section"><div class="split-col"><div class="section-label">TRx</div>' + prev_trx_chart + '</div><div class="split-col"><div class="section-label">NBRx</div>' + prev_nbrx_chart + '</div></div>' + prev_legend
 html_content = html_content.replace('PREV_BRAND_CHART_PLACEHOLDER', prev_html)
 
-# Acute Channel chart injection
-acute_ch_legend = '<div class="legend" style="margin-top:8px;justify-content:center;"><div class="legend-item"><div class="legend-dot" style="background:#0891b2"></div>Retail Actuals</div><div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#0891b2" stroke-width="2" stroke-dasharray="3"/></svg>Retail STLY</div><div class="legend-item"><div class="legend-dot" style="background:#7c3aed"></div>Mail-Order Actuals</div><div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#7c3aed" stroke-width="2" stroke-dasharray="3"/></svg>Mail-Order STLY</div></div>'
-acute_ch_html = '<div id="ap-ch-nurtec-acute" style="width:100%;"><div class="split-section"><div class="split-col"><div class="section-label">TRx</div>' + ap_ch_nurtec_acute_trx + '</div><div class="split-col"><div class="section-label">NBRx</div>' + ap_ch_nurtec_acute_nbrx + '</div></div></div>'
-acute_ch_html += '<div id="ap-ch-ubrelvy-acute" style="width:100%;display:none;"><div class="split-section"><div class="split-col"><div class="section-label">TRx</div>' + ap_ch_ubrelvy_acute_trx + '</div><div class="split-col"><div class="section-label">NBRx</div>' + ap_ch_ubrelvy_acute_nbrx + '</div></div></div>'
-acute_ch_html += acute_ch_legend
-html_content = html_content.replace('ACUTE_CHANNEL_CHART_PLACEHOLDER', acute_ch_html)
-
-# Preventive Channel chart injection
-prev_ch_legend = '<div class="legend" style="margin-top:8px;justify-content:center;"><div class="legend-item"><div class="legend-dot" style="background:#0891b2"></div>Retail Actuals</div><div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#0891b2" stroke-width="2" stroke-dasharray="3"/></svg>Retail STLY</div><div class="legend-item"><div class="legend-dot" style="background:#7c3aed"></div>Mail-Order Actuals</div><div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#7c3aed" stroke-width="2" stroke-dasharray="3"/></svg>Mail-Order STLY</div></div>'
-prev_ch_html = '<div id="ap-ch-nurtec-prev" style="width:100%;"><div class="split-section"><div class="split-col"><div class="section-label">TRx</div>' + ap_ch_nurtec_prev_trx + '</div><div class="split-col"><div class="section-label">NBRx</div>' + ap_ch_nurtec_prev_nbrx + '</div></div></div>'
-prev_ch_html += '<div id="ap-ch-qulipta-prev" style="width:100%;display:none;"><div class="split-section"><div class="split-col"><div class="section-label">TRx</div>' + ap_ch_qulipta_prev_trx + '</div><div class="split-col"><div class="section-label">NBRx</div>' + ap_ch_qulipta_prev_nbrx + '</div></div></div>'
-prev_ch_html += prev_ch_legend
-html_content = html_content.replace('PREV_CHANNEL_CHART_PLACEHOLDER', prev_ch_html)
-
-html_content = html_content.replace('CHANNEL_CHART_PLACEHOLDER', channel_html)
 components.html(html_content, height=920, scrolling=False)
