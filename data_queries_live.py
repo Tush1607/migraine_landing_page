@@ -1,7 +1,7 @@
 import pandas as pd
 
 # DSS Dataset name (same as Snowflake table)
-DATASET_NAME = "USMIGRAINEIISANALYTICSETL_SQL_US_MIGRAINE_FINAL_STACK_WEB_APP_VIEWS_SF"
+DATASET_NAME = "SQL_US_MIGRAINE_FINAL_STACK_WEB_APP_VIEWS_SF"
 
 
 def _get_full_dataset():
