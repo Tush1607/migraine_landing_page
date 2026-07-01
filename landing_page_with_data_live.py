@@ -92,6 +92,79 @@ ch_nurtec_nbrx = build_channel_chart(_channel_nbrx_data["NURTEC"], "NBRx", chann
 ch_ubrelvy_nbrx = build_channel_chart(_channel_nbrx_data["UBRELVY"], "NBRx", channel_dates)
 ch_qulipta_nbrx = build_channel_chart(_channel_nbrx_data["QULIPTA"], "NBRx", channel_dates)
 
+# --- Acute/Preventive Brand Competitive View (Live Data) ---
+@st.cache_data(ttl=3600)
+def load_acute_prev_brand_data(segment, rx_class):
+    return fetch_brand_data(segment=segment, rx_classification=rx_class, channel_type="Overall")
+
+@st.cache_data(ttl=3600)
+def load_acute_prev_channel_data(segment, rx_class, brand):
+    return fetch_channel_data(segment=segment, rx_classification=rx_class, brand=brand)
+
+# Fetch Acute/Preventive brand data
+_acute_trx_df = load_acute_prev_brand_data("TRx", "Acute")
+_acute_nbrx_df = load_acute_prev_brand_data("NBRx", "Acute")
+_prev_trx_df = load_acute_prev_brand_data("TRx", "Preventive")
+_prev_nbrx_df = load_acute_prev_brand_data("NBRx", "Preventive")
+
+def build_acute_prev_chart(df, brand1, brand2, brand1_name, brand2_name, brand1_color, brand2_color, metric_label, dates_list):
+    b1 = df[df['BRAND'] == brand1].sort_values('WEEK_ID')
+    b2 = df[df['BRAND'] == brand2].sort_values('WEEK_ID')
+    fig_ap = go.Figure()
+    fig_ap.add_trace(go.Scatter(x=dates_list, y=list(b1['ACTUALS']), mode='lines', name=f'{brand1_name} Actuals', line=dict(color=brand1_color, width=2.5), hovertemplate=f'{brand1_name} Actuals<br>Week: %{{x|%d %b %y}}<br>{metric_label}: %{{y:,.0f}}<extra></extra>'))
+    fig_ap.add_trace(go.Scatter(x=dates_list, y=list(b1['STLY']), mode='lines', name=f'{brand1_name} STLY', line=dict(color=brand1_color, width=2, dash='dash'), hovertemplate=f'{brand1_name} STLY<br>Week: %{{x|%d %b}} 25<br>{metric_label}: %{{y:,.0f}}<extra></extra>'))
+    fig_ap.add_trace(go.Scatter(x=dates_list, y=list(b2['ACTUALS']), mode='lines', name=f'{brand2_name} Actuals', line=dict(color=brand2_color, width=2.5), hovertemplate=f'{brand2_name} Actuals<br>Week: %{{x|%d %b %y}}<br>{metric_label}: %{{y:,.0f}}<extra></extra>'))
+    fig_ap.add_trace(go.Scatter(x=dates_list, y=list(b2['STLY']), mode='lines', name=f'{brand2_name} STLY', line=dict(color=brand2_color, width=2, dash='dash'), hovertemplate=f'{brand2_name} STLY<br>Week: %{{x|%d %b}} 25<br>{metric_label}: %{{y:,.0f}}<extra></extra>'))
+    fig_ap.update_layout(
+        height=300, margin=dict(l=50, r=10, t=10, b=80),
+        plot_bgcolor='white', paper_bgcolor='white',
+        xaxis=dict(tickfont=dict(size=8, color='#374151', family='Inter, sans-serif'), tickformat='%d %b %y', tickangle=-90, dtick=14*24*60*60*1000, showgrid=False, hoverformat=''),
+        yaxis=dict(tickfont=dict(size=8, color='#374151', family='Inter, sans-serif'), showgrid=False, tickformat=',.0f', rangemode='tozero'),
+        hovermode='closest', showlegend=False,
+        hoverlabel=dict(bgcolor='white', font=dict(size=11, color='#1a2332', family='Inter, sans-serif'), bordercolor='rgba(0,0,0,0)'),
+    )
+    ap_html = fig_ap.to_html(full_html=False, include_plotlyjs=False, config={'displayModeBar': False, 'responsive': True})
+    ap_html = ap_html.replace('class="plotly-graph-div" style="', 'class="plotly-graph-div" style="width:100%;')
+    return ap_html
+
+ap_dates = [week_to_date(w) for w in weeks]
+acute_trx_chart = build_acute_prev_chart(_acute_trx_df, 'NURTEC', 'UBRELVY', 'Nurtec Acute', 'Ubrelvy Acute', '#16a34a', '#f59e0b', 'TRx', ap_dates)
+acute_nbrx_chart = build_acute_prev_chart(_acute_nbrx_df, 'NURTEC', 'UBRELVY', 'Nurtec Acute', 'Ubrelvy Acute', '#16a34a', '#f59e0b', 'NBRx', ap_dates)
+prev_trx_chart = build_acute_prev_chart(_prev_trx_df, 'NURTEC', 'QULIPTA', 'Nurtec Prev', 'Qulipta Prev', '#16a34a', '#3b82f6', 'TRx', ap_dates)
+prev_nbrx_chart = build_acute_prev_chart(_prev_nbrx_df, 'NURTEC', 'QULIPTA', 'Nurtec Prev', 'Qulipta Prev', '#16a34a', '#3b82f6', 'NBRx', ap_dates)
+
+# --- Acute/Preventive Channel Charts (Live Data) ---
+def build_ap_channel_chart_live(segment, rx_class, brand, metric_label, dates_list):
+    ch_df = load_acute_prev_channel_data(segment, rx_class, brand)
+    retail_df = ch_df[ch_df['CHANNEL_TYPE'] == 'Retail'].sort_values('WEEK_ID')
+    mail_df = ch_df[ch_df['CHANNEL_TYPE'] == 'MAIL'].sort_values('WEEK_ID')
+    fig_ch = go.Figure()
+    fig_ch.add_trace(go.Scatter(x=dates_list, y=list(retail_df['ACTUALS']), mode='lines', name='Retail Actuals', line=dict(color='#0891b2', width=2.5), hovertemplate='Retail Actuals<br>Week: %{x|%d %b %y}<br>' + metric_label + ': %{y:,.0f}<extra></extra>'))
+    fig_ch.add_trace(go.Scatter(x=dates_list, y=list(retail_df['STLY']), mode='lines', name='Retail STLY', line=dict(color='#0891b2', width=2, dash='dash'), hovertemplate='Retail STLY<br>Week: %{x|%d %b %y}<br>' + metric_label + ': %{y:,.0f}<extra></extra>'))
+    fig_ch.add_trace(go.Scatter(x=dates_list, y=list(mail_df['ACTUALS']), mode='lines', name='Mail-Order Actuals', line=dict(color='#7c3aed', width=2.5), hovertemplate='Mail-Order Actuals<br>Week: %{x|%d %b %y}<br>' + metric_label + ': %{y:,.0f}<extra></extra>'))
+    fig_ch.add_trace(go.Scatter(x=dates_list, y=list(mail_df['STLY']), mode='lines', name='Mail-Order STLY', line=dict(color='#7c3aed', width=2, dash='dash'), hovertemplate='Mail-Order STLY<br>Week: %{x|%d %b %y}<br>' + metric_label + ': %{y:,.0f}<extra></extra>'))
+    fig_ch.update_layout(
+        height=300, margin=dict(l=50, r=10, t=10, b=80),
+        plot_bgcolor='white', paper_bgcolor='white',
+        xaxis=dict(tickfont=dict(size=8, color='#374151', family='Inter, sans-serif'), tickformat='%d %b %y', tickangle=-90, dtick=14*24*60*60*1000, showgrid=False, hoverformat=''),
+        yaxis=dict(tickfont=dict(size=8, color='#374151', family='Inter, sans-serif'), showgrid=False, tickformat=',.0f', rangemode='tozero'),
+        hovermode='closest', showlegend=False,
+        hoverlabel=dict(bgcolor='white', font=dict(size=11, color='#1a2332', family='Inter, sans-serif'), bordercolor='rgba(0,0,0,0)'),
+    )
+    ch_html = fig_ch.to_html(full_html=False, include_plotlyjs=False, config={'displayModeBar': False, 'responsive': True})
+    ch_html = ch_html.replace('class="plotly-graph-div" style="', 'class="plotly-graph-div" style="width:100%;')
+    return ch_html
+
+ap_ch_nurtec_acute_trx = build_ap_channel_chart_live("TRx", "Acute", "NURTEC", "TRx", ap_dates)
+ap_ch_nurtec_acute_nbrx = build_ap_channel_chart_live("NBRx", "Acute", "NURTEC", "NBRx", ap_dates)
+ap_ch_ubrelvy_acute_trx = build_ap_channel_chart_live("TRx", "Acute", "UBRELVY", "TRx", ap_dates)
+ap_ch_ubrelvy_acute_nbrx = build_ap_channel_chart_live("NBRx", "Acute", "UBRELVY", "NBRx", ap_dates)
+ap_ch_nurtec_prev_trx = build_ap_channel_chart_live("TRx", "Preventive", "NURTEC", "TRx", ap_dates)
+ap_ch_nurtec_prev_nbrx = build_ap_channel_chart_live("NBRx", "Preventive", "NURTEC", "NBRx", ap_dates)
+ap_ch_qulipta_prev_trx = build_ap_channel_chart_live("TRx", "Preventive", "QULIPTA", "TRx", ap_dates)
+ap_ch_qulipta_prev_nbrx = build_ap_channel_chart_live("NBRx", "Preventive", "QULIPTA", "NBRx", ap_dates)
+
+
 
 # --- Generate Interactive Chart with Plotly ---
 
@@ -1063,59 +1136,7 @@ BRAND_CHART_DATA_PLACEHOLDER
           <div class="card-subtitle">National · IQVIA NPA · Actuals 2026 vs Actuals 2025 (Same Time Last Year)</div>
 
           <!-- TRx (left) and NBRx (right) charts side by side -->
-          <div class="split-section">
-            <div class="split-col">
-              <div class="section-label">TRx</div>
-              <div class="chart-container chart-container-sm">
-                <svg class="chart" preserveAspectRatio="none" viewBox="0 0 380 200">
-                  <line x1="40" y1="180" x2="370" y2="180" stroke="#e5e7eb" stroke-width="1"/>
-                  <line x1="40" y1="140" x2="370" y2="140" stroke="#f3f4f6" stroke-width="1" stroke-dasharray="3"/>
-                  <line x1="40" y1="100" x2="370" y2="100" stroke="#f3f4f6" stroke-width="1" stroke-dasharray="3"/>
-                  <line x1="40" y1="60" x2="370" y2="60" stroke="#f3f4f6" stroke-width="1" stroke-dasharray="3"/>
-                  <line x1="40" y1="20" x2="370" y2="20" stroke="#f3f4f6" stroke-width="1" stroke-dasharray="3"/>
-                  <text x="35" y="184" text-anchor="end" font-size="9" fill="#9ca3af">0K</text>
-                  <text x="35" y="104" text-anchor="end" font-size="9" fill="#9ca3af">30K</text>
-                  <text x="35" y="24" text-anchor="end" font-size="9" fill="#9ca3af">60K</text>
-                  <polyline fill="none" stroke="#16a34a" stroke-width="2" points="50,45 75,48 100,44 125,42 150,40 175,38 200,36 225,35 250,33 275,32 300,30 325,28 350,27"/>
-                  <polyline fill="none" stroke="#16a34a" stroke-width="2" stroke-dasharray="4" points="50,62 75,65 100,60 125,58 150,56 175,55 200,53 225,52 250,51 275,50 300,49 325,48 350,47"/>
-                  <polyline fill="none" stroke="#f59e0b" stroke-width="2" points="50,90 75,92 100,88 125,87 150,86 175,85 200,84 225,84 250,83 275,82 300,82 325,81 350,80"/>
-                  <polyline fill="none" stroke="#f59e0b" stroke-width="2" stroke-dasharray="4" points="50,98 75,100 100,97 125,96 150,95 175,95 200,94 225,94 250,93 275,93 300,92 325,92 350,92"/>
-                  <text x="50" y="196" font-size="8" fill="#9ca3af">Wk 1</text>
-                  <text x="150" y="196" font-size="8" fill="#9ca3af">Wk 9</text>
-                  <text x="250" y="196" font-size="8" fill="#9ca3af">Wk 17</text>
-                  <text x="350" y="196" font-size="8" fill="#9ca3af">Wk 26</text>
-                </svg>
-              </div>
-            </div>
-            <div class="split-col">
-              <div class="section-label">NBRx</div>
-              <div class="chart-container chart-container-sm">
-                <svg class="chart" preserveAspectRatio="none" viewBox="0 0 380 200">
-                  <line x1="40" y1="180" x2="370" y2="180" stroke="#e5e7eb" stroke-width="1"/>
-                  <line x1="40" y1="140" x2="370" y2="140" stroke="#f3f4f6" stroke-width="1" stroke-dasharray="3"/>
-                  <line x1="40" y1="100" x2="370" y2="100" stroke="#f3f4f6" stroke-width="1" stroke-dasharray="3"/>
-                  <line x1="40" y1="60" x2="370" y2="60" stroke="#f3f4f6" stroke-width="1" stroke-dasharray="3"/>
-                  <line x1="40" y1="20" x2="370" y2="20" stroke="#f3f4f6" stroke-width="1" stroke-dasharray="3"/>
-                  <text x="35" y="184" text-anchor="end" font-size="9" fill="#9ca3af">0K</text>
-                  <text x="35" y="104" text-anchor="end" font-size="9" fill="#9ca3af">15K</text>
-                  <text x="35" y="24" text-anchor="end" font-size="9" fill="#9ca3af">30K</text>
-                  <polyline fill="none" stroke="#16a34a" stroke-width="2" points="50,55 75,58 100,52 125,50 150,48 175,46 200,44 225,42 250,40 275,38 300,36 325,34 350,32"/>
-                  <polyline fill="none" stroke="#16a34a" stroke-width="2" stroke-dasharray="4" points="50,72 75,74 100,70 125,68 150,66 175,64 200,63 225,62 250,61 275,60 300,59 325,58 350,57"/>
-                  <polyline fill="none" stroke="#f59e0b" stroke-width="2" points="50,105 75,107 100,103 125,102 150,100 175,99 200,98 225,97 250,96 275,96 300,95 325,95 350,94"/>
-                  <polyline fill="none" stroke="#f59e0b" stroke-width="2" stroke-dasharray="4" points="50,115 75,116 100,113 125,112 150,111 175,110 200,110 225,109 250,109 275,108 300,108 325,108 350,107"/>
-                  <text x="50" y="196" font-size="8" fill="#9ca3af">Wk 1</text>
-                  <text x="150" y="196" font-size="8" fill="#9ca3af">Wk 9</text>
-                  <text x="250" y="196" font-size="8" fill="#9ca3af">Wk 17</text>
-                  <text x="350" y="196" font-size="8" fill="#9ca3af">Wk 26</text>
-                </svg>
-              </div>
-            </div>
-          </div>
-          <div class="axis-info"><span>Y-Axis: Volume (K)</span><span>X-Axis: Time Period (Week)</span></div>
-        <div class="legend">
-            <div class="legend-item"><div class="legend-dot" style="background:#16a34a"></div>Nurtec Acute Actuals</div>
-            <div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#16a34a" stroke-width="2" stroke-dasharray="3"/></svg>Nurtec Acute STLY</div>
-            <div class="legend-item"><div class="legend-dot" style="background:#f59e0b"></div>Ubrelvy Acute Actuals</div>
+          ACUTE_BRAND_CHART_PLACEHOLDER
             <div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#f59e0b" stroke-width="2" stroke-dasharray="3"/></svg>Ubrelvy Acute STLY</div>
           </div>
         </div>
@@ -1132,52 +1153,7 @@ BRAND_CHART_DATA_PLACEHOLDER
               <div class="pill pill-sm" id="acute-ch-ubrelvy" onclick="switchAcuteChannel('ubrelvy')">Ubrelvy</div>
             </div>
           </div>
-          <div class="split-section">
-            <div class="split-col">
-              <div class="section-label">TRx</div>
-              <div class="chart-container chart-container-sm">
-                <svg class="chart" preserveAspectRatio="none" viewBox="0 0 380 200">
-                  <line x1="40" y1="180" x2="370" y2="180" stroke="#e5e7eb" stroke-width="1"/>
-                  <line x1="40" y1="100" x2="370" y2="100" stroke="#f3f4f6" stroke-width="1" stroke-dasharray="3"/>
-                  <text x="35" y="184" text-anchor="end" font-size="9" fill="#9ca3af">0K</text>
-                  <text x="35" y="104" text-anchor="end" font-size="9" fill="#9ca3af">30K</text>
-                  <text x="35" y="24" text-anchor="end" font-size="9" fill="#9ca3af">60K</text>
-                  <polyline fill="none" stroke="#0891b2" stroke-width="2" points="50,50 75,48 100,46 125,44 150,42 175,40 200,38 225,36 250,34 275,32 300,30 325,28 350,26"/>
-                  <polyline fill="none" stroke="#0891b2" stroke-width="2" stroke-dasharray="4" points="50,62 75,60 100,58 125,56 150,54 175,52 200,50 225,48 250,46 275,44 300,42 325,40 350,38"/>
-                  <polyline fill="none" stroke="#7c3aed" stroke-width="2" points="50,120 75,118 100,116 125,114 150,112 175,110 200,108 225,106 250,104 275,102 300,100 325,98 350,96"/>
-                  <polyline fill="none" stroke="#7c3aed" stroke-width="2" stroke-dasharray="4" points="50,130 75,129 100,127 125,126 150,124 175,123 200,121 225,120 250,118 275,117 300,115 325,113 350,112"/>
-                  <polyline fill="none" stroke="#9ca3af" stroke-width="2" points="50,155 75,155 100,154 125,154 150,153 175,153 200,152 225,152 250,151 275,151 300,150 325,150 350,149"/>
-                  <polyline fill="none" stroke="#9ca3af" stroke-width="2" stroke-dasharray="4" points="50,160 75,160 100,159 125,159 150,158 175,158 200,157 225,157 250,156 275,156 300,155 325,155 350,154"/>
-                  <text x="50" y="196" font-size="8" fill="#9ca3af">Wk 1</text><text x="150" y="196" font-size="8" fill="#9ca3af">Wk 9</text><text x="250" y="196" font-size="8" fill="#9ca3af">Wk 17</text><text x="350" y="196" font-size="8" fill="#9ca3af">Wk 26</text>
-                </svg>
-              </div>
-            </div>
-            <div class="split-col">
-              <div class="section-label">NBRx</div>
-              <div class="chart-container chart-container-sm">
-                <svg class="chart" preserveAspectRatio="none" viewBox="0 0 380 200">
-                  <line x1="40" y1="180" x2="370" y2="180" stroke="#e5e7eb" stroke-width="1"/>
-                  <line x1="40" y1="100" x2="370" y2="100" stroke="#f3f4f6" stroke-width="1" stroke-dasharray="3"/>
-                  <text x="35" y="184" text-anchor="end" font-size="9" fill="#9ca3af">0K</text>
-                  <text x="35" y="104" text-anchor="end" font-size="9" fill="#9ca3af">16K</text>
-                  <text x="35" y="24" text-anchor="end" font-size="9" fill="#9ca3af">32K</text>
-                  <polyline fill="none" stroke="#0891b2" stroke-width="2" points="50,55 75,53 100,50 125,48 150,45 175,43 200,40 225,38 250,35 275,33 300,30 325,28 350,25"/>
-                  <polyline fill="none" stroke="#0891b2" stroke-width="2" stroke-dasharray="4" points="50,68 75,66 100,64 125,62 150,60 175,58 200,56 225,54 250,52 275,50 300,48 325,46 350,44"/>
-                  <polyline fill="none" stroke="#7c3aed" stroke-width="2" points="50,125 75,123 100,121 125,119 150,117 175,115 200,113 225,111 250,109 275,107 300,105 325,103 350,101"/>
-                  <polyline fill="none" stroke="#7c3aed" stroke-width="2" stroke-dasharray="4" points="50,135 75,134 100,132 125,130 150,129 175,127 200,126 225,124 250,123 275,121 300,120 325,118 350,117"/>
-                  <polyline fill="none" stroke="#9ca3af" stroke-width="2" points="50,158 75,157 100,156 125,155 150,154 175,153 200,152 225,151 250,150 275,149 300,148 325,147 350,146"/>
-                  <polyline fill="none" stroke="#9ca3af" stroke-width="2" stroke-dasharray="4" points="50,163 75,163 100,162 125,162 150,161 175,161 200,160 225,160 250,159 275,159 300,158 325,158 350,157"/>
-                  <text x="50" y="196" font-size="8" fill="#9ca3af">Wk 1</text><text x="150" y="196" font-size="8" fill="#9ca3af">Wk 9</text><text x="250" y="196" font-size="8" fill="#9ca3af">Wk 17</text><text x="350" y="196" font-size="8" fill="#9ca3af">Wk 26</text>
-                </svg>
-              </div>
-            </div>
-          </div>
-          <div class="legend">
-            <div class="legend-item"><div class="legend-dot" style="background:#0891b2"></div>Retail Actuals</div>
-            <div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#0891b2" stroke-width="2" stroke-dasharray="3"/></svg>Retail STLY</div>
-            <div class="legend-item"><div class="legend-dot" style="background:#7c3aed"></div>Mail-Order Actuals</div>
-            <div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#7c3aed" stroke-width="2" stroke-dasharray="3"/></svg>Mail-Order STLY</div>
-            <div class="legend-item"><div class="legend-dot" style="background:#9ca3af"></div>LTC Actuals</div>
+          ACUTE_CHANNEL_CHART_PLACEHOLDERLTC Actuals</div>
             <div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#9ca3af" stroke-width="2" stroke-dasharray="3"/></svg>LTC STLY</div>
           </div>
         </div>
@@ -1240,59 +1216,7 @@ BRAND_CHART_DATA_PLACEHOLDER
           <div class="card-title">Nurtec Preventive — Brand Competitive View</div>
           <div class="card-subtitle">National · IQVIA NPA · Actuals 2026 vs Actuals 2025 (Same Time Last Year)</div>
 
-          <div class="split-section">
-            <div class="split-col">
-              <div class="section-label">TRx</div>
-              <div class="chart-container chart-container-sm">
-                <svg class="chart" preserveAspectRatio="none" viewBox="0 0 380 200">
-                  <line x1="40" y1="180" x2="370" y2="180" stroke="#e5e7eb" stroke-width="1"/>
-                  <line x1="40" y1="140" x2="370" y2="140" stroke="#f3f4f6" stroke-width="1" stroke-dasharray="3"/>
-                  <line x1="40" y1="100" x2="370" y2="100" stroke="#f3f4f6" stroke-width="1" stroke-dasharray="3"/>
-                  <line x1="40" y1="60" x2="370" y2="60" stroke="#f3f4f6" stroke-width="1" stroke-dasharray="3"/>
-                  <line x1="40" y1="20" x2="370" y2="20" stroke="#f3f4f6" stroke-width="1" stroke-dasharray="3"/>
-                  <text x="35" y="184" text-anchor="end" font-size="9" fill="#9ca3af">0K</text>
-                  <text x="35" y="104" text-anchor="end" font-size="9" fill="#9ca3af">25K</text>
-                  <text x="35" y="24" text-anchor="end" font-size="9" fill="#9ca3af">50K</text>
-                  <polyline fill="none" stroke="#16a34a" stroke-width="2" points="50,120 75,118 100,115 125,112 150,108 175,105 200,100 225,96 250,92 275,88 300,84 325,80 350,76"/>
-                  <polyline fill="none" stroke="#16a34a" stroke-width="2" stroke-dasharray="4" points="50,130 75,128 100,126 125,124 150,122 175,120 200,118 225,116 250,115 275,113 300,112 325,110 350,109"/>
-                  <polyline fill="none" stroke="#3b82f6" stroke-width="2" points="50,85 75,82 100,78 125,74 150,70 175,66 200,62 225,58 250,54 275,50 300,46 325,42 350,38"/>
-                  <polyline fill="none" stroke="#3b82f6" stroke-width="2" stroke-dasharray="4" points="50,100 75,97 100,94 125,90 150,87 175,84 200,80 225,77 250,74 275,71 300,68 325,66 350,63"/>
-                  <text x="50" y="196" font-size="8" fill="#9ca3af">Wk 1</text>
-                  <text x="150" y="196" font-size="8" fill="#9ca3af">Wk 9</text>
-                  <text x="250" y="196" font-size="8" fill="#9ca3af">Wk 17</text>
-                  <text x="350" y="196" font-size="8" fill="#9ca3af">Wk 26</text>
-                </svg>
-              </div>
-            </div>
-            <div class="split-col">
-              <div class="section-label">NBRx</div>
-              <div class="chart-container chart-container-sm">
-                <svg class="chart" preserveAspectRatio="none" viewBox="0 0 380 200">
-                  <line x1="40" y1="180" x2="370" y2="180" stroke="#e5e7eb" stroke-width="1"/>
-                  <line x1="40" y1="140" x2="370" y2="140" stroke="#f3f4f6" stroke-width="1" stroke-dasharray="3"/>
-                  <line x1="40" y1="100" x2="370" y2="100" stroke="#f3f4f6" stroke-width="1" stroke-dasharray="3"/>
-                  <line x1="40" y1="60" x2="370" y2="60" stroke="#f3f4f6" stroke-width="1" stroke-dasharray="3"/>
-                  <line x1="40" y1="20" x2="370" y2="20" stroke="#f3f4f6" stroke-width="1" stroke-dasharray="3"/>
-                  <text x="35" y="184" text-anchor="end" font-size="9" fill="#9ca3af">0K</text>
-                  <text x="35" y="104" text-anchor="end" font-size="9" fill="#9ca3af">12K</text>
-                  <text x="35" y="24" text-anchor="end" font-size="9" fill="#9ca3af">24K</text>
-                  <polyline fill="none" stroke="#16a34a" stroke-width="2" points="50,125 75,122 100,118 125,115 150,111 175,107 200,103 225,99 250,95 275,91 300,87 325,83 350,80"/>
-                  <polyline fill="none" stroke="#16a34a" stroke-width="2" stroke-dasharray="4" points="50,135 75,133 100,130 125,128 150,126 175,124 200,122 225,120 250,118 275,117 300,115 325,114 350,113"/>
-                  <polyline fill="none" stroke="#3b82f6" stroke-width="2" points="50,90 75,86 100,82 125,78 150,74 175,70 200,66 225,62 250,58 275,54 300,50 325,46 350,42"/>
-                  <polyline fill="none" stroke="#3b82f6" stroke-width="2" stroke-dasharray="4" points="50,105 75,102 100,98 125,95 150,92 175,89 200,86 225,83 250,80 275,77 300,74 325,72 350,70"/>
-                  <text x="50" y="196" font-size="8" fill="#9ca3af">Wk 1</text>
-                  <text x="150" y="196" font-size="8" fill="#9ca3af">Wk 9</text>
-                  <text x="250" y="196" font-size="8" fill="#9ca3af">Wk 17</text>
-                  <text x="350" y="196" font-size="8" fill="#9ca3af">Wk 26</text>
-                </svg>
-              </div>
-            </div>
-          </div>
-          <div class="axis-info"><span>Y-Axis: Volume (K)</span><span>X-Axis: Time Period (Week)</span></div>
-        <div class="legend">
-            <div class="legend-item"><div class="legend-dot" style="background:#16a34a"></div>Nurtec Prev Actuals</div>
-            <div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#16a34a" stroke-width="2" stroke-dasharray="3"/></svg>Nurtec Prev STLY</div>
-            <div class="legend-item"><div class="legend-dot" style="background:#3b82f6"></div>Qulipta Prev Actuals</div>
+          PREV_BRAND_CHART_PLACEHOLDER
             <div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#3b82f6" stroke-width="2" stroke-dasharray="3"/></svg>Qulipta Prev STLY</div>
           </div>
         </div>
@@ -1309,52 +1233,7 @@ BRAND_CHART_DATA_PLACEHOLDER
               <div class="pill pill-sm" id="prev-ch-qulipta" onclick="switchPrevChannel('qulipta')">Qulipta</div>
             </div>
           </div>
-          <div class="split-section">
-            <div class="split-col">
-              <div class="section-label">TRx</div>
-              <div class="chart-container chart-container-sm">
-                <svg class="chart" preserveAspectRatio="none" viewBox="0 0 380 200">
-                  <line x1="40" y1="180" x2="370" y2="180" stroke="#e5e7eb" stroke-width="1"/>
-                  <line x1="40" y1="100" x2="370" y2="100" stroke="#f3f4f6" stroke-width="1" stroke-dasharray="3"/>
-                  <text x="35" y="184" text-anchor="end" font-size="9" fill="#9ca3af">0K</text>
-                  <text x="35" y="104" text-anchor="end" font-size="9" fill="#9ca3af">30K</text>
-                  <text x="35" y="24" text-anchor="end" font-size="9" fill="#9ca3af">60K</text>
-                  <polyline fill="none" stroke="#0891b2" stroke-width="2" points="50,50 75,48 100,46 125,44 150,42 175,40 200,38 225,36 250,34 275,32 300,30 325,28 350,26"/>
-                  <polyline fill="none" stroke="#0891b2" stroke-width="2" stroke-dasharray="4" points="50,62 75,60 100,58 125,56 150,54 175,52 200,50 225,48 250,46 275,44 300,42 325,40 350,38"/>
-                  <polyline fill="none" stroke="#7c3aed" stroke-width="2" points="50,120 75,118 100,116 125,114 150,112 175,110 200,108 225,106 250,104 275,102 300,100 325,98 350,96"/>
-                  <polyline fill="none" stroke="#7c3aed" stroke-width="2" stroke-dasharray="4" points="50,130 75,129 100,127 125,126 150,124 175,123 200,121 225,120 250,118 275,117 300,115 325,113 350,112"/>
-                  <polyline fill="none" stroke="#9ca3af" stroke-width="2" points="50,155 75,155 100,154 125,154 150,153 175,153 200,152 225,152 250,151 275,151 300,150 325,150 350,149"/>
-                  <polyline fill="none" stroke="#9ca3af" stroke-width="2" stroke-dasharray="4" points="50,160 75,160 100,159 125,159 150,158 175,158 200,157 225,157 250,156 275,156 300,155 325,155 350,154"/>
-                  <text x="50" y="196" font-size="8" fill="#9ca3af">Wk 1</text><text x="150" y="196" font-size="8" fill="#9ca3af">Wk 9</text><text x="250" y="196" font-size="8" fill="#9ca3af">Wk 17</text><text x="350" y="196" font-size="8" fill="#9ca3af">Wk 26</text>
-                </svg>
-              </div>
-            </div>
-            <div class="split-col">
-              <div class="section-label">NBRx</div>
-              <div class="chart-container chart-container-sm">
-                <svg class="chart" preserveAspectRatio="none" viewBox="0 0 380 200">
-                  <line x1="40" y1="180" x2="370" y2="180" stroke="#e5e7eb" stroke-width="1"/>
-                  <line x1="40" y1="100" x2="370" y2="100" stroke="#f3f4f6" stroke-width="1" stroke-dasharray="3"/>
-                  <text x="35" y="184" text-anchor="end" font-size="9" fill="#9ca3af">0K</text>
-                  <text x="35" y="104" text-anchor="end" font-size="9" fill="#9ca3af">16K</text>
-                  <text x="35" y="24" text-anchor="end" font-size="9" fill="#9ca3af">32K</text>
-                  <polyline fill="none" stroke="#0891b2" stroke-width="2" points="50,55 75,53 100,50 125,48 150,45 175,43 200,40 225,38 250,35 275,33 300,30 325,28 350,25"/>
-                  <polyline fill="none" stroke="#0891b2" stroke-width="2" stroke-dasharray="4" points="50,68 75,66 100,64 125,62 150,60 175,58 200,56 225,54 250,52 275,50 300,48 325,46 350,44"/>
-                  <polyline fill="none" stroke="#7c3aed" stroke-width="2" points="50,125 75,123 100,121 125,119 150,117 175,115 200,113 225,111 250,109 275,107 300,105 325,103 350,101"/>
-                  <polyline fill="none" stroke="#7c3aed" stroke-width="2" stroke-dasharray="4" points="50,135 75,134 100,132 125,130 150,129 175,127 200,126 225,124 250,123 275,121 300,120 325,118 350,117"/>
-                  <polyline fill="none" stroke="#9ca3af" stroke-width="2" points="50,158 75,157 100,156 125,155 150,154 175,153 200,152 225,151 250,150 275,149 300,148 325,147 350,146"/>
-                  <polyline fill="none" stroke="#9ca3af" stroke-width="2" stroke-dasharray="4" points="50,163 75,163 100,162 125,162 150,161 175,161 200,160 225,160 250,159 275,159 300,158 325,158 350,157"/>
-                  <text x="50" y="196" font-size="8" fill="#9ca3af">Wk 1</text><text x="150" y="196" font-size="8" fill="#9ca3af">Wk 9</text><text x="250" y="196" font-size="8" fill="#9ca3af">Wk 17</text><text x="350" y="196" font-size="8" fill="#9ca3af">Wk 26</text>
-                </svg>
-              </div>
-            </div>
-          </div>
-          <div class="legend">
-            <div class="legend-item"><div class="legend-dot" style="background:#0891b2"></div>Retail Actuals</div>
-            <div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#0891b2" stroke-width="2" stroke-dasharray="3"/></svg>Retail STLY</div>
-            <div class="legend-item"><div class="legend-dot" style="background:#7c3aed"></div>Mail-Order Actuals</div>
-            <div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#7c3aed" stroke-width="2" stroke-dasharray="3"/></svg>Mail-Order STLY</div>
-            <div class="legend-item"><div class="legend-dot" style="background:#9ca3af"></div>LTC Actuals</div>
+          PREV_CHANNEL_CHART_PLACEHOLDERLTC Actuals</div>
             <div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#9ca3af" stroke-width="2" stroke-dasharray="3"/></svg>LTC STLY</div>
           </div>
         </div>
@@ -1974,12 +1853,18 @@ BRAND_CHART_DATA_PLACEHOLDER
         document.getElementById('acute-ch-ubrelvy').classList.toggle('active', brand === 'ubrelvy');
         var label = brand === 'nurtec' ? 'Nurtec' : 'Ubrelvy';
         document.getElementById('acute-ch-title').innerHTML = label + ' Acute &#8212; Channel Performance View';
+        document.getElementById('ap-ch-nurtec-acute').style.display = brand === 'nurtec' ? 'block' : 'none';
+        document.getElementById('ap-ch-ubrelvy-acute').style.display = brand === 'ubrelvy' ? 'block' : 'none';
+        window.dispatchEvent(new Event('resize'));
     };
     window.switchPrevChannel = function(brand) {
         document.getElementById('prev-ch-nurtec').classList.toggle('active', brand === 'nurtec');
         document.getElementById('prev-ch-qulipta').classList.toggle('active', brand === 'qulipta');
         var label = brand === 'nurtec' ? 'Nurtec' : 'Qulipta';
         document.getElementById('prev-ch-title').innerHTML = label + ' Preventive &#8212; Channel Performance View';
+        document.getElementById('ap-ch-nurtec-prev').style.display = brand === 'nurtec' ? 'block' : 'none';
+        document.getElementById('ap-ch-qulipta-prev').style.display = brand === 'qulipta' ? 'block' : 'none';
+        window.dispatchEvent(new Event('resize'));
     };
     window.switchChannelBrand = function(brand) {
         document.getElementById('channel-nurtec').classList.toggle('active', brand === 'nurtec');
@@ -2055,5 +1940,28 @@ channel_html += '<div id="ch-ubrelvy-trx" style="width:100%;overflow:hidden;disp
 channel_html += '<div id="ch-ubrelvy-nbrx" style="width:100%;overflow:hidden;display:none;">' + ch_ubrelvy_nbrx + '</div>'
 channel_html += '<div id="ch-qulipta-trx" style="width:100%;overflow:hidden;display:none;">' + ch_qulipta_trx + '</div>'
 channel_html += '<div id="ch-qulipta-nbrx" style="width:100%;overflow:hidden;display:none;">' + ch_qulipta_nbrx + '</div>'
+# Acute/Preventive Brand chart injection - side by side TRx | NBRx
+acute_legend = '<div class="legend" style="margin-top:8px;justify-content:center;"><div class="legend-item"><div class="legend-dot" style="background:#16a34a"></div>Nurtec Acute Actuals</div><div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#16a34a" stroke-width="2" stroke-dasharray="3"/></svg>Nurtec Acute STLY</div><div class="legend-item"><div class="legend-dot" style="background:#f59e0b"></div>Ubrelvy Acute Actuals</div><div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#f59e0b" stroke-width="2" stroke-dasharray="3"/></svg>Ubrelvy Acute STLY</div></div>'
+acute_html = '<div class="split-section"><div class="split-col"><div class="section-label">TRx</div>' + acute_trx_chart + '</div><div class="split-col"><div class="section-label">NBRx</div>' + acute_nbrx_chart + '</div></div>' + acute_legend
+html_content = html_content.replace('ACUTE_BRAND_CHART_PLACEHOLDER', acute_html)
+
+prev_legend = '<div class="legend" style="margin-top:8px;justify-content:center;"><div class="legend-item"><div class="legend-dot" style="background:#16a34a"></div>Nurtec Prev Actuals</div><div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#16a34a" stroke-width="2" stroke-dasharray="3"/></svg>Nurtec Prev STLY</div><div class="legend-item"><div class="legend-dot" style="background:#3b82f6"></div>Qulipta Prev Actuals</div><div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#3b82f6" stroke-width="2" stroke-dasharray="3"/></svg>Qulipta Prev STLY</div></div>'
+prev_html = '<div class="split-section"><div class="split-col"><div class="section-label">TRx</div>' + prev_trx_chart + '</div><div class="split-col"><div class="section-label">NBRx</div>' + prev_nbrx_chart + '</div></div>' + prev_legend
+html_content = html_content.replace('PREV_BRAND_CHART_PLACEHOLDER', prev_html)
+
+# Acute Channel chart injection
+acute_ch_legend = '<div class="legend" style="margin-top:8px;justify-content:center;"><div class="legend-item"><div class="legend-dot" style="background:#0891b2"></div>Retail Actuals</div><div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#0891b2" stroke-width="2" stroke-dasharray="3"/></svg>Retail STLY</div><div class="legend-item"><div class="legend-dot" style="background:#7c3aed"></div>Mail-Order Actuals</div><div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#7c3aed" stroke-width="2" stroke-dasharray="3"/></svg>Mail-Order STLY</div></div>'
+acute_ch_html = '<div id="ap-ch-nurtec-acute" style="width:100%;"><div class="split-section"><div class="split-col"><div class="section-label">TRx</div>' + ap_ch_nurtec_acute_trx + '</div><div class="split-col"><div class="section-label">NBRx</div>' + ap_ch_nurtec_acute_nbrx + '</div></div></div>'
+acute_ch_html += '<div id="ap-ch-ubrelvy-acute" style="width:100%;display:none;"><div class="split-section"><div class="split-col"><div class="section-label">TRx</div>' + ap_ch_ubrelvy_acute_trx + '</div><div class="split-col"><div class="section-label">NBRx</div>' + ap_ch_ubrelvy_acute_nbrx + '</div></div></div>'
+acute_ch_html += acute_ch_legend
+html_content = html_content.replace('ACUTE_CHANNEL_CHART_PLACEHOLDER', acute_ch_html)
+
+# Preventive Channel chart injection
+prev_ch_legend = '<div class="legend" style="margin-top:8px;justify-content:center;"><div class="legend-item"><div class="legend-dot" style="background:#0891b2"></div>Retail Actuals</div><div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#0891b2" stroke-width="2" stroke-dasharray="3"/></svg>Retail STLY</div><div class="legend-item"><div class="legend-dot" style="background:#7c3aed"></div>Mail-Order Actuals</div><div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#7c3aed" stroke-width="2" stroke-dasharray="3"/></svg>Mail-Order STLY</div></div>'
+prev_ch_html = '<div id="ap-ch-nurtec-prev" style="width:100%;"><div class="split-section"><div class="split-col"><div class="section-label">TRx</div>' + ap_ch_nurtec_prev_trx + '</div><div class="split-col"><div class="section-label">NBRx</div>' + ap_ch_nurtec_prev_nbrx + '</div></div></div>'
+prev_ch_html += '<div id="ap-ch-qulipta-prev" style="width:100%;display:none;"><div class="split-section"><div class="split-col"><div class="section-label">TRx</div>' + ap_ch_qulipta_prev_trx + '</div><div class="split-col"><div class="section-label">NBRx</div>' + ap_ch_qulipta_prev_nbrx + '</div></div></div>'
+prev_ch_html += prev_ch_legend
+html_content = html_content.replace('PREV_CHANNEL_CHART_PLACEHOLDER', prev_ch_html)
+
 html_content = html_content.replace('CHANNEL_CHART_PLACEHOLDER', channel_html)
 components.html(html_content, height=920, scrolling=False)
