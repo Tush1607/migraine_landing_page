@@ -20,10 +20,10 @@ def fetch_brand_data(segment="TRx", rx_classification="Overall", channel_type="O
     """
     df = _get_full_dataset()
     df = df[
-        (df['SEGMENT'] == segment) &
+        (df['PRESCRIPTION'] == segment) &
         (df['RX_CLASSIFICATION'] == rx_classification) &
         (df['CHANNEL_TYPE'] == channel_type) &
-        (df['STACK_KEY'] == 'NPA_BRANDS_BY_CHANNEL')
+        (df['STACK_KEY'] == 'NPA_TRENDS')
     ]
     df = df[['WEEK_ID', 'BRAND', 'ACTUALS', 'STLY', 'LATEST_GOAL']].sort_values(['WEEK_ID', 'BRAND']).reset_index(drop=True)
     return df
@@ -36,11 +36,11 @@ def fetch_channel_data(segment="TRx", rx_classification="Overall", brand="NURTEC
     """
     df = _get_full_dataset()
     df = df[
-        (df['SEGMENT'] == segment) &
+        (df['PRESCRIPTION'] == segment) &
         (df['RX_CLASSIFICATION'] == rx_classification) &
         (df['BRAND'] == brand) &
         (df['CHANNEL_TYPE'] != 'Overall') &
-        (df['STACK_KEY'] == 'NPA_BRANDS_BY_CHANNEL')
+        (df['STACK_KEY'] == 'NPA_TRENDS')
     ]
     df = df[['WEEK_ID', 'BRAND', 'CHANNEL_TYPE', 'ACTUALS', 'STLY', 'LATEST_GOAL']].sort_values(['WEEK_ID', 'CHANNEL_TYPE']).reset_index(drop=True)
     return df

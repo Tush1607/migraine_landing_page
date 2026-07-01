@@ -35,17 +35,17 @@ def fetch_npa_brand_competitive_data(segment="TRx", rx_classification="Overall",
     SELECT 
         WEEK_ID,
         BRAND,
-        SEGMENT,
+        PRESCRIPTION,
         RX_CLASSIFICATION,
         CHANNEL_TYPE,
         ACTUALS,
         STLY,
         LATEST_GOAL
     FROM "{SNOWFLAKE_CONFIG['database']}"."{SNOWFLAKE_CONFIG['schema']}"."{TABLE_NAME}"
-    WHERE SEGMENT = %s
+    WHERE PRESCRIPTION = %s
       AND RX_CLASSIFICATION = %s
       AND CHANNEL_TYPE = %s
-      AND STACK_KEY = 'NPA_BRANDS_BY_CHANNEL'
+      AND STACK_KEY = 'NPA_TRENDS'
     ORDER BY WEEK_ID, BRAND
     """
     conn = get_connection()
@@ -72,18 +72,18 @@ def fetch_npa_channel_data(segment="TRx", rx_classification="Overall", brand="NU
     SELECT 
         WEEK_ID,
         BRAND,
-        SEGMENT,
+        PRESCRIPTION,
         RX_CLASSIFICATION,
         CHANNEL_TYPE,
         ACTUALS,
         STLY,
         LATEST_GOAL
     FROM "{SNOWFLAKE_CONFIG['database']}"."{SNOWFLAKE_CONFIG['schema']}"."{TABLE_NAME}"
-    WHERE SEGMENT = %s
+    WHERE PRESCRIPTION = %s
       AND RX_CLASSIFICATION = %s
       AND BRAND = %s
       AND CHANNEL_TYPE != 'Overall'
-      AND STACK_KEY = 'NPA_BRANDS_BY_CHANNEL'
+      AND STACK_KEY = 'NPA_TRENDS'
     ORDER BY WEEK_ID, CHANNEL_TYPE
     """
     conn = get_connection()
@@ -111,17 +111,17 @@ def fetch_npa_brand_table_data(segment="TRx", rx_classification="Overall", chann
     SELECT 
         WEEK_ID,
         BRAND,
-        SEGMENT,
+        PRESCRIPTION,
         RX_CLASSIFICATION,
         CHANNEL_TYPE,
         ACTUALS,
         STLY,
         LATEST_GOAL
     FROM "{SNOWFLAKE_CONFIG['database']}"."{SNOWFLAKE_CONFIG['schema']}"."{TABLE_NAME}"
-    WHERE SEGMENT = %s
+    WHERE PRESCRIPTION = %s
       AND RX_CLASSIFICATION = %s
       AND CHANNEL_TYPE = %s
-      AND STACK_KEY = 'NPA_BRANDS_BY_CHANNEL'
+      AND STACK_KEY = 'NPA_TRENDS'
     ORDER BY WEEK_ID, BRAND
     """
     conn = get_connection()
@@ -140,9 +140,9 @@ def fetch_all_weeks(segment="TRx", rx_classification="Overall"):
     query = f"""
     SELECT DISTINCT WEEK_ID
     FROM "{SNOWFLAKE_CONFIG['database']}"."{SNOWFLAKE_CONFIG['schema']}"."{TABLE_NAME}"
-    WHERE SEGMENT = %s
+    WHERE PRESCRIPTION = %s
       AND RX_CLASSIFICATION = %s
-      AND STACK_KEY = 'NPA_BRANDS_BY_CHANNEL'
+      AND STACK_KEY = 'NPA_TRENDS'
     ORDER BY WEEK_ID
     """
     conn = get_connection()
