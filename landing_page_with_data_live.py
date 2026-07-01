@@ -12,7 +12,7 @@ import plotly.graph_objects as go
 from datetime import datetime
 
 def week_to_date(wid):
-    return datetime.strptime(str(wid), '%Y%m%d')
+    return datetime.strptime(str(int(wid)), '%Y%m%d')
 
 import pandas as pd
 
