@@ -1045,9 +1045,9 @@ a { color: inherit; text-decoration: none; }
 .nl-content .legend-item { display: flex; align-items: center; gap: 6px; }
 .nl-content .legend-dot { width: 8px; height: 8px; border-radius: 50%; }
 .nl-content .brand-header { padding: 10px 16px; border-radius: 6px; margin-bottom: 12px; color: white; font-size: 12px; font-weight: 600; display: flex; gap: 16px; }
-.nl-content .brand-header.brand-a { background: #1e3a5f; }
-.nl-content .brand-header.brand-b { background: #6b21a8; }
-.nl-content .brand-header.brand-c { background: #0f766e; }
+.nl-content .brand-header.brand-a { background: #7C6CFC; }
+.nl-content .brand-header.brand-b { background: #16a34a; }
+.nl-content .brand-header.brand-c { background: #ea580c; }
 .nl-content .insight-bullet { display: flex; gap: 10px; margin-bottom: 12px; align-items: flex-start; }
 .nl-content .insight-dot { width: 8px; height: 8px; border-radius: 50%; background: #f59e0b; margin-top: 4px; flex-shrink: 0; }
 .nl-content .alert-item { display: flex; gap: 10px; margin-bottom: 14px; align-items: flex-start; }
