@@ -2216,8 +2216,16 @@ BRAND_CHART_DATA_PLACEHOLDER
         });
         window.dispatchEvent(new Event('resize'));
     };
-    // Initial resize trigger for Plotly
-    setTimeout(function() { window.dispatchEvent(new Event('resize')); }, 500);
+    // Initial resize trigger for Plotly - staggered to ensure charts fill width on first load
+    function resizeAllPlotly() {
+        window.dispatchEvent(new Event('resize'));
+        document.querySelectorAll('.plotly-graph-div').forEach(function(gd) {
+            if (gd && gd.data && typeof Plotly !== 'undefined') { Plotly.Plots.resize(gd); }
+        });
+    }
+    setTimeout(resizeAllPlotly, 300);
+    setTimeout(resizeAllPlotly, 800);
+    setTimeout(resizeAllPlotly, 1500);
 })();
 </script>
 </body>
