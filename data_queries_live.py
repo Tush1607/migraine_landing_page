@@ -44,3 +44,58 @@ def fetch_channel_data(segment="TRx", rx_classification="Overall", brand="NURTEC
     ]
     df = df[['WEEK_ID', 'BRAND', 'CHANNEL_TYPE', 'ACTUALS', 'STLY', 'LATEST_GOAL']].sort_values(['WEEK_ID', 'CHANNEL_TYPE']).reset_index(drop=True)
     return df
+
+
+def fetch_npa_stacked(stack_key='NPA_BRANDS_OVERALL'):
+    """
+    Fetch NPA stacked metrics (KPI table data).
+    Returns DataFrame with all columns for the given stack key.
+    """
+    df = _get_full_dataset()
+    df = df[df['STACK_KEY'] == stack_key]
+    return df
+
+
+def fetch_xponent_trends():
+    """
+    Fetch Xponent Trends data (weekly share by Payer/Channel).
+    Returns DataFrame with: WEEK_ID, PRESCRIPTION, CUT_TYPE, CUT_VALUE, SHARE_PCT
+    """
+    df = _get_full_dataset()
+    df = df[
+        (df['STACK_KEY'] == 'XPONENT_TRENDS') &
+        (df['SHARE_PCT'].notna())
+    ]
+    df = df[['WEEK_ID', 'PRESCRIPTION', 'CUT_TYPE', 'CUT_VALUE', 'SHARE_PCT']].sort_values(['CUT_TYPE', 'CUT_VALUE', 'PRESCRIPTION', 'WEEK_ID']).reset_index(drop=True)
+    return df
+
+
+def fetch_xponent_stacked():
+    """
+    Fetch Xponent Stacked Matrices (KPI summary values).
+    Returns DataFrame with share and volume columns by CUT_TYPE/CUT_VALUE.
+    """
+    df = _get_full_dataset()
+    df = df[df['STACK_KEY'] == 'XPT_STACKED_MATRICES']
+    return df
+
+
+def fetch_finance_trends():
+    """
+    Fetch Finance Trends data (weekly gross / monthly net).
+    Returns DataFrame with: SECTION_NAME, PERIOD_LABEL, DATE_PARSED, ACTUAL_VALUE, BUDGET_VALUE, PRIOR_YEAR_VALUE
+    """
+    df = _get_full_dataset()
+    df = df[df['STACK_KEY'] == 'FINANCE_TRENDS']
+    df = df[['SECTION_NAME', 'PERIOD_LABEL', 'DATE_PARSED', 'ACTUAL_VALUE', 'BUDGET_VALUE', 'PRIOR_YEAR_VALUE']].sort_values(['SECTION_NAME', 'DATE_PARSED']).reset_index(drop=True)
+    return df
+
+
+def fetch_finance_stacked():
+    """
+    Fetch Finance Stacked Metrics (KPI summary values).
+    Returns DataFrame with: SECTION_NAME, KPI_TITLE, ACTUAL_VALUE, BUDGET_VALUE, PRIOR_YEAR_VALUE, BUDGET_ATT, VARIANCE_TO_PY_PCT, DATA_AS_OF_DATE
+    """
+    df = _get_full_dataset()
+    df = df[df['STACK_KEY'] == 'FINANCE_STACKED_METRICES']
+    return df

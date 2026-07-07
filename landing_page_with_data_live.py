@@ -7,16 +7,28 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
 
-# --- Data (cached from Snowflake) ---
+# --- Data (cached from Snowflake via DSS) ---
 import plotly.graph_objects as go
 from datetime import datetime
+
+# --- User Access Restriction ---
+FINANCE_RESTRICTED_EMAILS = ['ishan.rastogi@pfizer.com']
+try:
+    _current_user_email = st.experimental_user.email or ''
+except:
+    _current_user_email = ''
+FINANCE_RESTRICTED = _current_user_email.lower() in [e.lower() for e in FINANCE_RESTRICTED_EMAILS]
 
 def week_to_date(wid):
     return datetime.strptime(str(int(wid)), '%Y%m%d')
 
 import pandas as pd
 
-from data_queries_live import fetch_brand_data, fetch_channel_data
+from data_queries_live import (
+    fetch_brand_data, fetch_channel_data, fetch_npa_stacked,
+    fetch_xponent_trends, fetch_xponent_stacked,
+    fetch_finance_trends, fetch_finance_stacked
+)
 
 @st.cache_data(ttl=3600)
 def load_brand_data(segment):
@@ -33,6 +45,22 @@ def load_acute_prev_brand_data(segment, rx_class):
 @st.cache_data(ttl=3600)
 def load_acute_prev_channel_data(segment, rx_class, brand):
     return fetch_channel_data(segment=segment, rx_classification=rx_class, brand=brand)
+
+@st.cache_data(ttl=3600)
+def load_xponent_trends():
+    return fetch_xponent_trends()
+
+@st.cache_data(ttl=3600)
+def load_xponent_stacked():
+    return fetch_xponent_stacked()
+
+@st.cache_data(ttl=3600)
+def load_finance_trends():
+    return fetch_finance_trends()
+
+@st.cache_data(ttl=3600)
+def load_finance_stacked():
+    return fetch_finance_stacked()
 
 # --- NPA Overall Brand Data ---
 npa_brand_df = load_brand_data("TRx")
@@ -54,7 +82,11 @@ def get_channel_dict(segment):
         retail_df = ch_df[ch_df['CHANNEL_TYPE'] == 'Retail'].sort_values('WEEK_ID')
         mail_df = ch_df[ch_df['CHANNEL_TYPE'] == 'MAIL'].sort_values('WEEK_ID')
         ltc_df = ch_df[ch_df['CHANNEL_TYPE'] == 'Long term'].sort_values('WEEK_ID')
-        result[brand] = {"Retail": {"actuals": list(retail_df['ACTUALS']), "stly": list(retail_df['STLY'])}, "Mail": {"actuals": list(mail_df['ACTUALS']), "stly": list(mail_df['STLY'])}, "LTC": {"actuals": list(ltc_df['ACTUALS']) if len(ltc_df) > 0 else [0]*len(retail_df), "stly": list(ltc_df['STLY']) if len(ltc_df) > 0 else [0]*len(retail_df)}}
+        result[brand] = {
+            "Retail": {"actuals": list(retail_df['ACTUALS']), "stly": list(retail_df['STLY'])},
+            "Mail": {"actuals": list(mail_df['ACTUALS']), "stly": list(mail_df['STLY'])},
+            "LTC": {"actuals": list(ltc_df['ACTUALS']) if len(ltc_df) > 0 else [0]*len(retail_df), "stly": list(ltc_df['STLY']) if len(ltc_df) > 0 else [0]*len(retail_df)}
+        }
     return result
 
 _channel_trx_data = get_channel_dict("TRx")
@@ -66,6 +98,44 @@ _acute_nbrx_df = load_acute_prev_brand_data("NBRx", "Acute")
 _prev_trx_df = load_acute_prev_brand_data("TRx", "Preventive")
 _prev_nbrx_df = load_acute_prev_brand_data("NBRx", "Preventive")
 
+# --- Xponent Trends Data (Live) ---
+_xpt_df = load_xponent_trends()
+_xpt_weeks = sorted(_xpt_df['WEEK_ID'].unique())
+_xpt_dates = [week_to_date(w) for w in _xpt_weeks]
+
+def _get_xpt_series(df, cut_type, cut_value, prescription):
+    sub = df[(df['CUT_TYPE'] == cut_type) & (df['CUT_VALUE'] == cut_value) & (df['PRESCRIPTION'] == prescription)].sort_values('WEEK_ID')
+    return list(sub['SHARE_PCT'])
+
+_xpt_payer_trx = {k: _get_xpt_series(_xpt_df, 'Payer', k, 'TRx') for k in ['Commercial', 'Medicare', 'Medicaid', 'Other']}
+_xpt_payer_nrx = {k: _get_xpt_series(_xpt_df, 'Payer', k, 'NRx') for k in ['Commercial', 'Medicare', 'Medicaid', 'Other']}
+_xpt_ch_trx = {k: _get_xpt_series(_xpt_df, 'Channel', k, 'TRx') for k in ['RETAIL', 'MAIL_ORDER', 'LTC']}
+_xpt_ch_nrx = {k: _get_xpt_series(_xpt_df, 'Channel', k, 'NRx') for k in ['RETAIL', 'MAIL_ORDER', 'LTC']}
+
+# --- Finance Trends Data (Live) ---
+_fin_df = load_finance_trends()
+_fin_gross_df = _fin_df[_fin_df['SECTION_NAME'] == 'Gross'].sort_values('DATE_PARSED')
+_fin_net_df = _fin_df[_fin_df['SECTION_NAME'] == 'Net'].sort_values('DATE_PARSED')
+
+_fin_gross_labels = list(_fin_gross_df['PERIOD_LABEL'])
+_fin_gross_actuals = [v/1e6 if v and v > 0 else None for v in _fin_gross_df['ACTUAL_VALUE']]
+_fin_gross_stly = [v/1e6 if v and v > 0 else None for v in _fin_gross_df['PRIOR_YEAR_VALUE']]
+_fin_gross_budget = [v/1e6 if v and v > 0 else None for v in _fin_gross_df['BUDGET_VALUE']]
+
+_fin_net_labels = list(_fin_net_df['PERIOD_LABEL'])
+_fin_net_actuals = [v/1e6 if v and v > 0 else None for v in _fin_net_df['ACTUAL_VALUE']]
+_fin_net_stly = [v/1e6 if v and v > 0 else None for v in _fin_net_df['PRIOR_YEAR_VALUE']]
+_fin_net_budget = [v/1e6 if v and v > 0 else None for v in _fin_net_df['BUDGET_VALUE']]
+
+# --- Xponent KPI values (Live) ---
+_xpt_kpi_df = load_xponent_stacked()
+_xpt_national = _xpt_kpi_df[_xpt_kpi_df['CUT_TYPE'] == 'National'].iloc[0] if len(_xpt_kpi_df[_xpt_kpi_df['CUT_TYPE'] == 'National']) > 0 else None
+
+# --- Finance KPI values (Live) ---
+_fin_kpi_df = load_finance_stacked()
+
+
+# --- Acute/Preventive Brand Charts ---
 def build_acute_prev_chart(df, brand1, brand2, brand1_name, brand2_name, brand1_color, brand2_color, metric_label, dates_list):
     b1 = df[df['BRAND'] == brand1].sort_values('WEEK_ID')
     b2 = df[df['BRAND'] == brand2].sort_values('WEEK_ID')
@@ -87,10 +157,10 @@ def build_acute_prev_chart(df, brand1, brand2, brand1_name, brand2_name, brand1_
     return ap_html
 
 ap_dates = [week_to_date(w) for w in weeks]
-acute_trx_chart = build_acute_prev_chart(_acute_trx_df, 'NURTEC', 'UBRELVY', 'Nurtec Acute', 'Ubrelvy Acute', '#16a34a', '#f59e0b', 'TRx', ap_dates)
-acute_nbrx_chart = build_acute_prev_chart(_acute_nbrx_df, 'NURTEC', 'UBRELVY', 'Nurtec Acute', 'Ubrelvy Acute', '#16a34a', '#f59e0b', 'NBRx', ap_dates)
-prev_trx_chart = build_acute_prev_chart(_prev_trx_df, 'NURTEC', 'QULIPTA', 'Nurtec Prev', 'Qulipta Prev', '#16a34a', '#3b82f6', 'TRx', ap_dates)
-prev_nbrx_chart = build_acute_prev_chart(_prev_nbrx_df, 'NURTEC', 'QULIPTA', 'Nurtec Prev', 'Qulipta Prev', '#16a34a', '#3b82f6', 'NBRx', ap_dates)
+acute_trx_chart = build_acute_prev_chart(_acute_trx_df, 'NURTEC', 'UBRELVY', 'Nurtec Acute', 'Ubrelvy Acute', '#7C6CFC', '#4ADE80', 'TRx', ap_dates)
+acute_nbrx_chart = build_acute_prev_chart(_acute_nbrx_df, 'NURTEC', 'UBRELVY', 'Nurtec Acute', 'Ubrelvy Acute', '#7C6CFC', '#4ADE80', 'NBRx', ap_dates)
+prev_trx_chart = build_acute_prev_chart(_prev_trx_df, 'NURTEC', 'QULIPTA', 'Nurtec Prev', 'Qulipta Prev', '#7C6CFC', '#FB923C', 'TRx', ap_dates)
+prev_nbrx_chart = build_acute_prev_chart(_prev_nbrx_df, 'NURTEC', 'QULIPTA', 'Nurtec Prev', 'Qulipta Prev', '#7C6CFC', '#FB923C', 'NBRx', ap_dates)
 
 # --- Acute/Preventive Channel Charts ---
 def build_ap_channel_chart_live(segment, rx_class, brand, metric_label, dates_list):
@@ -129,8 +199,7 @@ ap_ch_qulipta_prev_trx = build_ap_channel_chart_live("TRx", "Preventive", "QULIP
 ap_ch_qulipta_prev_nbrx = build_ap_channel_chart_live("NBRx", "Preventive", "QULIPTA", "NBRx", ap_dates)
 
 
-# --- Generate Interactive Chart with Plotly ---
-
+# --- Generate NPA Overall Charts ---
 nurtec_dates = [week_to_date(w) for w in nurtec_data['WEEK_ID']]
 ubrelvy_dates = [week_to_date(w) for w in ubrelvy_data['WEEK_ID']]
 qulipta_dates = [week_to_date(w) for w in qulipta_data['WEEK_ID']]
@@ -139,27 +208,27 @@ fig = go.Figure()
 
 # Nurtec Actuals
 fig.add_trace(go.Scatter(x=nurtec_dates, y=list(nurtec_data['ACTUALS']),
-    mode='lines', name='Nurtec Actuals', line=dict(color='#16a34a', width=2.5),
+    mode='lines', name='Nurtec Actuals', line=dict(color='#7C6CFC', width=2.5),
     hovertemplate='Nurtec Actuals<br>Week: %{x|%d %b %y}<br>TRx: %{y:,.0f}<extra></extra>'))
 # Nurtec STLY
 fig.add_trace(go.Scatter(x=nurtec_dates, y=list(nurtec_data['STLY']),
-    mode='lines', name='Nurtec STLY', line=dict(color='#16a34a', width=2, dash='dash'),
+    mode='lines', name='Nurtec STLY', line=dict(color='#7C6CFC', width=2, dash='dash'),
     hovertemplate='Nurtec STLY<br>STLY Week: %{x|%d %b} 25<br>TRx: %{y:,.0f}<extra></extra>'))
 # Ubrelvy Actuals
 fig.add_trace(go.Scatter(x=ubrelvy_dates, y=list(ubrelvy_data['ACTUALS']),
-    mode='lines', name='Ubrelvy Actuals', line=dict(color='#f59e0b', width=2.5),
+    mode='lines', name='Ubrelvy Actuals', line=dict(color='#4ADE80', width=2.5),
     hovertemplate='Ubrelvy Actuals<br>Week: %{x|%d %b %y}<br>TRx: %{y:,.0f}<extra></extra>'))
 # Ubrelvy STLY
 fig.add_trace(go.Scatter(x=ubrelvy_dates, y=list(ubrelvy_data['STLY']),
-    mode='lines', name='Ubrelvy STLY', line=dict(color='#f59e0b', width=2, dash='dash'),
+    mode='lines', name='Ubrelvy STLY', line=dict(color='#4ADE80', width=2, dash='dash'),
     hovertemplate='Ubrelvy STLY<br>STLY Week: %{x|%d %b} 25<br>TRx: %{y:,.0f}<extra></extra>'))
 # Qulipta Actuals
 fig.add_trace(go.Scatter(x=qulipta_dates, y=list(qulipta_data['ACTUALS']),
-    mode='lines', name='Qulipta Actuals', line=dict(color='#3b82f6', width=2.5),
+    mode='lines', name='Qulipta Actuals', line=dict(color='#FB923C', width=2.5),
     hovertemplate='Qulipta Actuals<br>Week: %{x|%d %b %y}<br>TRx: %{y:,.0f}<extra></extra>'))
 # Qulipta STLY
 fig.add_trace(go.Scatter(x=qulipta_dates, y=list(qulipta_data['STLY']),
-    mode='lines', name='Qulipta STLY', line=dict(color='#3b82f6', width=2, dash='dash'),
+    mode='lines', name='Qulipta STLY', line=dict(color='#FB923C', width=2, dash='dash'),
     hovertemplate='Qulipta STLY<br>STLY Week: %{x|%d %b} 25<br>TRx: %{y:,.0f}<extra></extra>'))
 # Goal
 goal_vals = [v if v is not None and v > 0 else None for v in list(nurtec_data['LATEST_GOAL'])]
@@ -211,66 +280,96 @@ chart_html = fig.to_html(full_html=False, include_plotlyjs='cdn', config={'displ
 chart_html = chart_html.replace('class="plotly-graph-div" style="', 'class="plotly-graph-div" style="width:100%;')
 brand_chart_svg = chart_html
 
-# Generate NBRx Plotly chart
-fig_nbrx = go.Figure()
-nbrx_dates = [week_to_date(w) for w in nbrx_nurtec['WEEK_ID']]
 
-fig_nbrx.add_trace(go.Scatter(x=nbrx_dates, y=list(nbrx_nurtec['ACTUALS']), mode='lines', name='Nurtec Actuals', line=dict(color='#16a34a', width=2.5), hovertemplate='Nurtec Actuals<br>Week: %{x|%d %b %y}<br>NBRx: %{y:,.0f}<extra></extra>'))
-fig_nbrx.add_trace(go.Scatter(x=nbrx_dates, y=list(nbrx_nurtec['STLY']), mode='lines', name='Nurtec STLY', line=dict(color='#16a34a', width=2, dash='dash'), hovertemplate='Nurtec STLY<br>STLY Week: %{x|%d %b} 25<br>NBRx: %{y:,.0f}<extra></extra>'))
-fig_nbrx.add_trace(go.Scatter(x=nbrx_dates, y=list(nbrx_ubrelvy['ACTUALS']), mode='lines', name='Ubrelvy Actuals', line=dict(color='#f59e0b', width=2.5), hovertemplate='Ubrelvy Actuals<br>Week: %{x|%d %b %y}<br>NBRx: %{y:,.0f}<extra></extra>'))
-fig_nbrx.add_trace(go.Scatter(x=nbrx_dates, y=list(nbrx_ubrelvy['STLY']), mode='lines', name='Ubrelvy STLY', line=dict(color='#f59e0b', width=2, dash='dash'), hovertemplate='Ubrelvy STLY<br>STLY Week: %{x|%d %b} 25<br>NBRx: %{y:,.0f}<extra></extra>'))
-fig_nbrx.add_trace(go.Scatter(x=nbrx_dates, y=list(nbrx_qulipta['ACTUALS']), mode='lines', name='Qulipta Actuals', line=dict(color='#3b82f6', width=2.5), hovertemplate='Qulipta Actuals<br>Week: %{x|%d %b %y}<br>NBRx: %{y:,.0f}<extra></extra>'))
-fig_nbrx.add_trace(go.Scatter(x=nbrx_dates, y=list(nbrx_qulipta['STLY']), mode='lines', name='Qulipta STLY', line=dict(color='#3b82f6', width=2, dash='dash'), hovertemplate='Qulipta STLY<br>STLY Week: %{x|%d %b} 25<br>NBRx: %{y:,.0f}<extra></extra>'))
+# --- Xponent Trend Charts (from live data) ---
+# Build XPT Payer TRx chart
+fig_xpt_p_trx = go.Figure()
+fig_xpt_p_trx.add_trace(go.Scatter(x=_xpt_dates, y=_xpt_payer_trx['Commercial'], mode='lines', name='Commercial', line=dict(color='#3b82f6', width=2.5), hovertemplate='Commercial<br>Week: %{x|%d %b %y}<br>Share: %{y:.1f}%<extra></extra>'))
+fig_xpt_p_trx.add_trace(go.Scatter(x=_xpt_dates, y=_xpt_payer_trx['Medicare'], mode='lines', name='Medicare', line=dict(color='#16a34a', width=2.5), hovertemplate='Medicare<br>Week: %{x|%d %b %y}<br>Share: %{y:.1f}%<extra></extra>'))
+fig_xpt_p_trx.add_trace(go.Scatter(x=_xpt_dates, y=_xpt_payer_trx['Medicaid'], mode='lines', name='Medicaid', line=dict(color='#f59e0b', width=2.5), hovertemplate='Medicaid<br>Week: %{x|%d %b %y}<br>Share: %{y:.1f}%<extra></extra>'))
+fig_xpt_p_trx.add_trace(go.Scatter(x=_xpt_dates, y=_xpt_payer_trx['Other'], mode='lines', name='Other', line=dict(color='#9ca3af', width=2.5), hovertemplate='Other<br>Week: %{x|%d %b %y}<br>Share: %{y:.1f}%<extra></extra>'))
+fig_xpt_p_trx.update_layout(height=300, margin=dict(l=50, r=20, t=10, b=100), plot_bgcolor='white', paper_bgcolor='white',
+    xaxis=dict(tickfont=dict(size=9, color='#374151', family='Inter, sans-serif'), tickformat='%d %b %y', tickangle=-90, dtick=14*24*60*60*1000, showgrid=False, hoverformat='', showline=True, linewidth=1, linecolor='#1a2332'),
+    yaxis=dict(tickfont=dict(size=9, color='#374151', family='Inter, sans-serif'), showgrid=False, ticksuffix='%'),
+    showlegend=False, hovermode='closest',
+    hoverlabel=dict(bgcolor='white', font=dict(size=11, color='#1a2332', family='Inter, sans-serif'), bordercolor='rgba(0,0,0,0)'))
+xpt_payer_trx_html = fig_xpt_p_trx.to_html(full_html=False, include_plotlyjs='cdn', config={'displayModeBar': False, 'responsive': True})
+xpt_payer_trx_html = xpt_payer_trx_html.replace('class="plotly-graph-div" style="', 'class="plotly-graph-div" style="width:100%;')
 
-fig_nbrx.update_layout(
-    height=340, margin=dict(l=60, r=20, t=35, b=100),
-    plot_bgcolor='white', paper_bgcolor='white',
-    xaxis=dict(tickfont=dict(size=9, color='#374151', family='Inter, sans-serif'), tickformat='%d %b %y', tickangle=-90, dtick=7*24*60*60*1000, showgrid=False, hoverformat=''),
-    yaxis=dict(title=dict(text='NBRx Volume', font=dict(size=10, color='#4b5563')), tickfont=dict(size=9, color='#374151', family='Inter, sans-serif'), showgrid=False, tickformat=',', rangemode='tozero'),
-    legend=dict(orientation='h', yanchor='top', y=-0.35, xanchor='center', x=0.5, font=dict(size=9)),
-    hovermode='closest',
-    hoverlabel=dict(bgcolor='white', font=dict(size=11, color='#1a2332', family='Inter, sans-serif'), bordercolor='rgba(0,0,0,0)'),
-)
+# Build XPT Payer NRx chart
+fig_xpt_p_nrx = go.Figure()
+fig_xpt_p_nrx.add_trace(go.Scatter(x=_xpt_dates, y=_xpt_payer_nrx['Commercial'], mode='lines', name='Commercial', line=dict(color='#3b82f6', width=2.5), hovertemplate='Commercial<br>Week: %{x|%d %b %y}<br>Share: %{y:.1f}%<extra></extra>'))
+fig_xpt_p_nrx.add_trace(go.Scatter(x=_xpt_dates, y=_xpt_payer_nrx['Medicare'], mode='lines', name='Medicare', line=dict(color='#16a34a', width=2.5), hovertemplate='Medicare<br>Week: %{x|%d %b %y}<br>Share: %{y:.1f}%<extra></extra>'))
+fig_xpt_p_nrx.add_trace(go.Scatter(x=_xpt_dates, y=_xpt_payer_nrx['Medicaid'], mode='lines', name='Medicaid', line=dict(color='#f59e0b', width=2.5), hovertemplate='Medicaid<br>Week: %{x|%d %b %y}<br>Share: %{y:.1f}%<extra></extra>'))
+fig_xpt_p_nrx.add_trace(go.Scatter(x=_xpt_dates, y=_xpt_payer_nrx['Other'], mode='lines', name='Other', line=dict(color='#9ca3af', width=2.5), hovertemplate='Other<br>Week: %{x|%d %b %y}<br>Share: %{y:.1f}%<extra></extra>'))
+fig_xpt_p_nrx.update_layout(height=300, margin=dict(l=50, r=20, t=10, b=100), plot_bgcolor='white', paper_bgcolor='white',
+    xaxis=dict(tickfont=dict(size=9, color='#374151', family='Inter, sans-serif'), tickformat='%d %b %y', tickangle=-90, dtick=14*24*60*60*1000, showgrid=False, hoverformat='', showline=True, linewidth=1, linecolor='#1a2332'),
+    yaxis=dict(tickfont=dict(size=9, color='#374151', family='Inter, sans-serif'), showgrid=False, ticksuffix='%'),
+    showlegend=False, hovermode='closest',
+    hoverlabel=dict(bgcolor='white', font=dict(size=11, color='#1a2332', family='Inter, sans-serif'), bordercolor='rgba(0,0,0,0)'))
+xpt_payer_nrx_html = fig_xpt_p_nrx.to_html(full_html=False, include_plotlyjs=False, config={'displayModeBar': False, 'responsive': True})
+xpt_payer_nrx_html = xpt_payer_nrx_html.replace('class="plotly-graph-div" style="', 'class="plotly-graph-div" style="width:100%;')
 
-nbrx_chart_html = fig_nbrx.to_html(full_html=False, include_plotlyjs=False, config={'displayModeBar': False, 'responsive': True})
-nbrx_chart_html = nbrx_chart_html.replace('class="plotly-graph-div" style="', 'class="plotly-graph-div" style="width:100%;')
-nbrx_chart_svg = nbrx_chart_html
+# Build XPT Channel TRx chart
+fig_xpt_c_trx = go.Figure()
+fig_xpt_c_trx.add_trace(go.Scatter(x=_xpt_dates, y=_xpt_ch_trx['Retail'], mode='lines', name='Retail', line=dict(color='#0891b2', width=2.5), hovertemplate='Retail<br>Week: %{x|%d %b %y}<br>Share: %{y:.1f}%<extra></extra>'))
+fig_xpt_c_trx.add_trace(go.Scatter(x=_xpt_dates, y=_xpt_ch_trx['Mail-Order'], mode='lines', name='Mail-Order', line=dict(color='#7c3aed', width=2.5), hovertemplate='Mail-Order<br>Week: %{x|%d %b %y}<br>Share: %{y:.1f}%<extra></extra>'))
+fig_xpt_c_trx.add_trace(go.Scatter(x=_xpt_dates, y=_xpt_ch_trx['LTC'], mode='lines', name='LTC', line=dict(color='#9ca3af', width=2.5), hovertemplate='LTC<br>Week: %{x|%d %b %y}<br>Share: %{y:.1f}%<extra></extra>'))
+fig_xpt_c_trx.update_layout(height=300, margin=dict(l=50, r=20, t=10, b=100), plot_bgcolor='white', paper_bgcolor='white',
+    xaxis=dict(tickfont=dict(size=9, color='#374151', family='Inter, sans-serif'), tickformat='%d %b %y', tickangle=-90, dtick=14*24*60*60*1000, showgrid=False, hoverformat='', showline=True, linewidth=1, linecolor='#1a2332'),
+    yaxis=dict(tickfont=dict(size=9, color='#374151', family='Inter, sans-serif'), showgrid=False, ticksuffix='%'),
+    showlegend=False, hovermode='closest',
+    hoverlabel=dict(bgcolor='white', font=dict(size=11, color='#1a2332', family='Inter, sans-serif'), bordercolor='rgba(0,0,0,0)'))
+xpt_ch_trx_html = fig_xpt_c_trx.to_html(full_html=False, include_plotlyjs=False, config={'displayModeBar': False, 'responsive': True})
+xpt_ch_trx_html = xpt_ch_trx_html.replace('class="plotly-graph-div" style="', 'class="plotly-graph-div" style="width:100%;')
 
-# --- Channel Performance Charts (6 total: 3 brands x 2 metrics) ---
-def build_channel_chart(brand_data, metric_label, dates):
-    fig_ch = go.Figure()
-    retail_act = brand_data["Retail"]["actuals"]
-    retail_stl = brand_data["Retail"]["stly"]
-    mail_act = brand_data["Mail"]["actuals"]
-    mail_stl = brand_data["Mail"]["stly"]
-    ltc_act = brand_data.get("LTC", {}).get("actuals", [0]*len(dates))
-    ltc_stl = brand_data.get("LTC", {}).get("stly", [0]*len(dates))
-    fig_ch.add_trace(go.Scatter(x=dates, y=retail_act, mode='lines', name='Retail Actuals', line=dict(color='#0891b2', width=2.5), hovertemplate='Retail Actuals<br>Week: %{x|%d %b %y}<br>' + metric_label + ': %{y:,.0f}<extra></extra>'))
-    fig_ch.add_trace(go.Scatter(x=dates, y=retail_stl, mode='lines', name='Retail STLY', line=dict(color='#0891b2', width=2, dash='dash'), hovertemplate='Retail STLY<br>STLY Week: %{x|%d %b} 25<br>' + metric_label + ': %{y:,.0f}<extra></extra>'))
-    fig_ch.add_trace(go.Scatter(x=dates, y=mail_act, mode='lines', name='Mail-Order Actuals', line=dict(color='#7c3aed', width=2.5), hovertemplate='Mail-Order Actuals<br>Week: %{x|%d %b %y}<br>' + metric_label + ': %{y:,.0f}<extra></extra>'))
-    fig_ch.add_trace(go.Scatter(x=dates, y=mail_stl, mode='lines', name='Mail-Order STLY', line=dict(color='#7c3aed', width=2, dash='dash'), hovertemplate='Mail-Order STLY<br>STLY Week: %{x|%d %b} 25<br>' + metric_label + ': %{y:,.0f}<extra></extra>'))
-    fig_ch.add_trace(go.Scatter(x=dates, y=ltc_act, mode='lines', name='LTC Actuals', line=dict(color='#9ca3af', width=2.5), hovertemplate='LTC Actuals<br>Week: %{x|%d %b %y}<br>' + metric_label + ': %{y:,.0f}<extra></extra>'))
-    fig_ch.add_trace(go.Scatter(x=dates, y=ltc_stl, mode='lines', name='LTC STLY', line=dict(color='#9ca3af', width=2, dash='dash'), hovertemplate='LTC STLY<br>STLY Week: %{x|%d %b} 25<br>' + metric_label + ': %{y:,.0f}<extra></extra>'))
-    fig_ch.update_layout(
-        height=340, margin=dict(l=60, r=20, t=35, b=100),
-        plot_bgcolor='white', paper_bgcolor='white',
-        xaxis=dict(tickfont=dict(size=9, color='#374151', family='Inter, sans-serif'), tickformat='%d %b %y', tickangle=-90, dtick=7*24*60*60*1000, showgrid=False, hoverformat=''),
-        yaxis=dict(title=dict(text=metric_label + ' Volume', font=dict(size=10, color='#4b5563')), tickfont=dict(size=9, color='#374151', family='Inter, sans-serif'), showgrid=False, tickformat=',', rangemode='tozero'),
-        legend=dict(orientation='h', yanchor='top', y=-0.35, xanchor='center', x=0.5, font=dict(size=9)),
-        hovermode='closest',
-        hoverlabel=dict(bgcolor='white', font=dict(size=11, color='#1a2332', family='Inter, sans-serif'), bordercolor='rgba(0,0,0,0)'),
-    )
-    ch_html = fig_ch.to_html(full_html=False, include_plotlyjs=False, config={'displayModeBar': False, 'responsive': True})
-    ch_html = ch_html.replace('class="plotly-graph-div" style="', 'class="plotly-graph-div" style="width:100%;')
-    return ch_html
+# Build XPT Channel NRx chart
+fig_xpt_c_nrx = go.Figure()
+fig_xpt_c_nrx.add_trace(go.Scatter(x=_xpt_dates, y=_xpt_ch_nrx['Retail'], mode='lines', name='Retail', line=dict(color='#0891b2', width=2.5), hovertemplate='Retail<br>Week: %{x|%d %b %y}<br>Share: %{y:.1f}%<extra></extra>'))
+fig_xpt_c_nrx.add_trace(go.Scatter(x=_xpt_dates, y=_xpt_ch_nrx['Mail-Order'], mode='lines', name='Mail-Order', line=dict(color='#7c3aed', width=2.5), hovertemplate='Mail-Order<br>Week: %{x|%d %b %y}<br>Share: %{y:.1f}%<extra></extra>'))
+fig_xpt_c_nrx.add_trace(go.Scatter(x=_xpt_dates, y=_xpt_ch_nrx['LTC'], mode='lines', name='LTC', line=dict(color='#9ca3af', width=2.5), hovertemplate='LTC<br>Week: %{x|%d %b %y}<br>Share: %{y:.1f}%<extra></extra>'))
+fig_xpt_c_nrx.update_layout(height=300, margin=dict(l=50, r=20, t=10, b=100), plot_bgcolor='white', paper_bgcolor='white',
+    xaxis=dict(tickfont=dict(size=9, color='#374151', family='Inter, sans-serif'), tickformat='%d %b %y', tickangle=-90, dtick=14*24*60*60*1000, showgrid=False, hoverformat='', showline=True, linewidth=1, linecolor='#1a2332'),
+    yaxis=dict(tickfont=dict(size=9, color='#374151', family='Inter, sans-serif'), showgrid=False, ticksuffix='%'),
+    showlegend=False, hovermode='closest',
+    hoverlabel=dict(bgcolor='white', font=dict(size=11, color='#1a2332', family='Inter, sans-serif'), bordercolor='rgba(0,0,0,0)'))
+xpt_ch_nrx_html = fig_xpt_c_nrx.to_html(full_html=False, include_plotlyjs=False, config={'displayModeBar': False, 'responsive': True})
+xpt_ch_nrx_html = xpt_ch_nrx_html.replace('class="plotly-graph-div" style="', 'class="plotly-graph-div" style="width:100%;')
 
-channel_dates = [week_to_date(w) for w in weeks]
-ch_nurtec_trx = build_channel_chart(_channel_trx_data["NURTEC"], "TRx", channel_dates)
-ch_ubrelvy_trx = build_channel_chart(_channel_trx_data["UBRELVY"], "TRx", channel_dates)
-ch_qulipta_trx = build_channel_chart(_channel_trx_data["QULIPTA"], "TRx", channel_dates)
-ch_nurtec_nbrx = build_channel_chart(_channel_nbrx_data["NURTEC"], "NBRx", channel_dates)
-ch_ubrelvy_nbrx = build_channel_chart(_channel_nbrx_data["UBRELVY"], "NBRx", channel_dates)
-ch_qulipta_nbrx = build_channel_chart(_channel_nbrx_data["QULIPTA"], "NBRx", channel_dates)
+
+# --- Finance Trend Charts (from live data) ---
+fig_fin_gross = go.Figure()
+fig_fin_gross.add_trace(go.Bar(x=_fin_gross_labels, y=_fin_gross_actuals, name='Actual', marker_color='#7C6CFC'))
+fig_fin_gross.add_trace(go.Scatter(x=_fin_gross_labels, y=_fin_gross_stly, mode='lines', name='Actual (STLY)', line=dict(color='#0000C9', width=2.5)))
+fig_fin_gross.add_trace(go.Scatter(x=_fin_gross_labels, y=_fin_gross_budget, mode='lines', name='Budget', line=dict(color='#9ca3af', width=2, dash='dash')))
+fig_fin_gross.update_layout(height=340, margin=dict(l=60, r=20, t=10, b=100), plot_bgcolor='white', paper_bgcolor='white',
+    xaxis=dict(tickfont=dict(size=8, color='#374151', family='Inter, sans-serif'), tickangle=-90, showgrid=False, hoverformat='', showline=True, linewidth=1, linecolor='#1a2332'),
+    yaxis=dict(title=dict(text='Gross Sales ($M)', font=dict(size=10, color='#4b5563')), tickfont=dict(size=9, color='#374151', family='Inter, sans-serif'), showgrid=False, tickprefix='$', ticksuffix='M'),
+    showlegend=False, hovermode='x unified', barmode='group', bargap=0.3,
+    hoverlabel=dict(bgcolor='white', font=dict(size=11, color='#1a2332', family='Inter, sans-serif'), bordercolor='rgba(0,0,0,0)'))
+fin_gross_html = fig_fin_gross.to_html(full_html=False, include_plotlyjs=False, config={'displayModeBar': False, 'responsive': True})
+fin_gross_html = fin_gross_html.replace('class="plotly-graph-div" style="', 'class="plotly-graph-div" style="width:100%;')
+
+# Net Sales chart (monthly)
+_fin_net_labels = ["P01'26","P02'26","P03'26","P04'26","P05'26","P06'26","P07'26","P08'26","P09'26","P10'26","P11'26","P12'26"]
+_fin_net_actuals = [82.5,73.6,153.2,106.8,None,None,None,None,None,None,None,None]
+_fin_net_stly = [63.2,49.2,112.6,88.0,None,None,None,None,None,None,None,None]
+_fin_net_budget = [72.8,81.7,115.2,110.5,110.1,138.3,127.2,130.0,156.8,137.8,174.2,152.7]
+
+fig_fin_net = go.Figure()
+fig_fin_net.add_trace(go.Bar(x=_fin_net_labels, y=_fin_net_actuals, name='Actual', marker_color='#7C6CFC'))
+fig_fin_net.add_trace(go.Scatter(x=_fin_net_labels, y=_fin_net_stly, mode='lines', name='Actual (STLY)', line=dict(color='#0000C9', width=2.5)))
+fig_fin_net.add_trace(go.Scatter(x=_fin_net_labels, y=_fin_net_budget, mode='lines', name='Budget', line=dict(color='#9ca3af', width=2, dash='dash')))
+fig_fin_net.update_layout(height=340, margin=dict(l=60, r=10, t=10, b=80), plot_bgcolor='white', paper_bgcolor='white', autosize=True,
+    xaxis=dict(type='category', categoryorder='array', categoryarray=_fin_net_labels, tickfont=dict(size=9, color='#374151', family='Inter, sans-serif'), tickangle=0, showgrid=False, hoverformat='', showline=True, linewidth=1, linecolor='#1a2332', range=[-0.5, 11.5], constrain='domain'),
+    yaxis=dict(title=dict(text='Net Sales ($M)', font=dict(size=10, color='#4b5563')), tickfont=dict(size=9, color='#374151', family='Inter, sans-serif'), showgrid=False, tickprefix='$', ticksuffix='M'),
+    showlegend=False, hovermode='x unified', barmode='group', bargap=0.15,
+    hoverlabel=dict(bgcolor='white', font=dict(size=11, color='#1a2332', family='Inter, sans-serif'), bordercolor='rgba(0,0,0,0)'))
+fin_net_html = fig_fin_net.to_html(full_html=False, include_plotlyjs='cdn', config={'displayModeBar': False, 'responsive': True})
+fin_net_html = fin_net_html.replace('class="plotly-graph-div" style="', 'class="plotly-graph-div" style="width:100%;')
+
+
+
 
 
 
@@ -297,22 +396,20 @@ html_content = r"""
 <title>Migraine Intelligence Hub</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap">
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
-    --navy-900: #0A1A3D;
-    --navy-800: #102A5C;
-    --navy-700: #163990;
-    --navy-600: #1C4FC0;
-    --navy-500: #3B6FD9;
-    --accent: #41B6E6;
+    --navy-900: #0000C9;
+    --navy-800: #0000C9;
+    --navy-700: #0000C9;
+    --navy-600: #0000C9;
+    --navy-500: #0000C9;
+    --accent: #0EA5E9;
     
-    --bg: #EEF3FB;
-    --bg-2: #E3EBF7;
+    --bg: #F0F4FA;
+    --bg-2: #EFF6FF;
     --surface: #FFFFFF;
     --surface-2: #F8FAFD;
-    --text: #0F172A;
+    --text: #1A1A1A;
     --text-muted: #64748B;
     --text-soft: #475569;
     --hairline: rgba(15,23,42,0.08);
@@ -336,12 +433,8 @@ html_content = r"""
 html, body { height: 100%; }
 
 body {
-    font-family: 'Inter', system-ui, -apple-system, 'SF Pro Text', 'Segoe UI', Roboto, sans-serif;
-    background:
-        radial-gradient(ellipse 80% 60% at 0% 0%, rgba(28,79,192,0.08) 0%, transparent 60%),
-        radial-gradient(ellipse 70% 50% at 100% 0%, rgba(65,182,230,0.07) 0%, transparent 55%),
-        radial-gradient(ellipse 60% 50% at 50% 100%, rgba(124,58,237,0.04) 0%, transparent 60%),
-        var(--bg);
+    font-family: 'Pfizer Diatype Office', Arial, Helvetica, sans-serif;
+    background: linear-gradient(160deg, #EFF6FF 0%, #F0F4FA 50%, #EEF2FF 100%);
     color: var(--text);
     line-height: 1.5;
     font-size: 14px;
@@ -350,7 +443,7 @@ body {
     overflow: hidden;
 }
 
-h1, h2, h3, h4 { font-family: 'Manrope', 'Inter', 'SF Pro Display', system-ui, sans-serif; letter-spacing: -0.015em; }
+h1, h2, h3, h4 { font-family: 'Pfizer Diatype Office', Arial, Helvetica, sans-serif; font-weight: 800; letter-spacing: -0.015em; }
 a { color: inherit; text-decoration: none; }
 
 /* ───── APP SHELL ───── */
@@ -361,12 +454,12 @@ a { color: inherit; text-decoration: none; }
 
 .sidebar-brand { padding: 1.4rem 1.2rem 1.2rem; display: flex; flex-direction: column; gap: 0.7rem; }
 .sidebar-brand img { height: 28px; align-self: flex-start; }
-.sidebar-brand .title { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 1.22rem; color: var(--navy-900); line-height: 1.18; letter-spacing: -0.025em; }
+.sidebar-brand .title { font-family: 'Pfizer Diatype Office', Arial, Helvetica, sans-serif; font-weight: 800; font-size: 1.22rem; color: var(--navy-900); line-height: 1.18; letter-spacing: -0.025em; }
 .sidebar-brand .subtitle { font-size: 0.72rem; color: var(--text-muted); font-weight: 500; }
 
 .sidebar-divider { height: 1px; background: var(--hairline); margin: 0 0.85rem; }
 
-.sidebar-section-label { font-family: 'Manrope', sans-serif; font-size: 0.62rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-muted); padding: 0.95rem 1.15rem 0.4rem; }
+.sidebar-section-label { font-family: 'Pfizer Diatype Office', Arial, Helvetica, sans-serif; font-size: 0.62rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-muted); padding: 0.95rem 1.15rem 0.4rem; }
 
 .nav { padding: 0 0.55rem; }
 .nav-item {
@@ -478,7 +571,7 @@ a { color: inherit; text-decoration: none; }
 .chip-s4 { background: linear-gradient(135deg, #CFFAFE, #A5F3FC); } .chip-s4 svg { stroke: #0E7490; }
 .chip-s5 { background: linear-gradient(135deg, #DCFCE7, #BBF7D0); } .chip-s5 svg { stroke: #047857; }
 
-.card-title { font-family: 'Manrope', sans-serif; font-size: 1.02rem; font-weight: 700; color: var(--navy-900); line-height: 1.25; margin-bottom: 0.3rem; }
+.card-title { font-family: 'Pfizer Diatype Office', Arial, Helvetica, sans-serif; font-size: 1.02rem; font-weight: 700; color: var(--navy-900); line-height: 1.25; margin-bottom: 0.3rem; }
 .card-desc { font-size: 0.8rem; color: var(--text-muted); line-height: 1.5; flex: 1; margin-bottom: 0.85rem; }
 .dest-pill { display: inline-flex; align-items: center; gap: 0.35rem; font-size: 0.7rem; font-weight: 600; color: var(--text-soft); padding: 0.22rem 0.55rem; border-radius: 6px; background: rgba(15,23,42,0.05); align-self: flex-start; }
 .dest-tableau .swatch { color: #1F77B4; } .dest-ppt .swatch { color: #D24726; } .dest-xlsx .swatch { color: #107C41; } .dest-agent .swatch { color: #7C3AED; } .dest-doc .swatch { color: #475569; }
@@ -490,16 +583,16 @@ a { color: inherit; text-decoration: none; }
 .hero { position: relative; background: radial-gradient(ellipse 90% 80% at 20% 20%, rgba(28,79,192,0.06) 0%, transparent 50%), radial-gradient(ellipse 60% 70% at 80% 80%, rgba(65,182,230,0.05) 0%, transparent 50%), linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(248,250,253,0.95) 100%); border-radius: 16px; padding: 2rem 2rem 1.6rem; border: 1px solid var(--hairline-2); box-shadow: var(--shadow-sm); overflow: hidden; }
 .hero::before { content: ''; position: absolute; top: -1px; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--navy-600), var(--accent), var(--navy-500)); border-radius: 16px 16px 0 0; opacity: 0.7; }
 .hero-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 1.5rem; }
-.hero-title { font-family: 'Manrope', sans-serif; font-size: 1.65rem; font-weight: 800; color: var(--navy-900); letter-spacing: -0.025em; line-height: 1.15; margin-bottom: 0.35rem; }
+.hero-title { font-family: 'Pfizer Diatype Office', Arial, Helvetica, sans-serif; font-size: 1.65rem; font-weight: 800; color: var(--navy-900); letter-spacing: -0.025em; line-height: 1.15; margin-bottom: 0.35rem; }
 .hero-subtitle { font-size: 0.82rem; font-weight: 500; color: var(--text-muted); display: flex; align-items: center; gap: 0.5rem; }
 .hero-subtitle .dot { width: 4px; height: 4px; border-radius: 50%; background: var(--text-muted); opacity: 0.5; }
 .hero-badge { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.68rem; font-weight: 600; color: var(--navy-700); background: rgba(28,79,192,0.08); padding: 0.3rem 0.7rem; border-radius: 8px; flex-shrink: 0; margin-top: 0.2rem; }
 .hero-badge svg { width: 12px; height: 12px; stroke: currentColor; fill: none; stroke-width: 2; }
 .hero-kpis { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.75rem; }
-.hero-kpi { background: rgba(255,255,255,0.75); backdrop-filter: blur(8px); border: 1px solid var(--hairline-2); border-radius: 12px; padding: 0.85rem 1rem 0.8rem; transition: transform 0.25s var(--ease-out), box-shadow 0.25s var(--ease); }
+.hero-kpi { background: #EEF5FB; border: 1px solid var(--hairline-2); border-radius: 12px; padding: 0.85rem 1rem 0.8rem; transition: transform 0.25s var(--ease-out), box-shadow 0.25s var(--ease); }
 .hero-kpi:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
 .hero-kpi .kpi-label { font-size: 0.7rem; color: var(--text-muted); font-weight: 500; margin-bottom: 0.25rem; }
-.hero-kpi .kpi-value { font-family: 'Manrope', sans-serif; font-size: 1.5rem; font-weight: 700; color: var(--navy-900); line-height: 1.1; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; margin-bottom: 0.3rem; }
+.hero-kpi .kpi-value { font-family: 'Pfizer Diatype Office', Arial, Helvetica, sans-serif; font-size: 1.5rem; font-weight: 700; color: var(--navy-900); line-height: 1.1; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; margin-bottom: 0.3rem; }
 .hero-kpi .kpi-delta { display: inline-flex; align-items: center; gap: 0.25rem; font-size: 0.7rem; font-weight: 600; font-variant-numeric: tabular-nums; }
 .hero-kpi .kpi-delta.up { color: var(--up); } .hero-kpi .kpi-delta.down { color: var(--down); } .hero-kpi .kpi-delta.flat { color: var(--flat); }
 .hero-kpi .kpi-delta .tri { font-size: 0.65rem; line-height: 1; }
@@ -510,7 +603,7 @@ a { color: inherit; text-decoration: none; }
 /* ───── SUB-PANEL (full content area) ───── */
 .sub-panel { display: none; }
 .sub-panel.is-active { display: block; }
-.sub-panel-title { font-family: 'Manrope', sans-serif; font-size: 1.25rem; font-weight: 700; color: var(--navy-900); margin-bottom: 0.3rem; letter-spacing: -0.02em; }
+.sub-panel-title { font-family: 'Pfizer Diatype Office', Arial, Helvetica, sans-serif; font-size: 1.25rem; font-weight: 700; color: var(--navy-900); margin-bottom: 0.3rem; letter-spacing: -0.02em; }
 .sub-panel-desc { font-size: 0.84rem; color: var(--text-muted); margin-bottom: 1.4rem; max-width: 640px; }
 .placeholder-chart { border: 2px dashed var(--hairline); border-radius: 12px; padding: 3rem 2rem; display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 0.85rem; font-weight: 500; background: var(--surface-2); margin-bottom: 1.2rem; min-height: 220px; }
 .placeholder-table { border: 1px solid var(--hairline); border-radius: 10px; overflow: hidden; }
@@ -536,17 +629,17 @@ a { color: inherit; text-decoration: none; }
     z-index: 5;
 }
 .toolbar-title {
-    font-family: 'Manrope', sans-serif;
+    font-family: 'Pfizer Diatype Office', Arial, Helvetica, sans-serif;
     font-size: 0.78rem;
-    color: var(--text-muted);
+    color: var(--navy-700);
     font-weight: 500;
 }
-.toolbar-title strong { color: var(--text); font-weight: 600; }
+.toolbar-title strong { color: var(--navy-900); font-weight: 600; }
 .toolbar-actions { display: flex; align-items: center; gap: 0.45rem; }
 
 /* ????? KPI STRIP ????? */
 .kpis-head {
-    font-family: 'Manrope', sans-serif;
+    font-family: 'Pfizer Diatype Office', Arial, Helvetica, sans-serif;
     font-size: 0.62rem;
     font-weight: 700;
     text-transform: uppercase;
@@ -587,7 +680,7 @@ a { color: inherit; text-decoration: none; }
     margin-bottom: 0.3rem;
 }
 .kpi .kpi-value {
-    font-family: 'Manrope', sans-serif;
+    font-family: 'Pfizer Diatype Office', Arial, Helvetica, sans-serif;
     font-size: 1.7rem;
     font-weight: 700;
     color: var(--navy-900);
@@ -704,11 +797,11 @@ a { color: inherit; text-decoration: none; }
                 <span class="hero-badge"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 5V3M12 21v-2M16.95 7.05l1.41-1.41M5.64 18.36l1.41-1.41M19 12h2M3 12h2M16.95 16.95l1.41 1.41M5.64 5.64l1.41 1.41"/></svg>Executive KPIs</span>
             </div>
             <div class="hero-kpis">
-                <div class="hero-kpi"><div class="kpi-label">Nurtec TRx</div><div class="kpi-value">892K</div><div class="kpi-delta up"><span class="tri">&#9650;</span>+12.4% <span class="vs">vs STLY</span></div></div>
-                <div class="hero-kpi"><div class="kpi-label">Nurtec NBRx</div><div class="kpi-value">187K</div><div class="kpi-delta up"><span class="tri">&#9650;</span>+8.6% <span class="vs">vs STLY</span></div></div>
-                <div class="hero-kpi"><div class="kpi-label">Nurtec oCGRP Mkt Share</div><div class="kpi-value">34.1%</div><div class="kpi-delta up"><span class="tri">&#9650;</span>+1.8% <span class="vs">vs STLY</span></div></div>
-                <div class="hero-kpi"><div class="kpi-label">Acute Nurtec oCGRP Share</div><div class="kpi-value">41.2%</div><div class="kpi-delta up"><span class="tri">&#9650;</span>+2.3% <span class="vs">vs STLY</span></div></div>
-                <div class="hero-kpi"><div class="kpi-label">Preventive Nurtec oCGRP Share</div><div class="kpi-value">22.7%</div><div class="kpi-delta down"><span class="tri">&#9660;</span>-0.5% <span class="vs">vs STLY</span></div></div>
+                <div class="hero-kpi"><div class="kpi-label">Nurtec TRx</div><div class="kpi-value">1.81M</div><div class="kpi-delta up"><span class="tri">&#9650;</span>+16.3% <span class="vs">vs STLY</span></div></div>
+                <div class="hero-kpi"><div class="kpi-label">Nurtec NBRx</div><div class="kpi-value">237K</div><div class="kpi-delta up"><span class="tri">&#9650;</span>+11.2% <span class="vs">vs STLY</span></div></div>
+                <div class="hero-kpi"><div class="kpi-label">Nurtec oCGRP Mkt Share</div><div class="kpi-value">43.0%</div><div class="kpi-delta up"><span class="tri">&#9650;</span>+0.1% <span class="vs">vs STLY</span></div></div>
+                <div class="hero-kpi"><div class="kpi-label">Acute Nurtec oCGRP Share</div><div class="kpi-value">47.4%</div><div class="kpi-delta up"><span class="tri">&#9650;</span>+0.6% <span class="vs">vs STLY</span></div></div>
+                <div class="hero-kpi"><div class="kpi-label">Preventive Nurtec oCGRP Share</div><div class="kpi-value">36.2%</div><div class="kpi-delta down"><span class="tri">&#9660;</span>-0.3% <span class="vs">vs STLY</span></div></div>
             </div>
         </div>
 
@@ -772,19 +865,32 @@ a { color: inherit; text-decoration: none; }
 .nl-content .row { display: flex; gap: 16px; margin-bottom: 16px; }
 .nl-content .row > * { flex: 1; }
 .nl-content .stat-tile { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px; }
-.nl-content .stat-tile .label { font-size: 10px; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+.nl-content .stat-tile .label { font-size: 13px; color: #374151; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; font-weight: 700; }
+.nl-content .label { font-size: 13px; color: #374151; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; font-weight: 700; }
 .nl-content .stat-tile .value { font-size: 28px; font-weight: 700; color: #1a2332; }
-.nl-content .stat-tile .sub { font-size: 11px; color: #6b7280; margin-top: 4px; }
-.nl-content table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.nl-content .stat-tile .sub { font-size: 10px; color: #9ca3af; margin-top: 4px; }
+.nl-content .sub { font-size: 10px; color: #9ca3af; margin-top: 4px; }
+.nl-content .value { font-size: 28px; font-weight: 700; color: #1a2332; }
+.nl-content table { width: 100%; border-collapse: collapse; font-size: 12px; table-layout: fixed; }
 .nl-content th { text-align: left; padding: 10px 12px; border-bottom: 2px solid #e5e7eb; font-size: 10px; text-transform: uppercase; color: #6b7280; letter-spacing: 0.5px; font-weight: 600; }
 .nl-content td { padding: 10px 12px; border-bottom: 1px solid #f3f4f6; }
 .nl-content tr:last-child td { border-bottom: none; }
-.nl-content .pill-group { display: flex; gap: 0; margin-bottom: 16px; }
-.nl-content .pill { padding: 8px 16px; border: 1px solid #e5e7eb; cursor: pointer; font-size: 12px; font-weight: 500; background: white; }
-.nl-content .pill:first-child { border-radius: 6px 0 0 6px; }
-.nl-content .pill:last-child { border-radius: 0 6px 6px 0; }
-.nl-content .pill.active { background: #dc2626; color: white; border-color: #dc2626; }
-.nl-content .pill-sm { padding: 6px 12px; font-size: 11px; }
+.nl-content table th:first-child, .nl-content table td:first-child { width: 18%; }
+.nl-content table th:nth-child(2), .nl-content table td:nth-child(2) { width: 10%; }
+.nl-content table th:nth-child(3), .nl-content table td:nth-child(3) { width: 10%; }
+.nl-content table th:nth-child(4), .nl-content table td:nth-child(4) { width: 11%; }
+.nl-content table th:nth-child(5), .nl-content table td:nth-child(5) { width: 9%; }
+.nl-content table th:nth-child(6), .nl-content table td:nth-child(6) { width: 9%; }
+.nl-content table th:nth-child(7), .nl-content table td:nth-child(7) { width: 9%; }
+.nl-content table th:nth-child(8), .nl-content table td:nth-child(8) { width: 8%; }
+.nl-content table th:nth-child(9), .nl-content table td:nth-child(9) { width: 8%; }
+.nl-content table th:nth-child(10), .nl-content table td:nth-child(10) { width: 8%; }
+.nl-content .pill-group { display: inline-flex; gap: 0; margin-bottom: 16px; border: 2px solid #0000C9; border-radius: 50px; overflow: hidden; }
+.nl-content .pill { padding: 8px 20px; border: none; cursor: pointer; font-size: 12px; font-weight: 600; background: white; color: #0000C9; }
+.nl-content .pill:first-child { border-radius: 50px 0 0 50px; }
+.nl-content .pill:last-child { border-radius: 0 50px 50px 0; }
+.nl-content .pill.active { background: #0000C9; color: white; }
+.nl-content .pill-sm { padding: 6px 14px; font-size: 11px; }
 .nl-content .chart-container { position: relative; width: 100%; height: 280px; margin: 16px 0; margin-left: -20px; margin-right: -20px; width: calc(100% + 40px); }
 .nl-content .chart-container-sm { height: 220px; margin-left: -20px; margin-right: -20px; width: calc(100% + 40px); }
 .nl-content svg.chart { width: 100%; height: 100%; }
@@ -796,9 +902,9 @@ a { color: inherit; text-decoration: none; }
 .nl-content .legend-item { display: flex; align-items: center; gap: 6px; }
 .nl-content .legend-dot { width: 8px; height: 8px; border-radius: 50%; }
 .nl-content .brand-header { padding: 10px 16px; border-radius: 6px; margin-bottom: 12px; color: white; font-size: 12px; font-weight: 600; display: flex; gap: 16px; }
-.nl-content .brand-header.brand-a { background: #1e3a5f; }
-.nl-content .brand-header.brand-b { background: #6b21a8; }
-.nl-content .brand-header.brand-c { background: #0f766e; }
+.nl-content .brand-header.brand-a { background: #7C6CFC; }
+.nl-content .brand-header.brand-b { background: #16a34a; }
+.nl-content .brand-header.brand-c { background: #ea580c; }
 .nl-content .insight-bullet { display: flex; gap: 10px; margin-bottom: 12px; align-items: flex-start; }
 .nl-content .insight-dot { width: 8px; height: 8px; border-radius: 50%; background: #f59e0b; margin-top: 4px; flex-shrink: 0; }
 .nl-content .alert-item { display: flex; gap: 10px; margin-bottom: 14px; align-items: flex-start; }
@@ -815,6 +921,8 @@ a { color: inherit; text-decoration: none; }
 .nl-content .footnote { font-size: 10px; color: #9ca3af; margin-top: 12px; padding-top: 8px; border-top: 1px solid #f3f4f6; }
 .nl-content .split-section { display: flex; gap: 24px; margin-bottom: 16px; }
 .nl-content .split-section > .split-col { flex: 1; min-width: 0; }
+.nl-content .split-section.chart-split { position: relative; }
+.nl-content .split-section.chart-split::after { content: ''; position: absolute; top: 5%; bottom: 5%; left: 50%; transform: translateX(-50%); width: 0; border-left: 1px dotted #c7d2fe; }
 .nl-content .split-col .section-label { font-size: 13px; font-weight: 700; margin-bottom: 12px; color: #1a2332; text-align: center; }
 .nl-content .filter-select { padding: 6px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 11px; background: white; }
 .nl-content .sub-signal-table td { padding: 6px 12px; font-size: 11px; }
@@ -825,81 +933,111 @@ a { color: inherit; text-decoration: none; }
 <div class="nl-tab active" id="nl-exec-tab">
 <div style="padding:8px 32px 24px;">
 <div class="section-head"><h2>Executive Summary</h2><p>High-level performance overview and key takeaways for the current reporting week.</p></div>
-    <div class="card">
-      <div class="card-title">Performance Snapshot</div>
-      <div class="card-subtitle">Week ending 06/19/2026 · National</div>
-      <table>
-        <thead>
-          <tr><th>METRIC</th><th style="text-align:right">LATEST WK</th><th style="text-align:right">YTD</th><th style="text-align:right">VS. GOAL</th><th style="text-align:right">VS. STLY</th></tr>
-        </thead>
-        <tbody>
-          <tr><td><strong>Nurtec NBRx</strong></td><td style="text-align:right">48.2K</td><td style="text-align:right">1.21M</td><td style="text-align:right">97.8%</td><td style="text-align:right"><span class="delta-pos">+11.3%</span></td></tr>
-          <tr><td><strong>Nurtec NRx</strong></td><td style="text-align:right">112.6K</td><td style="text-align:right">2.85M</td><td style="text-align:right">95.1%</td><td style="text-align:right"><span class="delta-pos">+14.2%</span></td></tr>
-          <tr><td><strong>Nurtec TRx</strong></td><td style="text-align:right">612.4K</td><td style="text-align:right">15.9M</td><td style="text-align:right">93.6%</td><td style="text-align:right"><span class="delta-pos">+16.1%</span></td></tr>
-          <tr><td><strong>Nurtec NBRx Share</strong></td><td style="text-align:right">21.2%</td><td style="text-align:right">20.9%</td><td style="text-align:right">—</td><td style="text-align:right"><span class="delta-pos">+1.3%</span></td></tr>
-          <tr><td><strong>Nurtec NRx Share</strong></td><td style="text-align:right">33.4%</td><td style="text-align:right">33.0%</td><td style="text-align:right">—</td><td style="text-align:right"><span class="delta-pos">+1.1%</span></td></tr>
-          <tr><td><strong>Nurtec TRx Share</strong></td><td style="text-align:right">38.7%</td><td style="text-align:right">38.1%</td><td style="text-align:right">—</td><td style="text-align:right"><span class="delta-pos">+1.4%</span></td></tr>
-        </tbody>
-      </table>
+
+    <!-- KPI CARDS ROW -->
+    <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:16px;margin-bottom:32px;">
+      <div style="background:#EEF5FB;border-radius:12px;padding:14px 16px;text-align:left;border:1px solid rgba(15,23,42,0.05);transition:transform 0.25s cubic-bezier(0.16,1,0.3,1),box-shadow 0.25s cubic-bezier(0.4,0,0.2,1);cursor:default;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 6px 16px rgba(15,23,42,0.07),0 2px 4px rgba(15,23,42,0.04)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+        <div style="font-size:28px;font-weight:800;color:#0000C9;margin-bottom:6px;">48.2K</div>
+        <div style="font-size:12px;font-weight:600;color:#374151;margin-bottom:2px;">Nurtec NBRx</div>
+        <div style="font-size:11px;color:#16a34a;font-weight:600;">+3.1% WoW</div>
+        <div style="font-size:10px;color:#9ca3af;margin-top:4px;">W/E Jun 19, 2026</div>
+      </div>
+      <div style="background:#EEF5FB;border-radius:12px;padding:14px 16px;text-align:left;border:1px solid rgba(15,23,42,0.05);transition:transform 0.25s cubic-bezier(0.16,1,0.3,1),box-shadow 0.25s cubic-bezier(0.4,0,0.2,1);cursor:default;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 6px 16px rgba(15,23,42,0.07),0 2px 4px rgba(15,23,42,0.04)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+        <div style="font-size:28px;font-weight:800;color:#0000C9;margin-bottom:6px;">612.4K</div>
+        <div style="font-size:12px;font-weight:600;color:#374151;margin-bottom:2px;">Nurtec TRx</div>
+        <div style="font-size:11px;color:#16a34a;font-weight:600;">+2.4% WoW</div>
+        <div style="font-size:10px;color:#9ca3af;margin-top:4px;">W/E Jun 19, 2026</div>
+      </div>
+      <div style="background:#EEF5FB;border-radius:12px;padding:14px 16px;text-align:left;border:1px solid rgba(15,23,42,0.05);transition:transform 0.25s cubic-bezier(0.16,1,0.3,1),box-shadow 0.25s cubic-bezier(0.4,0,0.2,1);cursor:default;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 6px 16px rgba(15,23,42,0.07),0 2px 4px rgba(15,23,42,0.04)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+        <div style="font-size:28px;font-weight:800;color:#0000C9;margin-bottom:6px;">38.7%</div>
+        <div style="font-size:12px;font-weight:600;color:#374151;margin-bottom:2px;">oCGRP TRx Share</div>
+        <div style="font-size:11px;color:#16a34a;font-weight:600;">+0.2% WoW</div>
+        <div style="font-size:10px;color:#9ca3af;margin-top:4px;">National &middot; All Segments</div>
+      </div>
+      <div style="background:#EEF5FB;border-radius:12px;padding:14px 16px;text-align:left;border:1px solid rgba(15,23,42,0.05);transition:transform 0.25s cubic-bezier(0.16,1,0.3,1),box-shadow 0.25s cubic-bezier(0.4,0,0.2,1);cursor:default;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 6px 16px rgba(15,23,42,0.07),0 2px 4px rgba(15,23,42,0.04)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+        <div style="font-size:28px;font-weight:800;color:#0000C9;margin-bottom:6px;">$28.4M</div>
+        <div style="font-size:12px;font-weight:600;color:#374151;margin-bottom:2px;">Gross Sales W/E</div>
+        <div style="font-size:11px;color:#16a34a;font-weight:600;">+2.8% WoW</div>
+        <div style="font-size:10px;color:#9ca3af;margin-top:4px;">vs. $27.6M prior week</div>
+      </div>
+      <div style="background:#EEF5FB;border-radius:12px;padding:14px 16px;text-align:left;border:1px solid rgba(15,23,42,0.05);transition:transform 0.25s cubic-bezier(0.16,1,0.3,1),box-shadow 0.25s cubic-bezier(0.4,0,0.2,1);cursor:default;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 6px 16px rgba(15,23,42,0.07),0 2px 4px rgba(15,23,42,0.04)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+        <div style="font-size:28px;font-weight:800;color:#0000C9;margin-bottom:6px;">93.6%</div>
+        <div style="font-size:12px;font-weight:600;color:#374151;margin-bottom:2px;">YTD Goal Attainment</div>
+        <div style="font-size:11px;color:#d97706;font-weight:600;">$112K behind pace</div>
+        <div style="font-size:10px;color:#9ca3af;margin-top:4px;">TRx vs OP26</div>
+      </div>
+      <div style="background:#EEF5FB;border-radius:12px;padding:14px 16px;text-align:left;border:1px solid rgba(15,23,42,0.05);transition:transform 0.25s cubic-bezier(0.16,1,0.3,1),box-shadow 0.25s cubic-bezier(0.4,0,0.2,1);cursor:default;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 6px 16px rgba(15,23,42,0.07),0 2px 4px rgba(15,23,42,0.04)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+        <div style="font-size:28px;font-weight:800;color:#0000C9;margin-bottom:6px;">128M</div>
+        <div style="font-size:12px;font-weight:600;color:#374151;margin-bottom:2px;">Covered Lives w/ Access</div>
+        <div style="font-size:11px;color:#16a34a;font-weight:600;">+1.2M vs prior month</div>
+        <div style="font-size:10px;color:#9ca3af;margin-top:4px;">As of Jun 2026</div>
+      </div>
     </div>
 
-    <div class="card">
-        <div class="card-title">Weekly Insight Bullets</div>
-        <div class="card-subtitle">Key performance highlights for the current reporting week</div>
-        <div class="insight-bullet">
-          <div class="insight-dot"></div>
-          <div><strong>Financial performance:</strong> Gross sales at 101.0% vs. LE2 for P6 PTD and 103.3% vs. LE2 for Q2 QTD.</div>
-        </div>
-        <div class="insight-bullet">
-          <div class="insight-dot"></div>
-          <div><strong>As of May 29, Nurtec TRx growth is 16.1% YTD</strong> which is 2.2% higher compared to same time point in 2025.</div>
-        </div>
-        <div class="insight-bullet">
-          <div class="insight-dot"></div>
-          <div><strong>oCGRP market TRx YTD growth:</strong> 17.1%</div>
-        </div>
-        <div class="insight-bullet">
-          <div class="insight-dot"></div>
-          <div><strong>Competition TRx YTD growth:</strong> Ubrelvy 14.4%; Qulipta 22.5%</div>
-        </div>
-        <div class="insight-bullet">
-          <div class="insight-dot"></div>
-          <div><strong>Nurtec market share performance:</strong> TRx YTD: 42.6%; NRx YTD: 42.7%</div>
-        </div>
-        <div class="insight-bullet">
-          <div class="insight-dot"></div>
-          <div><strong>vs Budget:</strong> Nurtec TRx is 93.5% YTD; oCGRP TRx is 94.3% YTD</div>
-        </div>
-        <div class="insight-bullet">
-          <div class="insight-dot"></div>
-          <div><strong>Weekly channel performance (5/22):</strong> TRx share higher (0.2%) for the week vs same time period last year</div>
-        </div>
-      </div>
+    <!-- PERFORMANCE INSIGHTS -->
+    <div style="background:#ffffff;border:1px solid #e8ecf0;border-left:4px solid #0000C9;border-radius:8px;padding:24px 28px;margin-bottom:24px;">
+      <div style="font-size:18px;font-weight:700;color:#1a2332;margin-bottom:6px;">Performance Insights</div>
+      <div style="font-size:12px;color:#6b7280;margin-bottom:20px;">Key observations for week ending 06/19/2026 &middot; Numbers in bold update weekly</div>
 
-    <div class="row">
-      <div class="card">
-        <div class="card-title">Access Change Lines</div>
-        <div class="card-subtitle">Only appears with material weekly access changes</div>
-        <div style="margin-bottom:10px;"><strong>Louisiana Medicaid</strong><br><span style="color:#6b7280">Nurtec removed from PDL · est. -2,200 NRx</span></div>
-        <div><strong>UnitedHealth Commercial (IL)</strong><br><span style="color:#6b7280">PA requirement added · 820K covered lives</span></div>
-      </div>
+      <div style="font-size:14px;font-weight:700;color:#1a2332;margin-bottom:4px;text-decoration:underline;">Weekly Insights</div>
+      <div style="font-size:11px;color:#6b7280;margin-bottom:12px;">Week-over-week changes and weekly-level observations</div>
+      <ul style="list-style-type:disc;padding-left:20px;margin-bottom:16px;color:#0000C9;">
+        <li style="margin-bottom:8px;font-size:13px;line-height:1.7;"><span style="color:#374151;">Nurtec NBRx volume this week was <strong style="color:#0000C9;">48.2K</strong>, up <strong style="color:#0000C9;">+3.1%</strong> vs. prior week (46.7K) and <strong style="color:#0000C9;">+5.8%</strong> vs. same week last year.</span></li>
+        <li style="margin-bottom:8px;font-size:13px;line-height:1.7;"><span style="color:#374151;">Nurtec TRx volume came in at <strong style="color:#0000C9;">612.4K</strong>, an increase of <strong style="color:#0000C9;">+2.4%</strong> WoW, with retail channel contributing <strong style="color:#0000C9;">+0.2%</strong> share gain vs. same week last year.</span></li>
+        <li style="margin-bottom:8px;font-size:13px;line-height:1.7;"><span style="color:#374151;">Nurtec oCGRP TRx market share moved to <strong style="color:#0000C9;">38.7%</strong> this week, up <strong style="color:#0000C9;">+0.2%</strong> WoW. Ubrelvy flat at <strong style="color:#0000C9;">31.4%</strong>; Qulipta gained <strong style="color:#0000C9;">+0.1%</strong> to <strong style="color:#0000C9;">24.8%</strong>.</span></li>
+        <li style="margin-bottom:8px;font-size:13px;line-height:1.7;"><span style="color:#374151;">Acute oCGRP share for Nurtec at <strong style="color:#0000C9;">54.1%</strong> (<strong style="color:#0000C9;">+0.3%</strong> WoW); Preventive share at <strong style="color:#0000C9;">21.2%</strong> (<strong style="color:#0000C9;">-0.1%</strong> WoW).</span></li>
+        <li style="margin-bottom:8px;font-size:13px;line-height:1.7;"><span style="color:#374151;">Gross sales for the week were <strong style="color:#0000C9;">$28.4M</strong>, up <strong style="color:#0000C9;">+2.8%</strong> vs. prior week ($27.6M). MTD attainment at <strong style="color:#0000C9;">94.4%</strong> vs. OP26.</span></li>
+        <li style="margin-bottom:8px;font-size:13px;line-height:1.7;"><span style="color:#374151;">Preventive segment: Qulipta weekly volume grew <strong style="color:#0000C9;">+4.2%</strong> WoW vs. Nurtec Preventive at <strong style="color:#0000C9;">+1.1%</strong> WoW &#8212; gap widening by <strong style="color:#0000C9;">3.1%</strong> this week.</span></li>
+      </ul>
 
-      <div class="card">
-        <div class="card-title">Weekly Gross Sales</div>
-        <div class="card-subtitle">Pending Finance feed alignment (Chris Marino)</div>
-        <div style="margin-bottom:4px;font-size:10px;color:#6b7280;">GROSS SALES W/E 06/19</div>
-        <div style="font-size:28px;font-weight:700;">$28.4M <span class="badge" style="background:#dcfce7;color:#166534;font-size:11px;vertical-align:middle;">+2.8%</span></div>
-        <div style="font-size:11px;color:#6b7280;margin-bottom:16px;">vs. $27.6M prior week</div>
-        <hr style="border:none;border-top:1px solid #e5e7eb;margin:12px 0;">
-        <div style="font-size:10px;color:#6b7280;">YTD ATTAINMENT VS OP26</div>
-        <div style="font-size:24px;font-weight:700;">93.6%</div>
-        <div style="font-size:11px;color:#6b7280;">$112K behind pace</div>
-      </div>
+      <hr style="border:none;border-top:1px solid #e8ecf0;margin:24px 0;">
 
-      
+      <div style="font-size:14px;font-weight:700;color:#1a2332;margin-bottom:4px;text-decoration:underline;">Year to Date Insights</div>
+      <div style="font-size:11px;color:#6b7280;margin-bottom:12px;">Cumulative performance statements as of week ending 06/19/2026</div>
+      <ul style="list-style-type:disc;padding-left:20px;margin-bottom:16px;color:#0000C9;">
+        <li style="margin-bottom:8px;font-size:13px;line-height:1.7;"><span style="color:#374151;">As of <strong style="color:#0000C9;">June 19, 2026</strong>, the oral CGRP TRx market is growing at <strong style="color:#0000C9;">17.0% YTD</strong> vs. same time last year, which is <strong style="color:#0000C9;">1.5%</strong> lower growth than the same time period in 2025 vs. 2024 (18.5%).</span></li>
+        <li style="margin-bottom:8px;font-size:13px;line-height:1.7;"><span style="color:#374151;">Nurtec TRx is growing at <strong style="color:#0000C9;">16.3% YTD</strong>, which is <strong style="color:#0000C9;">2.7%</strong> higher than Nurtec's growth in 2025 by this point in the year (13.5%).</span></li>
+        <li style="margin-bottom:8px;font-size:13px;line-height:1.7;"><span style="color:#374151;">Comparatively, Ubrelvy's YTD growth is <strong style="color:#0000C9;">14.0%</strong> (3.0% lower than in 2025), and Qulipta's is <strong style="color:#0000C9;">22.5%</strong> (9.0% lower than in 2025).</span></li>
+        <li style="margin-bottom:8px;font-size:13px;line-height:1.7;"><span style="color:#374151;">Nurtec remains the market leader in Oral CGRP with <strong style="color:#0000C9;">43.0% TRx share YTD</strong> and <strong style="color:#0000C9;">43.3% NBRx share YTD</strong> (-0.3% TRx share and +0.5% NBRx share vs. same period last year).</span></li>
+        <li style="margin-bottom:8px;font-size:13px;line-height:1.7;"><span style="color:#374151;">Ubrelvy has <strong style="color:#0000C9;">32.1%</strong> TRx share YTD and <strong style="color:#0000C9;">35.5%</strong> NBRx share YTD (-0.9% and -0.1% respectively vs. same time last year).</span></li>
+        <li style="margin-bottom:8px;font-size:13px;line-height:1.7;"><span style="color:#374151;">Qulipta has <strong style="color:#0000C9;">24.8%</strong> TRx share YTD and <strong style="color:#0000C9;">21.2%</strong> NBRx share YTD (+1.1% and -0.3% respectively vs. same time last year).</span></li>
+        <li style="margin-bottom:8px;font-size:13px;line-height:1.7;"><span style="color:#374151;">vs Budget: Nurtec TRx attainment is <strong style="color:#0000C9;">93.5% YTD</strong>; oCGRP TRx attainment is <strong style="color:#0000C9;">94.3% YTD</strong>.</span></li>
+      </ul>
     </div>
 
-    
+    <!-- PERFORMANCE SNAPSHOT + ACCESS CHANGES -->
+    <div style="display:flex;gap:20px;margin-bottom:24px;">
+      <div style="flex:2;background:#ffffff;border:1px solid #e8ecf0;border-left:4px solid #0000C9;border-radius:8px;padding:24px 28px;">
+        <div style="font-size:16px;font-weight:700;margin-bottom:4px;">Performance Snapshot</div>
+        <div style="font-size:11px;color:#6b7280;margin-bottom:16px;">Week ending 06/19/2026 &middot; National</div>
+        <table>
+          <thead>
+            <tr><th>METRIC</th><th style="text-align:right">LATEST WK</th><th style="text-align:right">R4W AVG</th><th style="text-align:right">YTD</th><th style="text-align:right">VS. GOAL</th><th style="text-align:right">VS. STLY</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Nurtec NBRx</strong></td><td style="text-align:right">48.2K</td><td style="text-align:right">46.8K</td><td style="text-align:right">1.21M</td><td style="text-align:right">97.8%</td><td style="text-align:right"><span class="delta-pos">+11.3%</span></td></tr>
+            <tr><td><strong>Nurtec NRx</strong></td><td style="text-align:right">112.6K</td><td style="text-align:right">110.4K</td><td style="text-align:right">2.85M</td><td style="text-align:right">95.1%</td><td style="text-align:right"><span class="delta-pos">+14.2%</span></td></tr>
+            <tr><td><strong>Nurtec TRx</strong></td><td style="text-align:right">612.4K</td><td style="text-align:right">601.8K</td><td style="text-align:right">15.9M</td><td style="text-align:right">93.6%</td><td style="text-align:right"><span class="delta-pos">+16.1%</span></td></tr>
+            <tr><td><strong>Nurtec NBRx Share</strong></td><td style="text-align:right">21.2%</td><td style="text-align:right">21.0%</td><td style="text-align:right">20.9%</td><td style="text-align:right">—</td><td style="text-align:right"><span class="delta-pos">+1.3%</span></td></tr>
+            <tr><td><strong>Nurtec NRx Share</strong></td><td style="text-align:right">33.4%</td><td style="text-align:right">33.2%</td><td style="text-align:right">33.0%</td><td style="text-align:right">—</td><td style="text-align:right"><span class="delta-pos">+1.1%</span></td></tr>
+            <tr><td><strong>Nurtec TRx Share</strong></td><td style="text-align:right">38.7%</td><td style="text-align:right">38.5%</td><td style="text-align:right">38.1%</td><td style="text-align:right">—</td><td style="text-align:right"><span class="delta-pos">+1.4%</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div style="flex:1;background:#ffffff;border:1px solid #e8ecf0;border-left:4px solid #0000C9;border-radius:8px;padding:20px 24px;">
+        <div style="font-size:16px;font-weight:700;margin-bottom:4px;">Access Change Lines</div>
+        <div style="font-size:11px;color:#6b7280;margin-bottom:16px;">Only appears with material weekly access changes</div>
+        <div style="margin-bottom:14px;">
+          <div><strong>Louisiana Medicaid</strong></div>
+          <div style="color:#6b7280;font-size:12px;">Nurtec removed from PDL &middot; est. <strong style="color:#0000C9;">-2,200 NRx</strong></div>
+        </div>
+        <div>
+          <div><strong>UnitedHealth Commercial (IL)</strong></div>
+          <div style="color:#6b7280;font-size:12px;">PA requirement added &middot; <strong style="color:#0000C9;">820K</strong> covered lives</div>
+        </div>
+      </div>
+    </div>
 
   </div>
 </div>
@@ -913,10 +1051,10 @@ a { color: inherit; text-decoration: none; }
     
 
 <div class="row">
-        <div class="stat-tile"><div class="label">NRX MTD</div><div class="value">486K</div><div class="sub delta-pos">+15.6%</div></div>
-        <div class="stat-tile"><div class="label">NRX YTD</div><div class="value">2.85M</div><div class="sub delta-pos">+16.1%</div></div>
-        <div class="stat-tile"><div class="label">TRX MTD</div><div class="value">2.41M</div><div class="sub delta-pos">+16.5%</div></div>
-        <div class="stat-tile"><div class="label">TRX YTD</div><div class="value">15.9M</div><div class="sub delta-pos">+16.1%</div></div>
+        <div style="background:#EEF5FB;border-radius:12px;padding:14px 16px;text-align:left;border:1px solid rgba(15,23,42,0.05);transition:transform 0.25s cubic-bezier(0.16,1,0.3,1),box-shadow 0.25s cubic-bezier(0.4,0,0.2,1);flex:1;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 6px 16px rgba(15,23,42,0.07),0 2px 4px rgba(15,23,42,0.04)'" onmouseout="this.style.transform='';this.style.boxShadow=''"><div class="label">NRX MTD</div><div class="value" style="color:#0000C9;">28.6K</div><div class="sub"><span class="delta-pos">+14.4%</span> vs STLY</div></div>
+        <div style="background:#EEF5FB;border-radius:12px;padding:14px 16px;text-align:left;border:1px solid rgba(15,23,42,0.05);transition:transform 0.25s cubic-bezier(0.16,1,0.3,1),box-shadow 0.25s cubic-bezier(0.4,0,0.2,1);flex:1;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 6px 16px rgba(15,23,42,0.07),0 2px 4px rgba(15,23,42,0.04)'" onmouseout="this.style.transform='';this.style.boxShadow=''"><div class="label">NRX YTD</div><div class="value" style="color:#0000C9;">627.7K</div><div class="sub"><span class="delta-pos">+14.7%</span> vs STLY</div></div>
+        <div style="background:#EEF5FB;border-radius:12px;padding:14px 16px;text-align:left;border:1px solid rgba(15,23,42,0.05);transition:transform 0.25s cubic-bezier(0.16,1,0.3,1),box-shadow 0.25s cubic-bezier(0.4,0,0.2,1);flex:1;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 6px 16px rgba(15,23,42,0.07),0 2px 4px rgba(15,23,42,0.04)'" onmouseout="this.style.transform='';this.style.boxShadow=''"><div class="label">TRX MTD</div><div class="value" style="color:#0000C9;">75.5K</div><div class="sub"><span class="delta-pos">+17.0%</span> vs STLY</div></div>
+        <div style="background:#EEF5FB;border-radius:12px;padding:14px 16px;text-align:left;border:1px solid rgba(15,23,42,0.05);transition:transform 0.25s cubic-bezier(0.16,1,0.3,1),box-shadow 0.25s cubic-bezier(0.4,0,0.2,1);flex:1;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 6px 16px rgba(15,23,42,0.07),0 2px 4px rgba(15,23,42,0.04)'" onmouseout="this.style.transform='';this.style.boxShadow=''"><div class="label">TRX YTD</div><div class="value" style="color:#0000C9;">1.59M</div><div class="sub"><span class="delta-pos">+15.6%</span> vs STLY</div></div>
       </div>
     </div>
 
@@ -924,35 +1062,20 @@ a { color: inherit; text-decoration: none; }
         <div class="pill pill-sm active" id="xp-trx-pill" onclick="switchXponentMetric('trx')">TRx</div>
         <div class="pill pill-sm" id="xp-nrx-pill" onclick="switchXponentMetric('nrx')">NRx</div>
       </div>
+      <div style="display:flex;justify-content:flex-end;margin-bottom:6px;margin-top:-10px;">
+        <div style="position:relative;display:inline-block;">
+          <div style="width:28px;height:28px;border-radius:50%;background:#ffffff;color:#0000C9;font-size:16px;font-weight:800;display:flex;align-items:center;justify-content:center;cursor:pointer;border:1px solid #c7d2fe;" onmouseover="this.nextElementSibling.style.display='block'" onmouseout="this.nextElementSibling.style.display='none'">i</div>
+          <div style="display:none;position:absolute;right:0;top:32px;background:#1a2332;color:#fff;padding:10px 14px;border-radius:6px;font-size:11px;line-height:1.5;width:240px;z-index:10;box-shadow:0 4px 12px rgba(0,0,0,0.15);">The Shares in this view are the Nurtec oCGRP shares across Payer's or Channel's</div>
+        </div>
+      </div>
       <div class="row" style="margin-bottom:0;">
       
       <div class="card">
         <div class="card-title" data-xp-metric="{XM} Share Trend by Payer">TRx Share Trend by Payer</div>
         <div class="card-subtitle">Commercial / Medicare / Medicaid / Other · weekly</div>
-        <div class="chart-container chart-container-sm">
-          <svg class="chart" preserveAspectRatio="none" viewBox="0 0 380 200">
-            <line x1="40" y1="180" x2="370" y2="180" stroke="#e5e7eb" stroke-width="1"/>
-            <line x1="40" y1="140" x2="370" y2="140" stroke="#f3f4f6" stroke-width="1" stroke-dasharray="3"/>
-            <line x1="40" y1="100" x2="370" y2="100" stroke="#f3f4f6" stroke-width="1" stroke-dasharray="3"/>
-            <line x1="40" y1="60" x2="370" y2="60" stroke="#f3f4f6" stroke-width="1" stroke-dasharray="3"/>
-            <text x="35" y="184" text-anchor="end" font-size="9" fill="#9ca3af">0%</text>
-            <text x="35" y="144" text-anchor="end" font-size="9" fill="#9ca3af">10%</text>
-            <text x="35" y="104" text-anchor="end" font-size="9" fill="#9ca3af">20%</text>
-            <text x="35" y="64" text-anchor="end" font-size="9" fill="#9ca3af">30%</text>
-            <text x="35" y="24" text-anchor="end" font-size="9" fill="#9ca3af">40%</text>
-            <polyline fill="none" stroke="#3b82f6" stroke-width="2" points="50,72 75,70 100,68 125,67 150,66 175,64 200,63 225,62 250,61 275,60 300,59 325,58 350,57"/>
-            <polyline fill="none" stroke="#16a34a" stroke-width="2" points="50,95 75,94 100,93 125,92 150,91 175,90 200,89 225,88 250,87 275,87 300,86 325,86 350,85"/>
-            <polyline fill="none" stroke="#f59e0b" stroke-width="2" points="50,135 75,134 100,133 125,132 150,132 175,131 200,130 225,130 250,129 275,128 300,128 325,127 350,127"/>
-            <polyline fill="none" stroke="#9ca3af" stroke-width="2" points="50,148 75,148 100,147 125,147 150,147 175,146 200,146 225,146 250,145 275,145 300,145 325,144 350,144"/>
-            <text x="50" y="196" font-size="8" fill="#9ca3af">Wk 1</text>
-            <text x="130" y="196" font-size="8" fill="#9ca3af">Wk 6</text>
-            <text x="210" y="196" font-size="8" fill="#9ca3af">Wk 11</text>
-            <text x="290" y="196" font-size="8" fill="#9ca3af">Wk 16</text>
-            <text x="350" y="196" font-size="8" fill="#9ca3af"></text>
-          </svg>
-        </div>
-        <div class="axis-info"><span>Y-Axis: TRx Share %</span><span>X-Axis: Time Period (Week)</span></div>
-        <div class="legend" style="font-size:10px;">
+        <div id="xpt-payer-trx" style="width:100%;overflow:hidden;">XPT_PAYER_TRX_PLACEHOLDER</div>
+        <div id="xpt-payer-nrx" style="width:100%;overflow:hidden;height:0;visibility:hidden;">XPT_PAYER_NRX_PLACEHOLDER</div>
+        <div class="legend" style="font-size:10px;margin-top:8px;">
           <div class="legend-item"><div class="legend-dot" style="background:#3b82f6"></div>Commercial</div>
           <div class="legend-item"><div class="legend-dot" style="background:#16a34a"></div>Medicare</div>
           <div class="legend-item"><div class="legend-dot" style="background:#f59e0b"></div>Medicaid</div>
@@ -963,29 +1086,9 @@ a { color: inherit; text-decoration: none; }
       <div class="card">
         <div class="card-title" data-xp-metric="{XM} Share by Channel">TRx Share by Channel</div>
         <div class="card-subtitle">Retail / Mail-Order / LTC · weekly</div>
-        <div class="chart-container chart-container-sm">
-          <svg class="chart" preserveAspectRatio="none" viewBox="0 0 380 200">
-            <line x1="40" y1="180" x2="370" y2="180" stroke="#e5e7eb" stroke-width="1"/>
-            <line x1="40" y1="140" x2="370" y2="140" stroke="#f3f4f6" stroke-width="1" stroke-dasharray="3"/>
-            <line x1="40" y1="100" x2="370" y2="100" stroke="#f3f4f6" stroke-width="1" stroke-dasharray="3"/>
-            <line x1="40" y1="60" x2="370" y2="60" stroke="#f3f4f6" stroke-width="1" stroke-dasharray="3"/>
-            <text x="35" y="184" text-anchor="end" font-size="9" fill="#9ca3af">0%</text>
-            <text x="35" y="144" text-anchor="end" font-size="9" fill="#9ca3af">20%</text>
-            <text x="35" y="104" text-anchor="end" font-size="9" fill="#9ca3af">40%</text>
-            <text x="35" y="64" text-anchor="end" font-size="9" fill="#9ca3af">60%</text>
-            <text x="35" y="24" text-anchor="end" font-size="9" fill="#9ca3af">80%</text>
-            <polyline fill="none" stroke="#0891b2" stroke-width="2" points="50,55 75,54 100,53 125,52 150,51 175,50 200,50 225,49 250,49 275,48 300,48 325,47 350,47"/>
-            <polyline fill="none" stroke="#7c3aed" stroke-width="2" points="50,120 75,119 100,118 125,117 150,116 175,115 200,114 225,114 250,113 275,112 300,112 325,111 350,111"/>
-            <polyline fill="none" stroke="#9ca3af" stroke-width="2" points="50,145 75,145 100,144 125,144 150,144 175,143 200,143 225,143 250,142 275,142 300,142 325,142 350,141"/>
-            <text x="50" y="196" font-size="8" fill="#9ca3af">Wk 1</text>
-            <text x="130" y="196" font-size="8" fill="#9ca3af">Wk 6</text>
-            <text x="210" y="196" font-size="8" fill="#9ca3af">Wk 11</text>
-            <text x="290" y="196" font-size="8" fill="#9ca3af">Wk 16</text>
-            <text x="350" y="196" font-size="8" fill="#9ca3af"></text>
-          </svg>
-        </div>
-        <div class="axis-info"><span>Y-Axis: TRx Share %</span><span>X-Axis: Time Period (Week)</span></div>
-        <div class="legend" style="font-size:10px;">
+        <div id="xpt-ch-trx" style="width:100%;overflow:hidden;">XPT_CH_TRX_PLACEHOLDER</div>
+        <div id="xpt-ch-nrx" style="width:100%;overflow:hidden;height:0;visibility:hidden;">XPT_CH_NRX_PLACEHOLDER</div>
+        <div class="legend" style="font-size:10px;margin-top:8px;">
           <div class="legend-item"><div class="legend-dot" style="background:#0891b2"></div>Retail</div>
           <div class="legend-item"><div class="legend-dot" style="background:#7c3aed"></div>Mail-Order</div>
           <div class="legend-item"><div class="legend-dot" style="background:#9ca3af"></div>LTC</div>
@@ -1001,12 +1104,19 @@ a { color: inherit; text-decoration: none; }
         <thead>
           <tr><th>CUT</th><th style="text-align:right" data-xp-metric="WoW Mkt Share ({XM})">WoW Mkt Share (TRx)</th><th style="text-align:right" data-xp-metric="WoW Growth ({XM})">WoW Growth (TRx)</th><th style="text-align:right" data-xp-metric="MTD Mkt Share ({XM})">MTD Mkt Share (TRx)</th><th style="text-align:right" data-xp-metric="MTD Growth vs STLY ({XM})">MTD Growth vs STLY (TRx)</th></tr>
         </thead>
-        <tbody>
-          <tr><td><strong>National</strong></td><td style="text-align:right">38.7%</td><td style="text-align:right"><span class="delta-pos">+0.1%</span></td><td style="text-align:right">38.5%</td><td style="text-align:right"><span class="delta-pos">+1.4%</span></td></tr>
-          <tr><td><strong>Commercial</strong></td><td style="text-align:right">41.2%</td><td style="text-align:right"><span class="delta-pos">+0.2%</span></td><td style="text-align:right">41.0%</td><td style="text-align:right"><span class="delta-pos">+1.8%</span></td></tr>
-          <tr><td><strong>Medicare</strong></td><td style="text-align:right">36.5%</td><td style="text-align:right"><span class="delta-pos">+0.1%</span></td><td style="text-align:right">36.3%</td><td style="text-align:right"><span class="delta-pos">+2.1%</span></td></tr>
-          <tr><td><strong>Medicaid</strong></td><td style="text-align:right">26.4%</td><td style="text-align:right"><span class="delta-neg">-0.3%</span></td><td style="text-align:right">26.5%</td><td style="text-align:right"><span class="delta-neg">-0.7%</span></td></tr>
-          <tr><td><strong>Other</strong></td><td style="text-align:right">22.1%</td><td style="text-align:right"><span class="delta-pos">+0.0%</span></td><td style="text-align:right">22.0%</td><td style="text-align:right"><span class="delta-pos">+0.4%</span></td></tr>
+        <tbody class="xpt-trx-body">
+          <tr><td><strong>National</strong></td><td style="text-align:right">43.5%</td><td style="text-align:right"><span class="delta-neg">-0.2%</span></td><td style="text-align:right">43.5%</td><td style="text-align:right"><span class="delta-pos">+0.3%</span></td></tr>
+          <tr><td><strong>Commercial</strong></td><td style="text-align:right">44.1%</td><td style="text-align:right"><span class="delta-neg">-0.3%</span></td><td style="text-align:right">44.1%</td><td style="text-align:right"><span class="delta-pos">+0.8%</span></td></tr>
+          <tr><td><strong>Medicare</strong></td><td style="text-align:right">40.9%</td><td style="text-align:right"><span class="delta-neg">-0.2%</span></td><td style="text-align:right">40.9%</td><td style="text-align:right"><span class="delta-neg">-0.6%</span></td></tr>
+          <tr><td><strong>Medicaid</strong></td><td style="text-align:right">48.0%</td><td style="text-align:right"><span class="delta-neg">-0.1%</span></td><td style="text-align:right">48.0%</td><td style="text-align:right"><span class="delta-neg">-1.0%</span></td></tr>
+          <tr><td><strong>Other</strong></td><td style="text-align:right">32.2%</td><td style="text-align:right"><span class="delta-pos">+0.3%</span></td><td style="text-align:right">32.2%</td><td style="text-align:right"><span class="delta-neg">-0.9%</span></td></tr>
+        </tbody>
+        <tbody class="xpt-nrx-body" style="display:none;">
+          <tr><td><strong>National</strong></td><td style="text-align:right">43.4%</td><td style="text-align:right"><span class="delta-neg">-0.6%</span></td><td style="text-align:right">43.4%</td><td style="text-align:right">0.0%</td></tr>
+          <tr><td><strong>Commercial</strong></td><td style="text-align:right">43.8%</td><td style="text-align:right"><span class="delta-neg">-1.0%</span></td><td style="text-align:right">43.8%</td><td style="text-align:right"><span class="delta-pos">+0.3%</span></td></tr>
+          <tr><td><strong>Medicare</strong></td><td style="text-align:right">41.8%</td><td style="text-align:right"><span class="delta-pos">+0.9%</span></td><td style="text-align:right">41.8%</td><td style="text-align:right"><span class="delta-neg">-0.7%</span></td></tr>
+          <tr><td><strong>Medicaid</strong></td><td style="text-align:right">48.2%</td><td style="text-align:right"><span class="delta-neg">-1.2%</span></td><td style="text-align:right">48.2%</td><td style="text-align:right"><span class="delta-neg">-2.0%</span></td></tr>
+          <tr><td><strong>Other</strong></td><td style="text-align:right">32.4%</td><td style="text-align:right"><span class="delta-pos">+1.1%</span></td><td style="text-align:right">32.4%</td><td style="text-align:right"><span class="delta-pos">+1.0%</span></td></tr>
         </tbody>
       </table>
     </div>
@@ -1017,11 +1127,17 @@ a { color: inherit; text-decoration: none; }
         <thead>
           <tr><th>CUT</th><th style="text-align:right" data-xp-metric="WoW Mkt Share ({XM})">WoW Mkt Share (TRx)</th><th style="text-align:right" data-xp-metric="WoW Growth ({XM})">WoW Growth (TRx)</th><th style="text-align:right" data-xp-metric="MTD Mkt Share ({XM})">MTD Mkt Share (TRx)</th><th style="text-align:right" data-xp-metric="MTD Growth vs STLY ({XM})">MTD Growth vs STLY (TRx)</th></tr>
         </thead>
-        <tbody>
-          <tr><td><strong>National</strong></td><td style="text-align:right">38.7%</td><td style="text-align:right"><span class="delta-pos">+0.1%</span></td><td style="text-align:right">38.5%</td><td style="text-align:right"><span class="delta-pos">+1.4%</span></td></tr>
-          <tr><td><strong>Retail</strong></td><td style="text-align:right">39.4%</td><td style="text-align:right"><span class="delta-pos">+0.1%</span></td><td style="text-align:right">39.2%</td><td style="text-align:right"><span class="delta-pos">+1.5%</span></td></tr>
-          <tr><td><strong>Mail-Order</strong></td><td style="text-align:right">31.8%</td><td style="text-align:right"><span class="delta-pos">+0.3%</span></td><td style="text-align:right">31.6%</td><td style="text-align:right"><span class="delta-pos">+2.3%</span></td></tr>
-          <tr><td><strong>LTC</strong></td><td style="text-align:right">21.4%</td><td style="text-align:right"><span class="delta-neg">-0.1%</span></td><td style="text-align:right">21.5%</td><td style="text-align:right"><span class="delta-neg">-0.3%</span></td></tr>
+        <tbody class="xpt-trx-body">
+          <tr><td><strong>National</strong></td><td style="text-align:right">43.5%</td><td style="text-align:right"><span class="delta-neg">-0.2%</span></td><td style="text-align:right">43.5%</td><td style="text-align:right"><span class="delta-pos">+0.3%</span></td></tr>
+          <tr><td><strong>Retail</strong></td><td style="text-align:right">43.6%</td><td style="text-align:right"><span class="delta-neg">-0.3%</span></td><td style="text-align:right">43.6%</td><td style="text-align:right"><span class="delta-pos">+0.4%</span></td></tr>
+          <tr><td><strong>Mail-Order</strong></td><td style="text-align:right">38.5%</td><td style="text-align:right"><span class="delta-pos">+1.2%</span></td><td style="text-align:right">38.5%</td><td style="text-align:right"><span class="delta-neg">-1.2%</span></td></tr>
+          <tr><td><strong>LTC</strong></td><td style="text-align:right">43.5%</td><td style="text-align:right"><span class="delta-pos">+0.6%</span></td><td style="text-align:right">43.5%</td><td style="text-align:right"><span class="delta-neg">-0.9%</span></td></tr>
+        </tbody>
+        <tbody class="xpt-nrx-body" style="display:none;">
+          <tr><td><strong>National</strong></td><td style="text-align:right">43.4%</td><td style="text-align:right"><span class="delta-neg">-0.6%</span></td><td style="text-align:right">43.4%</td><td style="text-align:right">0.0%</td></tr>
+          <tr><td><strong>Retail</strong></td><td style="text-align:right">43.5%</td><td style="text-align:right"><span class="delta-neg">-0.7%</span></td><td style="text-align:right">43.5%</td><td style="text-align:right">0.0%</td></tr>
+          <tr><td><strong>Mail-Order</strong></td><td style="text-align:right">35.5%</td><td style="text-align:right"><span class="delta-neg">-1.7%</span></td><td style="text-align:right">35.5%</td><td style="text-align:right"><span class="delta-neg">-0.2%</span></td></tr>
+          <tr><td><strong>LTC</strong></td><td style="text-align:right">45.1%</td><td style="text-align:right"><span class="delta-pos">+0.8%</span></td><td style="text-align:right">45.1%</td><td style="text-align:right"><span class="delta-neg">-1.5%</span></td></tr>
         </tbody>
       </table>
     </div>
@@ -1084,11 +1200,15 @@ BRAND_CHART_DATA_PLACEHOLDER
       <div class="card" style="border-top-left-radius:0;border-top-right-radius:0;margin-top:-1px;">
         <table>
           <thead><tr><th></th><th style="text-align:right">LATEST WK</th><th style="text-align:right">QTD</th><th style="text-align:right">YTD</th><th style="text-align:right">WK %</th><th style="text-align:right">QTD %</th><th style="text-align:right">YTD %</th><th style="text-align:right">WK MS</th><th style="text-align:right">QTD MS</th><th style="text-align:right">YTD MS</th></tr></thead>
-          <tbody>
-            <tr><td>Actuals '26</td><td style="text-align:right">82,914</td><td style="text-align:right">771,205</td><td style="text-align:right">1,718,623</td><td style="text-align:right"><span class="delta-pos">+18.6%</span></td><td style="text-align:right"><span class="delta-pos">+17.9%</span></td><td style="text-align:right"><span class="delta-pos">+17.4%</span></td><td style="text-align:right">44.1%</td><td style="text-align:right">43.8%</td><td style="text-align:right">43.6%</td></tr>
-            <tr><td>Actuals '25</td><td style="text-align:right">69,912</td><td style="text-align:right">654,108</td><td style="text-align:right">1,464,331</td><td style="text-align:right"><span class="delta-pos">+13.5%</span></td><td style="text-align:right"><span class="delta-pos">+12.2%</span></td><td style="text-align:right"><span class="delta-pos">+14.3%</span></td><td style="text-align:right">43.6%</td><td style="text-align:right">43.4%</td><td style="text-align:right">43.3%</td></tr>
-            <tr><td>Latest Goal OP'26</td><td style="text-align:right">85,326</td><td style="text-align:right">798,471</td><td style="text-align:right">1,832,540</td><td style="text-align:right"><span class="delta-pos">+22.0%</span></td><td style="text-align:right"><span class="delta-pos">+24.2%</span></td><td style="text-align:right"><span class="delta-pos">+25.1%</span></td><td style="text-align:right">—</td><td style="text-align:right">—</td><td style="text-align:right">—</td></tr>
-            <tr><td>Goal Attainment '26</td><td style="text-align:right">97.2%</td><td style="text-align:right">96.6%</td><td style="text-align:right">93.8%</td><td style="text-align:right">—</td><td style="text-align:right">—</td><td style="text-align:right">—</td><td style="text-align:right">—</td><td style="text-align:right">—</td><td style="text-align:right">—</td></tr>
+          <tbody class="npa-table-trx">
+            <tr><td>Actuals '26</td><td style="text-align:right">77,737</td><td style="text-align:right">896,296</td><td style="text-align:right">1,809,152</td><td style="text-align:right"><span class="delta-pos">+16.9%</span></td><td style="text-align:right"><span class="delta-pos">+16.5%</span></td><td style="text-align:right"><span class="delta-pos">+16.3%</span></td><td style="text-align:right">43.5%</td><td style="text-align:right">43.3%</td><td style="text-align:right">43.0%</td></tr>
+            <tr><td>Actuals '25</td><td style="text-align:right">66,493</td><td style="text-align:right">835,126</td><td style="text-align:right">3,397,510</td><td style="text-align:right"><span class="delta-pos">+11.2%</span></td><td style="text-align:right"><span class="delta-pos">+11.4%</span></td><td style="text-align:right"><span class="delta-pos">+12.4%</span></td><td style="text-align:right">43.2%</td><td style="text-align:right">43.1%</td><td style="text-align:right">42.9%</td></tr>
+            <tr><td>Latest Goal OP'26</td><td style="text-align:right">81,534</td><td style="text-align:right">685,559</td><td style="text-align:right">1,649,919</td><td style="text-align:right"><span class="delta-pos">+22.6%</span></td><td style="text-align:right"><span class="delta-neg">-10.9%</span></td><td style="text-align:right"><span class="delta-pos">+6.0%</span></td><td style="text-align:right">—</td><td style="text-align:right">—</td><td style="text-align:right">—</td></tr>
+            <tr><td>Goal Attainment '26</td><td style="text-align:right">95.3%</td><td style="text-align:right">130.7%</td><td style="text-align:right">109.7%</td><td style="text-align:right">—</td><td style="text-align:right">—</td><td style="text-align:right">—</td><td style="text-align:right">—</td><td style="text-align:right">—</td><td style="text-align:right">—</td></tr>
+          </tbody>
+          <tbody class="npa-table-nbrx" style="display:none;">
+            <tr><td>Actuals '26</td><td style="text-align:right">9,881</td><td style="text-align:right">115,686</td><td style="text-align:right">236,508</td><td style="text-align:right"><span class="delta-pos">+16.1%</span></td><td style="text-align:right"><span class="delta-pos">+12.7%</span></td><td style="text-align:right"><span class="delta-pos">+11.2%</span></td><td style="text-align:right">43.0%</td><td style="text-align:right">43.4%</td><td style="text-align:right">43.3%</td></tr>
+            <tr><td>Actuals '25</td><td style="text-align:right">8,514</td><td style="text-align:right">111,462</td><td style="text-align:right">446,622</td><td style="text-align:right"><span class="delta-pos">+1.5%</span></td><td style="text-align:right"><span class="delta-pos">+3.9%</span></td><td style="text-align:right"><span class="delta-pos">+4.7%</span></td><td style="text-align:right">42.0%</td><td style="text-align:right">42.7%</td><td style="text-align:right">42.3%</td></tr>
           </tbody>
         </table>
       </div>
@@ -1097,9 +1217,13 @@ BRAND_CHART_DATA_PLACEHOLDER
       <div class="card" style="border-top-left-radius:0;border-top-right-radius:0;margin-top:-1px;">
         <table>
           <thead><tr><th></th><th style="text-align:right">LATEST WK</th><th style="text-align:right">QTD</th><th style="text-align:right">YTD</th><th style="text-align:right">WK %</th><th style="text-align:right">QTD %</th><th style="text-align:right">YTD %</th><th style="text-align:right">WK MS</th><th style="text-align:right">QTD MS</th><th style="text-align:right">YTD MS</th></tr></thead>
-          <tbody>
-            <tr><td>Actuals '26</td><td style="text-align:right">59,082</td><td style="text-align:right">557,914</td><td style="text-align:right">1,272,406</td><td style="text-align:right"><span class="delta-pos">+12.1%</span></td><td style="text-align:right"><span class="delta-pos">+11.8%</span></td><td style="text-align:right"><span class="delta-pos">+14.9%</span></td><td style="text-align:right">31.4%</td><td style="text-align:right">31.6%</td><td style="text-align:right">32.0%</td></tr>
-            <tr><td>Actuals '25</td><td style="text-align:right">52,706</td><td style="text-align:right">478,902</td><td style="text-align:right">1,107,452</td><td style="text-align:right"><span class="delta-pos">+18.4%</span></td><td style="text-align:right"><span class="delta-pos">+15.3%</span></td><td style="text-align:right"><span class="delta-pos">+16.5%</span></td><td style="text-align:right">32.9%</td><td style="text-align:right">32.8%</td><td style="text-align:right">32.7%</td></tr>
+          <tbody class="npa-table-trx">
+            <tr><td>Actuals '26</td><td style="text-align:right">56,372</td><td style="text-align:right">654,931</td><td style="text-align:right">1,351,214</td><td style="text-align:right"><span class="delta-pos">+9.9%</span></td><td style="text-align:right"><span class="delta-pos">+11.1%</span></td><td style="text-align:right"><span class="delta-pos">+14.0%</span></td><td style="text-align:right">31.5%</td><td style="text-align:right">31.7%</td><td style="text-align:right">32.1%</td></tr>
+            <tr><td>Actuals '25</td><td style="text-align:right">51,297</td><td style="text-align:right">640,379</td><td style="text-align:right">2,624,367</td><td style="text-align:right"><span class="delta-pos">+16.5%</span></td><td style="text-align:right"><span class="delta-pos">+16.0%</span></td><td style="text-align:right"><span class="delta-pos">+17.9%</span></td><td style="text-align:right">33.3%</td><td style="text-align:right">33.1%</td><td style="text-align:right">33.2%</td></tr>
+          </tbody>
+          <tbody class="npa-table-nbrx" style="display:none;">
+            <tr><td>Actuals '26</td><td style="text-align:right">8,338</td><td style="text-align:right">94,712</td><td style="text-align:right">193,647</td><td style="text-align:right"><span class="delta-pos">+14.0%</span></td><td style="text-align:right"><span class="delta-pos">+9.5%</span></td><td style="text-align:right"><span class="delta-pos">+9.6%</span></td><td style="text-align:right">36.2%</td><td style="text-align:right">35.5%</td><td style="text-align:right">35.5%</td></tr>
+            <tr><td>Actuals '25</td><td style="text-align:right">7,315</td><td style="text-align:right">93,778</td><td style="text-align:right">380,580</td><td style="text-align:right"><span class="delta-pos">+9.2%</span></td><td style="text-align:right"><span class="delta-pos">+7.9%</span></td><td style="text-align:right"><span class="delta-pos">+10.4%</span></td><td style="text-align:right">36.1%</td><td style="text-align:right">35.9%</td><td style="text-align:right">36.0%</td></tr>
           </tbody>
         </table>
       </div>
@@ -1108,9 +1232,13 @@ BRAND_CHART_DATA_PLACEHOLDER
       <div class="card" style="border-top-left-radius:0;border-top-right-radius:0;margin-top:-1px;">
         <table>
           <thead><tr><th></th><th style="text-align:right">LATEST WK</th><th style="text-align:right">QTD</th><th style="text-align:right">YTD</th><th style="text-align:right">WK %</th><th style="text-align:right">QTD %</th><th style="text-align:right">YTD %</th><th style="text-align:right">WK MS</th><th style="text-align:right">QTD MS</th><th style="text-align:right">YTD MS</th></tr></thead>
-          <tbody>
-            <tr><td>Actuals '26</td><td style="text-align:right">47,538</td><td style="text-align:right">445,083</td><td style="text-align:right">988,217</td><td style="text-align:right"><span class="delta-pos">+24.1%</span></td><td style="text-align:right"><span class="delta-pos">+23.0%</span></td><td style="text-align:right"><span class="delta-pos">+23.8%</span></td><td style="text-align:right">25.3%</td><td style="text-align:right">25.4%</td><td style="text-align:right">25.2%</td></tr>
-            <tr><td>Actuals '25</td><td style="text-align:right">38,302</td><td style="text-align:right">361,820</td><td style="text-align:right">798,154</td><td style="text-align:right"><span class="delta-pos">+32.7%</span></td><td style="text-align:right"><span class="delta-pos">+32.4%</span></td><td style="text-align:right"><span class="delta-pos">+32.9%</span></td><td style="text-align:right">23.5%</td><td style="text-align:right">23.6%</td><td style="text-align:right">23.5%</td></tr>
+          <tbody class="npa-table-trx">
+            <tr><td>Actuals '26</td><td style="text-align:right">44,775</td><td style="text-align:right">517,036</td><td style="text-align:right">1,042,664</td><td style="text-align:right"><span class="delta-pos">+23.5%</span></td><td style="text-align:right"><span class="delta-pos">+21.8%</span></td><td style="text-align:right"><span class="delta-pos">+22.5%</span></td><td style="text-align:right">25.0%</td><td style="text-align:right">25.0%</td><td style="text-align:right">24.8%</td></tr>
+            <tr><td>Actuals '25</td><td style="text-align:right">36,259</td><td style="text-align:right">460,078</td><td style="text-align:right">1,891,025</td><td style="text-align:right"><span class="delta-pos">+28.9%</span></td><td style="text-align:right"><span class="delta-pos">+30.6%</span></td><td style="text-align:right"><span class="delta-pos">+28.9%</span></td><td style="text-align:right">23.5%</td><td style="text-align:right">23.8%</td><td style="text-align:right">23.9%</td></tr>
+          </tbody>
+          <tbody class="npa-table-nbrx" style="display:none;">
+            <tr><td>Actuals '26</td><td style="text-align:right">4,785</td><td style="text-align:right">56,442</td><td style="text-align:right">115,690</td><td style="text-align:right"><span class="delta-pos">+7.8%</span></td><td style="text-align:right"><span class="delta-pos">+9.3%</span></td><td style="text-align:right"><span class="delta-pos">+8.4%</span></td><td style="text-align:right">20.8%</td><td style="text-align:right">21.2%</td><td style="text-align:right">21.2%</td></tr>
+            <tr><td>Actuals '25</td><td style="text-align:right">4,438</td><td style="text-align:right">56,087</td><td style="text-align:right">229,304</td><td style="text-align:right"><span class="delta-pos">+14.8%</span></td><td style="text-align:right"><span class="delta-pos">+14.1%</span></td><td style="text-align:right"><span class="delta-pos">+14.0%</span></td><td style="text-align:right">21.9%</td><td style="text-align:right">21.5%</td><td style="text-align:right">21.7%</td></tr>
           </tbody>
         </table>
       </div>
@@ -1138,6 +1266,7 @@ BRAND_CHART_DATA_PLACEHOLDER
         </div>
 
         
+        
         <div class="card">
           <div class="card-header-row">
             <div>
@@ -1152,6 +1281,8 @@ BRAND_CHART_DATA_PLACEHOLDER
           ACUTE_CHANNEL_CHART_PLACEHOLDER
         </div>
 
+        
+
         <!-- Brand Tables: TRx left, NBRx right — aligned with charts above -->
         <div class="split-section">
           <div class="split-col">
@@ -1160,8 +1291,8 @@ BRAND_CHART_DATA_PLACEHOLDER
               <table>
                 <thead><tr><th></th><th style="text-align:right">LATEST WK</th><th style="text-align:right">QTD</th><th style="text-align:right">YTD</th><th style="text-align:right">WK %</th><th style="text-align:right">WK MS</th></tr></thead>
                 <tbody>
-                  <tr><td>Actuals '26</td><td style="text-align:right">58,241</td><td style="text-align:right">542,108</td><td style="text-align:right">1,205,417</td><td style="text-align:right">19.2%</td><td style="text-align:right">54.1%</td></tr>
-                  <tr><td>Actuals '25</td><td style="text-align:right">48,912</td><td style="text-align:right">459,302</td><td style="text-align:right">1,024,118</td><td style="text-align:right">14.8%</td><td style="text-align:right">51.9%</td></tr>
+                  <tr><td>Actuals '26</td><td style="text-align:right">52,695</td><td style="text-align:right">604,478</td><td style="text-align:right">1,217,341</td><td style="text-align:right"><span class="delta-pos">+15.9%</span></td><td style="text-align:right">48.3%</td></tr>
+                  <tr><td>Actuals '25</td><td style="text-align:right">45,461</td><td style="text-align:right">570,048</td><td style="text-align:right">2,312,576</td><td style="text-align:right"><span class="delta-pos">+10.5%</span></td><td style="text-align:right">47.0%</td></tr>
                 </tbody>
               </table>
             </div>
@@ -1171,8 +1302,8 @@ BRAND_CHART_DATA_PLACEHOLDER
               <table>
                 <thead><tr><th></th><th style="text-align:right">LATEST WK</th><th style="text-align:right">QTD</th><th style="text-align:right">YTD</th><th style="text-align:right">WK %</th><th style="text-align:right">WK MS</th></tr></thead>
                 <tbody>
-                  <tr><td>Actuals '26</td><td style="text-align:right">42,318</td><td style="text-align:right">398,521</td><td style="text-align:right">912,604</td><td style="text-align:right">11.4%</td><td style="text-align:right">39.3%</td></tr>
-                  <tr><td>Actuals '25</td><td style="text-align:right">37,986</td><td style="text-align:right">359,411</td><td style="text-align:right">801,823</td><td style="text-align:right">16.2%</td><td style="text-align:right">40.1%</td></tr>
+                  <tr><td>Actuals '26</td><td style="text-align:right">56,372</td><td style="text-align:right">654,931</td><td style="text-align:right">1,351,214</td><td style="text-align:right"><span class="delta-pos">+9.9%</span></td><td style="text-align:right">51.7%</td></tr>
+                  <tr><td>Actuals '25</td><td style="text-align:right">51,297</td><td style="text-align:right">640,379</td><td style="text-align:right">2,624,367</td><td style="text-align:right"><span class="delta-pos">+16.5%</span></td><td style="text-align:right">53.0%</td></tr>
                 </tbody>
               </table>
             </div>
@@ -1184,8 +1315,8 @@ BRAND_CHART_DATA_PLACEHOLDER
               <table>
                 <thead><tr><th></th><th style="text-align:right">LATEST WK</th><th style="text-align:right">QTD</th><th style="text-align:right">YTD</th><th style="text-align:right">WK %</th><th style="text-align:right">WK MS</th></tr></thead>
                 <tbody>
-                  <tr><td>Actuals '26</td><td style="text-align:right">21,408</td><td style="text-align:right">198,412</td><td style="text-align:right">442,106</td><td style="text-align:right">20.1%</td><td style="text-align:right">56.2%</td></tr>
-                  <tr><td>Actuals '25</td><td style="text-align:right">17,820</td><td style="text-align:right">167,540</td><td style="text-align:right">374,821</td><td style="text-align:right">15.6%</td><td style="text-align:right">54.0%</td></tr>
+                  <tr><td>Actuals '26</td><td style="text-align:right">7,682</td><td style="text-align:right">90,200</td><td style="text-align:right">183,606</td><td style="text-align:right"><span class="delta-pos">+15.4%</span></td><td style="text-align:right">48.0%</td></tr>
+                  <tr><td>Actuals '25</td><td style="text-align:right">6,654</td><td style="text-align:right">87,392</td><td style="text-align:right">348,969</td><td style="text-align:right"><span class="delta-pos">+6.6%</span></td><td style="text-align:right">47.6%</td></tr>
                 </tbody>
               </table>
             </div>
@@ -1195,8 +1326,8 @@ BRAND_CHART_DATA_PLACEHOLDER
               <table>
                 <thead><tr><th></th><th style="text-align:right">LATEST WK</th><th style="text-align:right">QTD</th><th style="text-align:right">YTD</th><th style="text-align:right">WK %</th><th style="text-align:right">WK MS</th></tr></thead>
                 <tbody>
-                  <tr><td>Actuals '26</td><td style="text-align:right">15,612</td><td style="text-align:right">146,808</td><td style="text-align:right">335,417</td><td style="text-align:right">12.8%</td><td style="text-align:right">41.0%</td></tr>
-                  <tr><td>Actuals '25</td><td style="text-align:right">13,842</td><td style="text-align:right">131,204</td><td style="text-align:right">298,612</td><td style="text-align:right">17.4%</td><td style="text-align:right">42.5%</td></tr>
+                  <tr><td>Actuals '26</td><td style="text-align:right">8,338</td><td style="text-align:right">94,712</td><td style="text-align:right">193,647</td><td style="text-align:right"><span class="delta-pos">+14.0%</span></td><td style="text-align:right">52.0%</td></tr>
+                  <tr><td>Actuals '25</td><td style="text-align:right">7,315</td><td style="text-align:right">93,778</td><td style="text-align:right">380,580</td><td style="text-align:right"><span class="delta-pos">+9.2%</span></td><td style="text-align:right">52.4%</td></tr>
                 </tbody>
               </table>
             </div>
@@ -1236,8 +1367,8 @@ BRAND_CHART_DATA_PLACEHOLDER
               <table>
                 <thead><tr><th></th><th style="text-align:right">LATEST WK</th><th style="text-align:right">QTD</th><th style="text-align:right">YTD</th><th style="text-align:right">WK %</th><th style="text-align:right">WK MS</th></tr></thead>
                 <tbody>
-                  <tr><td>Actuals '26</td><td style="text-align:right">24,673</td><td style="text-align:right">229,097</td><td style="text-align:right">513,206</td><td style="text-align:right">15.8%</td><td style="text-align:right">21.2%</td></tr>
-                  <tr><td>Actuals '25</td><td style="text-align:right">21,000</td><td style="text-align:right">194,806</td><td style="text-align:right">440,213</td><td style="text-align:right">18.4%</td><td style="text-align:right">19.9%</td></tr>
+                  <tr><td>Actuals '26</td><td style="text-align:right">25,042</td><td style="text-align:right">291,818</td><td style="text-align:right">591,811</td><td style="text-align:right"><span class="delta-pos">+19.1%</span></td><td style="text-align:right">35.9%</td></tr>
+                  <tr><td>Actuals '25</td><td style="text-align:right">21,032</td><td style="text-align:right">265,078</td><td style="text-align:right">1,084,934</td><td style="text-align:right"><span class="delta-pos">+12.5%</span></td><td style="text-align:right">36.7%</td></tr>
                 </tbody>
               </table>
             </div>
@@ -1247,8 +1378,8 @@ BRAND_CHART_DATA_PLACEHOLDER
               <table>
                 <thead><tr><th></th><th style="text-align:right">LATEST WK</th><th style="text-align:right">QTD</th><th style="text-align:right">YTD</th><th style="text-align:right">WK %</th><th style="text-align:right">WK MS</th></tr></thead>
                 <tbody>
-                  <tr><td>Actuals '26</td><td style="text-align:right">38,412</td><td style="text-align:right">358,920</td><td style="text-align:right">802,814</td><td style="text-align:right">26.3%</td><td style="text-align:right">33.0%</td></tr>
-                  <tr><td>Actuals '25</td><td style="text-align:right">30,418</td><td style="text-align:right">283,740</td><td style="text-align:right">638,102</td><td style="text-align:right">34.2%</td><td style="text-align:right">30.8%</td></tr>
+                  <tr><td>Actuals '26</td><td style="text-align:right">44,775</td><td style="text-align:right">517,036</td><td style="text-align:right">1,042,664</td><td style="text-align:right"><span class="delta-pos">+23.5%</span></td><td style="text-align:right">64.1%</td></tr>
+                  <tr><td>Actuals '25</td><td style="text-align:right">36,259</td><td style="text-align:right">460,078</td><td style="text-align:right">1,891,025</td><td style="text-align:right"><span class="delta-pos">+28.9%</span></td><td style="text-align:right">63.3%</td></tr>
                 </tbody>
               </table>
             </div>
@@ -1260,8 +1391,8 @@ BRAND_CHART_DATA_PLACEHOLDER
               <table>
                 <thead><tr><th></th><th style="text-align:right">LATEST WK</th><th style="text-align:right">QTD</th><th style="text-align:right">YTD</th><th style="text-align:right">WK %</th><th style="text-align:right">WK MS</th></tr></thead>
                 <tbody>
-                  <tr><td>Actuals '26</td><td style="text-align:right">9,214</td><td style="text-align:right">85,621</td><td style="text-align:right">191,408</td><td style="text-align:right">17.2%</td><td style="text-align:right">22.8%</td></tr>
-                  <tr><td>Actuals '25</td><td style="text-align:right">7,860</td><td style="text-align:right">72,414</td><td style="text-align:right">163,210</td><td style="text-align:right">19.8%</td><td style="text-align:right">21.4%</td></tr>
+                  <tr><td>Actuals '26</td><td style="text-align:right">2,199</td><td style="text-align:right">25,486</td><td style="text-align:right">52,902</td><td style="text-align:right"><span class="delta-pos">+18.2%</span></td><td style="text-align:right">31.5%</td></tr>
+                  <tr><td>Actuals '25</td><td style="text-align:right">1,860</td><td style="text-align:right">24,070</td><td style="text-align:right">97,653</td><td style="text-align:right"><span class="delta-neg">-13.2%</span></td><td style="text-align:right">29.5%</td></tr>
                 </tbody>
               </table>
             </div>
@@ -1271,8 +1402,8 @@ BRAND_CHART_DATA_PLACEHOLDER
               <table>
                 <thead><tr><th></th><th style="text-align:right">LATEST WK</th><th style="text-align:right">QTD</th><th style="text-align:right">YTD</th><th style="text-align:right">WK %</th><th style="text-align:right">WK MS</th></tr></thead>
                 <tbody>
-                  <tr><td>Actuals '26</td><td style="text-align:right">14,508</td><td style="text-align:right">135,214</td><td style="text-align:right">302,618</td><td style="text-align:right">28.6%</td><td style="text-align:right">35.9%</td></tr>
-                  <tr><td>Actuals '25</td><td style="text-align:right">11,204</td><td style="text-align:right">104,812</td><td style="text-align:right">235,404</td><td style="text-align:right">36.1%</td><td style="text-align:right">33.2%</td></tr>
+                  <tr><td>Actuals '26</td><td style="text-align:right">4,785</td><td style="text-align:right">56,442</td><td style="text-align:right">115,690</td><td style="text-align:right"><span class="delta-pos">+7.8%</span></td><td style="text-align:right">68.5%</td></tr>
+                  <tr><td>Actuals '25</td><td style="text-align:right">4,438</td><td style="text-align:right">56,087</td><td style="text-align:right">229,304</td><td style="text-align:right"><span class="delta-pos">+14.8%</span></td><td style="text-align:right">70.5%</td></tr>
                 </tbody>
               </table>
             </div>
@@ -1291,23 +1422,26 @@ BRAND_CHART_DATA_PLACEHOLDER
           <div class="card-title">Rolled-up NRx Share by Access-Change Cohort</div>
           <div class="card-subtitle">Calculated share across all plans grouped by access change since Jan 2025. Plans contribute to their cohort only after their change effective date — pre-change months roll into Control.</div>
         </div>
-        <div style="display:flex;align-items:center;gap:8px;font-size:11px;">Start <input type="month" value="2025-01" style="padding:4px 8px;border:1px solid #d1d5db;border-radius:4px;font-size:11px;"></div>
+                <div style="position:relative;display:inline-block;">
+          <div style="width:28px;height:28px;border-radius:50%;background:#ffffff;color:#0000C9;font-size:16px;font-weight:800;display:flex;align-items:center;justify-content:center;cursor:pointer;border:1px solid #c7d2fe;" onmouseover="this.nextElementSibling.style.display='block'" onmouseout="this.nextElementSibling.style.display='none'">i</div>
+          <div style="display:none;position:absolute;right:0;top:32px;background:#1a2332;color:#fff;padding:8px 12px;border-radius:6px;font-size:11px;line-height:1.5;width:auto;white-space:nowrap;z-index:10;box-shadow:0 4px 12px rgba(0,0,0,0.15);">Data Considered from 2025 onwards only</div>
+        </div>
       </div>
 
-      <div class="row">
-        <div class="stat-tile">
+    <div class="row">
+        <div style="background:#EEF5FB;border-radius:12px;padding:14px 16px;text-align:left;border:1px solid rgba(15,23,42,0.05);transition:transform 0.25s cubic-bezier(0.16,1,0.3,1),box-shadow 0.25s cubic-bezier(0.4,0,0.2,1);flex:1;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 6px 16px rgba(15,23,42,0.07),0 2px 4px rgba(15,23,42,0.04)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
           <div class="label">ACCESS GAIN PLANS</div>
           <div class="value" style="color:#16a34a;">7</div>
           <div class="sub">gain events since Jan 2025</div>
         </div>
-        <div class="stat-tile">
+        <div style="background:#EEF5FB;border-radius:12px;padding:14px 16px;text-align:left;border:1px solid rgba(15,23,42,0.05);transition:transform 0.25s cubic-bezier(0.16,1,0.3,1),box-shadow 0.25s cubic-bezier(0.4,0,0.2,1);flex:1;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 6px 16px rgba(15,23,42,0.07),0 2px 4px rgba(15,23,42,0.04)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
           <div class="label">ACCESS LOSS / RESTRICTION</div>
           <div class="value" style="color:#dc2626;">4</div>
           <div class="sub">loss / restriction events</div>
         </div>
-        <div class="stat-tile">
+        <div style="background:#EEF5FB;border-radius:12px;padding:14px 16px;text-align:left;border:1px solid rgba(15,23,42,0.05);transition:transform 0.25s cubic-bezier(0.16,1,0.3,1),box-shadow 0.25s cubic-bezier(0.4,0,0.2,1);flex:1;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 6px 16px rgba(15,23,42,0.07),0 2px 4px rgba(15,23,42,0.04)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
           <div class="label">CONTROL GROUP</div>
-          <div class="value">38</div>
+          <div class="value" style="color:#0000C9;">38</div>
           <div class="sub">no change (incl. pre-change months)</div>
         </div>
       </div>
@@ -1350,16 +1484,73 @@ BRAND_CHART_DATA_PLACEHOLDER
     <div class="card">
       <div class="card-title">Access Change Details</div>
       <div class="card-subtitle">Includes current share vs. share at time of change (delta is the story)</div>
-      <table>
-        <thead>
+      <div style="max-height:220px;overflow-y:auto;">
+      <table style="table-layout:fixed;">
+        <colgroup><col style="width:28%"><col style="width:9%"><col style="width:9%"><col style="width:8%"><col style="width:7%"><col style="width:11%"><col style="width:11%"><col style="width:7%"><col style="width:6%"><col style="width:6%"></colgroup>
+        <thead style="position:sticky;top:0;z-index:1;background:#fff;">
           <tr><th>PLAN</th><th>CHANGE</th><th>EFF. DATE</th><th>PAYER</th><th style="text-align:right">LIVES</th><th style="text-align:right">SHARE @ CHANGE</th><th style="text-align:right">CURRENT SHARE</th><th style="text-align:right">Δ SHARE</th><th style="text-align:right">EST. NRX %</th><th style="text-align:right">EST. TRX %</th></tr>
         </thead>
         <tbody>
-          <tr><td>Louisiana Medicaid</td><td><span class="badge badge-loss">Loss</span></td><td>06/15/26</td><td>Medicaid</td><td style="text-align:right">1.4M</td><td style="text-align:right">24.1%</td><td style="text-align:right">21.9%</td><td style="text-align:right"><span class="delta-neg">-2.2%</span></td><td style="text-align:right"><span class="delta-neg">-0.3%</span></td><td style="text-align:right"><span class="delta-neg">-0.2%</span></td></tr>
-          <tr><td>UnitedHealth Comm (IL)</td><td><span class="badge badge-restriction">Restriction</span></td><td>06/10/26</td><td>Commercial</td><td style="text-align:right">820K</td><td style="text-align:right">36.4%</td><td style="text-align:right">35.8%</td><td style="text-align:right"><span class="delta-neg">-0.6%</span></td><td style="text-align:right"><span class="delta-neg">-0.1%</span></td><td style="text-align:right"><span class="delta-neg">-0.1%</span></td></tr>
-          <tr><td>BCBS Texas Comm</td><td><span class="badge badge-gain">Gain</span></td><td>05/28/26</td><td>Commercial</td><td style="text-align:right">2.1M</td><td style="text-align:right">28.7%</td><td style="text-align:right">32.4%</td><td style="text-align:right"><span class="delta-pos">+3.7%</span></td><td style="text-align:right"><span class="delta-pos">+0.6%</span></td><td style="text-align:right"><span class="delta-pos">+0.4%</span></td></tr>
-          <tr><td>CVS Caremark Comm</td><td><span class="badge badge-gain">Gain</span></td><td>05/12/26</td><td>Commercial</td><td style="text-align:right">3.6M</td><td style="text-align:right">30.2%</td><td style="text-align:right">34.9%</td><td style="text-align:right"><span class="delta-pos">+4.7%</span></td><td style="text-align:right"><span class="delta-pos">+0.9%</span></td><td style="text-align:right"><span class="delta-pos">+0.7%</span></td></tr>
-          <tr><td>Florida Medicaid</td><td><span class="badge badge-restriction">Restriction</span></td><td>04/22/26</td><td>Medicaid</td><td style="text-align:right">980K</td><td style="text-align:right">26.0%</td><td style="text-align:right">23.5%</td><td style="text-align:right"><span class="delta-neg">-2.5%</span></td><td style="text-align:right"><span class="delta-neg">-0.2%</span></td><td style="text-align:right"><span class="delta-neg">-0.2%</span></td></tr>
+          <tr><td>Connecticut (TOP$)</td><td><span class="badge badge-gain">Gain</span></td><td>06/18/26</td><td>Commercial</td><td style="text-align:right">1.2M</td><td style="text-align:right">29.3%</td><td style="text-align:right">33.1%</td><td style="text-align:right"><span class="delta-pos">+3.8%</span></td><td style="text-align:right"><span class="delta-pos">+0.5%</span></td><td style="text-align:right"><span class="delta-pos">+0.3%</span></td></tr>
+          <tr><td>Delaware (SSDC)</td><td><span class="badge badge-loss">Loss</span></td><td>06/12/26</td><td>Medicaid</td><td style="text-align:right">680K</td><td style="text-align:right">31.2%</td><td style="text-align:right">28.7%</td><td style="text-align:right"><span class="delta-neg">-2.5%</span></td><td style="text-align:right"><span class="delta-neg">-0.4%</span></td><td style="text-align:right"><span class="delta-neg">-0.3%</span></td></tr>
+          <tr><td>Idaho (TOP$)</td><td><span class="badge badge-gain">Gain</span></td><td>06/05/26</td><td>Commercial</td><td style="text-align:right">920K</td><td style="text-align:right">25.8%</td><td style="text-align:right">30.2%</td><td style="text-align:right"><span class="delta-pos">+4.4%</span></td><td style="text-align:right"><span class="delta-pos">+0.7%</span></td><td style="text-align:right"><span class="delta-pos">+0.5%</span></td></tr>
+          <tr><td>Iowa (SSDC)</td><td><span class="badge badge-restriction">Restriction</span></td><td>05/29/26</td><td>Medicaid</td><td style="text-align:right">1.1M</td><td style="text-align:right">33.6%</td><td style="text-align:right">31.9%</td><td style="text-align:right"><span class="delta-neg">-1.7%</span></td><td style="text-align:right"><span class="delta-neg">-0.2%</span></td><td style="text-align:right"><span class="delta-neg">-0.1%</span></td></tr>
+          <tr><td>Kentucky (SSDC)</td><td><span class="badge badge-gain">Gain</span></td><td>05/22/26</td><td>Medicaid</td><td style="text-align:right">1.5M</td><td style="text-align:right">27.4%</td><td style="text-align:right">31.8%</td><td style="text-align:right"><span class="delta-pos">+4.4%</span></td><td style="text-align:right"><span class="delta-pos">+0.8%</span></td><td style="text-align:right"><span class="delta-pos">+0.6%</span></td></tr>
+          <tr><td>Louisiana (TOP$)</td><td><span class="badge badge-loss">Loss</span></td><td>05/15/26</td><td>Commercial</td><td style="text-align:right">1.8M</td><td style="text-align:right">35.1%</td><td style="text-align:right">32.4%</td><td style="text-align:right"><span class="delta-neg">-2.7%</span></td><td style="text-align:right"><span class="delta-neg">-0.5%</span></td><td style="text-align:right"><span class="delta-neg">-0.4%</span></td></tr>
+          <tr><td>Mississippi (SSDC)</td><td><span class="badge badge-restriction">Restriction</span></td><td>05/08/26</td><td>Medicaid</td><td style="text-align:right">740K</td><td style="text-align:right">28.9%</td><td style="text-align:right">26.5%</td><td style="text-align:right"><span class="delta-neg">-2.4%</span></td><td style="text-align:right"><span class="delta-neg">-0.3%</span></td><td style="text-align:right"><span class="delta-neg">-0.2%</span></td></tr>
+          <tr><td>Montana (NMPI)</td><td><span class="badge badge-gain">Gain</span></td><td>05/01/26</td><td>Commercial</td><td style="text-align:right">560K</td><td style="text-align:right">22.1%</td><td style="text-align:right">27.6%</td><td style="text-align:right"><span class="delta-pos">+5.5%</span></td><td style="text-align:right"><span class="delta-pos">+0.4%</span></td><td style="text-align:right"><span class="delta-pos">+0.3%</span></td></tr>
+          <tr><td>New York (NMPI)</td><td><span class="badge badge-gain">Gain</span></td><td>04/24/26</td><td>Commercial</td><td style="text-align:right">4.2M</td><td style="text-align:right">30.5%</td><td style="text-align:right">34.2%</td><td style="text-align:right"><span class="delta-pos">+3.7%</span></td><td style="text-align:right"><span class="delta-pos">+1.2%</span></td><td style="text-align:right"><span class="delta-pos">+0.9%</span></td></tr>
+          <tr><td>Ohio (SSDC)</td><td><span class="badge badge-loss">Loss</span></td><td>04/17/26</td><td>Medicaid</td><td style="text-align:right">2.3M</td><td style="text-align:right">32.8%</td><td style="text-align:right">29.6%</td><td style="text-align:right"><span class="delta-neg">-3.2%</span></td><td style="text-align:right"><span class="delta-neg">-0.6%</span></td><td style="text-align:right"><span class="delta-neg">-0.5%</span></td></tr>
+          <tr><td>Pennsylvania (SSDC)</td><td><span class="badge badge-restriction">Restriction</span></td><td>04/10/26</td><td>Commercial</td><td style="text-align:right">3.1M</td><td style="text-align:right">34.7%</td><td style="text-align:right">33.1%</td><td style="text-align:right"><span class="delta-neg">-1.6%</span></td><td style="text-align:right"><span class="delta-neg">-0.3%</span></td><td style="text-align:right"><span class="delta-neg">-0.2%</span></td></tr>
+          <tr><td>Texas (Stand-Alone OptumRx)</td><td><span class="badge badge-gain">Gain</span></td><td>04/03/26</td><td>Commercial</td><td style="text-align:right">5.4M</td><td style="text-align:right">26.3%</td><td style="text-align:right">31.5%</td><td style="text-align:right"><span class="delta-pos">+5.2%</span></td><td style="text-align:right"><span class="delta-pos">+1.5%</span></td><td style="text-align:right"><span class="delta-pos">+1.1%</span></td></tr>
+          <tr><td>Wyoming (SSDC)</td><td><span class="badge badge-loss">Loss</span></td><td>03/27/26</td><td>Medicaid</td><td style="text-align:right">320K</td><td style="text-align:right">29.4%</td><td style="text-align:right">26.1%</td><td style="text-align:right"><span class="delta-neg">-3.3%</span></td><td style="text-align:right"><span class="delta-neg">-0.1%</span></td><td style="text-align:right"><span class="delta-neg">-0.1%</span></td></tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header-row">
+        <div>
+          <div class="card-title">Access Change Details — Top Plans by Payer</div>
+          <div class="card-subtitle">Top 5 plans by covered lives within the selected payer type</div>
+        </div>
+        <div class="filter-group" style="margin-bottom:0;">
+          <span style="font-size:11px;font-weight:600;">Payer Type</span>
+          <select class="filter-select" id="payer-filter-select" onchange="filterPayerTable(this.value)">
+            <option value="commercial">Commercial</option>
+            <option value="medicaid">Medicaid</option>
+            <option value="medicare">Medicare</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+      </div>
+      <table style="table-layout:fixed;">
+        <colgroup><col style="width:36%"><col style="width:9%"><col style="width:9%"><col style="width:7%"><col style="width:11%"><col style="width:11%"><col style="width:7%"><col style="width:6%"><col style="width:6%"></colgroup>
+        <thead>
+          <tr><th>PLAN</th><th>CHANGE</th><th>EFF. DATE</th><th style="text-align:right">LIVES</th><th style="text-align:right">SHARE @ CHANGE</th><th style="text-align:right">CURRENT SHARE</th><th style="text-align:right">Δ SHARE</th><th style="text-align:right">EST. NRX %</th><th style="text-align:right">EST. TRX %</th></tr>
+        </thead>
+        <tbody id="payer-table-body">
+          <tr data-payer="commercial"><td>Aetna National</td><td><span class="badge badge-gain">Gain</span></td><td>06/10/26</td><td style="text-align:right">5.8M</td><td style="text-align:right">28.4%</td><td style="text-align:right">33.2%</td><td style="text-align:right"><span class="delta-pos">+4.8%</span></td><td style="text-align:right"><span class="delta-pos">+1.4%</span></td><td style="text-align:right"><span class="delta-pos">+1.1%</span></td></tr>
+          <tr data-payer="commercial"><td>Cigna Commercial</td><td><span class="badge badge-gain">Gain</span></td><td>05/28/26</td><td style="text-align:right">4.3M</td><td style="text-align:right">30.1%</td><td style="text-align:right">34.6%</td><td style="text-align:right"><span class="delta-pos">+4.5%</span></td><td style="text-align:right"><span class="delta-pos">+1.1%</span></td><td style="text-align:right"><span class="delta-pos">+0.8%</span></td></tr>
+          <tr data-payer="commercial"><td>UnitedHealth Comm (National)</td><td><span class="badge badge-restriction">Restriction</span></td><td>05/15/26</td><td style="text-align:right">8.2M</td><td style="text-align:right">36.7%</td><td style="text-align:right">35.1%</td><td style="text-align:right"><span class="delta-neg">-1.6%</span></td><td style="text-align:right"><span class="delta-neg">-0.3%</span></td><td style="text-align:right"><span class="delta-neg">-0.2%</span></td></tr>
+          <tr data-payer="commercial"><td>Anthem BCBS</td><td><span class="badge badge-gain">Gain</span></td><td>04/30/26</td><td style="text-align:right">6.1M</td><td style="text-align:right">27.9%</td><td style="text-align:right">32.4%</td><td style="text-align:right"><span class="delta-pos">+4.5%</span></td><td style="text-align:right"><span class="delta-pos">+1.3%</span></td><td style="text-align:right"><span class="delta-pos">+1.0%</span></td></tr>
+          <tr data-payer="commercial"><td>Humana Commercial</td><td><span class="badge badge-loss">Loss</span></td><td>04/18/26</td><td style="text-align:right">3.7M</td><td style="text-align:right">33.5%</td><td style="text-align:right">30.8%</td><td style="text-align:right"><span class="delta-neg">-2.7%</span></td><td style="text-align:right"><span class="delta-neg">-0.5%</span></td><td style="text-align:right"><span class="delta-neg">-0.4%</span></td></tr>
+          <tr data-payer="medicaid"><td>California Medicaid</td><td><span class="badge badge-gain">Gain</span></td><td>06/05/26</td><td style="text-align:right">4.9M</td><td style="text-align:right">22.3%</td><td style="text-align:right">27.8%</td><td style="text-align:right"><span class="delta-pos">+5.5%</span></td><td style="text-align:right"><span class="delta-pos">+0.9%</span></td><td style="text-align:right"><span class="delta-pos">+0.7%</span></td></tr>
+          <tr data-payer="medicaid"><td>Texas Medicaid</td><td><span class="badge badge-loss">Loss</span></td><td>05/22/26</td><td style="text-align:right">3.6M</td><td style="text-align:right">29.1%</td><td style="text-align:right">26.4%</td><td style="text-align:right"><span class="delta-neg">-2.7%</span></td><td style="text-align:right"><span class="delta-neg">-0.6%</span></td><td style="text-align:right"><span class="delta-neg">-0.4%</span></td></tr>
+          <tr data-payer="medicaid"><td>New York Medicaid</td><td><span class="badge badge-restriction">Restriction</span></td><td>05/10/26</td><td style="text-align:right">3.2M</td><td style="text-align:right">31.6%</td><td style="text-align:right">29.8%</td><td style="text-align:right"><span class="delta-neg">-1.8%</span></td><td style="text-align:right"><span class="delta-neg">-0.3%</span></td><td style="text-align:right"><span class="delta-neg">-0.2%</span></td></tr>
+          <tr data-payer="medicaid"><td>Florida Medicaid</td><td><span class="badge badge-gain">Gain</span></td><td>04/28/26</td><td style="text-align:right">2.8M</td><td style="text-align:right">24.7%</td><td style="text-align:right">29.3%</td><td style="text-align:right"><span class="delta-pos">+4.6%</span></td><td style="text-align:right"><span class="delta-pos">+0.7%</span></td><td style="text-align:right"><span class="delta-pos">+0.5%</span></td></tr>
+          <tr data-payer="medicaid"><td>Illinois Medicaid</td><td><span class="badge badge-loss">Loss</span></td><td>04/15/26</td><td style="text-align:right">2.1M</td><td style="text-align:right">30.4%</td><td style="text-align:right">27.2%</td><td style="text-align:right"><span class="delta-neg">-3.2%</span></td><td style="text-align:right"><span class="delta-neg">-0.4%</span></td><td style="text-align:right"><span class="delta-neg">-0.3%</span></td></tr>
+          <tr data-payer="medicare"><td>UnitedHealth Medicare</td><td><span class="badge badge-gain">Gain</span></td><td>06/01/26</td><td style="text-align:right">7.4M</td><td style="text-align:right">25.6%</td><td style="text-align:right">30.1%</td><td style="text-align:right"><span class="delta-pos">+4.5%</span></td><td style="text-align:right"><span class="delta-pos">+1.6%</span></td><td style="text-align:right"><span class="delta-pos">+1.2%</span></td></tr>
+          <tr data-payer="medicare"><td>Humana Medicare</td><td><span class="badge badge-restriction">Restriction</span></td><td>05/18/26</td><td style="text-align:right">5.1M</td><td style="text-align:right">32.3%</td><td style="text-align:right">30.7%</td><td style="text-align:right"><span class="delta-neg">-1.6%</span></td><td style="text-align:right"><span class="delta-neg">-0.4%</span></td><td style="text-align:right"><span class="delta-neg">-0.3%</span></td></tr>
+          <tr data-payer="medicare"><td>Aetna Medicare Advantage</td><td><span class="badge badge-gain">Gain</span></td><td>05/05/26</td><td style="text-align:right">3.9M</td><td style="text-align:right">26.8%</td><td style="text-align:right">31.4%</td><td style="text-align:right"><span class="delta-pos">+4.6%</span></td><td style="text-align:right"><span class="delta-pos">+0.9%</span></td><td style="text-align:right"><span class="delta-pos">+0.7%</span></td></tr>
+          <tr data-payer="medicare"><td>BCBS Medicare</td><td><span class="badge badge-loss">Loss</span></td><td>04/22/26</td><td style="text-align:right">2.6M</td><td style="text-align:right">34.2%</td><td style="text-align:right">31.5%</td><td style="text-align:right"><span class="delta-neg">-2.7%</span></td><td style="text-align:right"><span class="delta-neg">-0.4%</span></td><td style="text-align:right"><span class="delta-neg">-0.3%</span></td></tr>
+          <tr data-payer="medicare"><td>Cigna Medicare Part D</td><td><span class="badge badge-gain">Gain</span></td><td>04/08/26</td><td style="text-align:right">2.2M</td><td style="text-align:right">23.9%</td><td style="text-align:right">28.7%</td><td style="text-align:right"><span class="delta-pos">+4.8%</span></td><td style="text-align:right"><span class="delta-pos">+0.5%</span></td><td style="text-align:right"><span class="delta-pos">+0.4%</span></td></tr>
+          <tr data-payer="other"><td>Kaiser Permanente</td><td><span class="badge badge-gain">Gain</span></td><td>06/12/26</td><td style="text-align:right">4.1M</td><td style="text-align:right">24.5%</td><td style="text-align:right">29.8%</td><td style="text-align:right"><span class="delta-pos">+5.3%</span></td><td style="text-align:right"><span class="delta-pos">+1.0%</span></td><td style="text-align:right"><span class="delta-pos">+0.8%</span></td></tr>
+          <tr data-payer="other"><td>Tricare (DoD)</td><td><span class="badge badge-restriction">Restriction</span></td><td>05/20/26</td><td style="text-align:right">2.9M</td><td style="text-align:right">31.8%</td><td style="text-align:right">29.4%</td><td style="text-align:right"><span class="delta-neg">-2.4%</span></td><td style="text-align:right"><span class="delta-neg">-0.3%</span></td><td style="text-align:right"><span class="delta-neg">-0.2%</span></td></tr>
+          <tr data-payer="other"><td>VA Health System</td><td><span class="badge badge-gain">Gain</span></td><td>05/06/26</td><td style="text-align:right">3.5M</td><td style="text-align:right">19.7%</td><td style="text-align:right">25.3%</td><td style="text-align:right"><span class="delta-pos">+5.6%</span></td><td style="text-align:right"><span class="delta-pos">+0.8%</span></td><td style="text-align:right"><span class="delta-pos">+0.6%</span></td></tr>
+          <tr data-payer="other"><td>Workers Comp National</td><td><span class="badge badge-loss">Loss</span></td><td>04/25/26</td><td style="text-align:right">1.7M</td><td style="text-align:right">28.3%</td><td style="text-align:right">25.1%</td><td style="text-align:right"><span class="delta-neg">-3.2%</span></td><td style="text-align:right"><span class="delta-neg">-0.2%</span></td><td style="text-align:right"><span class="delta-neg">-0.2%</span></td></tr>
+          <tr data-payer="other"><td>Health Exchange (ACA)</td><td><span class="badge badge-gain">Gain</span></td><td>04/11/26</td><td style="text-align:right">2.4M</td><td style="text-align:right">22.9%</td><td style="text-align:right">27.4%</td><td style="text-align:right"><span class="delta-pos">+4.5%</span></td><td style="text-align:right"><span class="delta-pos">+0.5%</span></td><td style="text-align:right"><span class="delta-pos">+0.4%</span></td></tr>
         </tbody>
       </table>
     </div>
@@ -1372,30 +1563,34 @@ BRAND_CHART_DATA_PLACEHOLDER
         </div>
         <div class="filter-group">
           <span style="font-size:11px;">Payer</span><select class="filter-select"><option>All</option></select>
-          <span style="font-size:11px;">Status</span><select class="filter-select"><option>All</option></select>
         </div>
       </div>
       <div class="chart-container">
         <svg class="chart" preserveAspectRatio="none" viewBox="0 0 800 250">
-          <line x1="60" y1="220" x2="780" y2="220" stroke="#e5e7eb" stroke-width="1"/>
+          <line x1="60" y1="220" x2="780" y2="220" stroke="#1a2332" stroke-width="1"/>
           <text x="50" y="224" text-anchor="end" font-size="10" fill="#9ca3af">0M</text>
           <text x="50" y="174" text-anchor="end" font-size="10" fill="#9ca3af">35M</text>
           <text x="50" y="124" text-anchor="end" font-size="10" fill="#9ca3af">70M</text>
           <text x="50" y="74" text-anchor="end" font-size="10" fill="#9ca3af">105M</text>
           <text x="50" y="24" text-anchor="end" font-size="10" fill="#9ca3af">140M</text>
-          <polygon fill="rgba(156,163,175,0.3)" points="80,220 120,180 200,140 300,100 400,70 500,55 600,45 700,38 760,35 760,220"/>
-          <polygon fill="rgba(22,163,74,0.3)" points="80,220 120,205 200,195 300,185 400,175 500,165 600,155 700,148 760,145 760,220"/>
-          <polygon fill="rgba(220,38,38,0.2)" points="80,220 120,215 200,213 300,212 400,214 500,215 600,216 700,217 760,217 760,220"/>
-          <polyline fill="none" stroke="#16a34a" stroke-width="2" points="80,205 120,195 200,185 300,175 400,165 500,155 600,148 700,142 760,140"/>
-          <polyline fill="none" stroke="#dc2626" stroke-width="1.5" points="80,215 120,213 200,212 300,213 400,214 500,215 600,216 700,217 760,217"/>
-          <polyline fill="none" stroke="#9ca3af" stroke-width="2" points="80,180 120,140 200,100 300,70 400,55 500,45 600,40 700,36 760,34"/>
+          <polyline fill="none" stroke="#16a34a" stroke-width="2.5" points="80,205 120,195 200,185 300,175 400,165 500,155 600,148 700,142 760,140"/>
+          <polyline fill="none" stroke="#dc2626" stroke-width="2.5" points="80,215 120,213 200,212 300,213 400,214 500,215 600,216 700,217 760,217"/>
+          <polyline fill="none" stroke="#9ca3af" stroke-width="2.5" points="80,180 120,140 200,100 300,70 400,55 500,45 600,40 700,36 760,34"/>
+          <text x="80" y="238" text-anchor="middle" font-size="9" fill="#9ca3af">Jan'25</text>
+          <text x="165" y="238" text-anchor="middle" font-size="9" fill="#9ca3af">Mar'25</text>
+          <text x="250" y="238" text-anchor="middle" font-size="9" fill="#9ca3af">May'25</text>
+          <text x="335" y="238" text-anchor="middle" font-size="9" fill="#9ca3af">Jul'25</text>
+          <text x="420" y="238" text-anchor="middle" font-size="9" fill="#9ca3af">Sep'25</text>
+          <text x="505" y="238" text-anchor="middle" font-size="9" fill="#9ca3af">Nov'25</text>
+          <text x="590" y="238" text-anchor="middle" font-size="9" fill="#9ca3af">Jan'26</text>
+          <text x="675" y="238" text-anchor="middle" font-size="9" fill="#9ca3af">Mar'26</text>
+          <text x="760" y="238" text-anchor="middle" font-size="9" fill="#9ca3af">May'26</text>
         </svg>
       </div>
       <div class="axis-info"><span>Y-Axis: Covered Lives (M)</span><span>X-Axis: Time Period (Month)</span></div>
         <div class="legend">
         <div class="legend-item"><div class="legend-dot" style="background:#16a34a"></div>Gain</div>
         <div class="legend-item"><div class="legend-dot" style="background:#dc2626"></div>Loss</div>
-        <div class="legend-item"><div class="legend-dot" style="background:#f59e0b"></div>Restriction</div>
         <div class="legend-item"><div class="legend-dot" style="background:#9ca3af"></div>Control</div>
       </div>
     </div>
@@ -1404,218 +1599,83 @@ BRAND_CHART_DATA_PLACEHOLDER
 <div class="nl-tab" id="nl-financial-tab">
 <div style="padding:8px 32px 24px;">
 <div class="section-head"><h2>Financial Tracker</h2><p>Weekly gross and net sales performance vs. budget and plan attainment.</p></div>
-    <div class="pill-group" id="financial-toggle">
+    <div class="pill-group" id="financial-toggle" style="margin-bottom:16px;">
       <div class="pill active" onclick="switchFinancial('gross')">Gross Sales</div>
       <div class="pill" onclick="switchFinancial('net')">Net Sales</div>
+    </div>
+    <div style="display:flex;justify-content:flex-end;margin-bottom:6px;margin-top:-10px;">
+      <div style="position:relative;display:inline-block;">
+        <div style="width:28px;height:28px;border-radius:50%;background:#ffffff;color:#0000C9;font-size:16px;font-weight:800;display:flex;align-items:center;justify-content:center;cursor:pointer;border:1px solid #c7d2fe;" onmouseover="this.nextElementSibling.style.display='block'" onmouseout="this.nextElementSibling.style.display='none'">i</div>
+        <div style="display:none;position:absolute;right:0;top:32px;background:#1a2332;color:#fff;padding:8px 12px;border-radius:6px;font-size:11px;line-height:1.5;width:auto;white-space:nowrap;z-index:10;box-shadow:0 4px 12px rgba(0,0,0,0.15);"><strong>Reporting Cadence:</strong><br>Gross Sales = Weekly &nbsp;|&nbsp; Net Sales = Monthly</div>
+      </div>
     </div>
 
     <div id="gross-view">
     <div class="row">
-      <div class="stat-tile">
-        <div class="label">GROSS SALES W/E 06/19</div>
-        <div class="value">$28.4M</div>
-        <div class="sub"><span class="delta-pos">+2.8%</span>&nbsp;&nbsp;WoW · +$0.8M</div>
+      <div style="background:#EEF5FB;border-radius:12px;padding:14px 16px;text-align:left;border:1px solid rgba(15,23,42,0.05);transition:transform 0.25s cubic-bezier(0.16,1,0.3,1),box-shadow 0.25s cubic-bezier(0.4,0,0.2,1);flex:1;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 6px 16px rgba(15,23,42,0.07),0 2px 4px rgba(15,23,42,0.04)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+        <div class="label">GROSS SALES W/E 10 May'26</div>
+        <div class="value" style="color:#0000C9;">$124.6M</div>
+        <div class="sub"><span class="delta-pos">+14.2%</span>&nbsp;&nbsp;vs Prior Year</div>
       </div>
-      <div class="stat-tile">
-        <div class="label">MTD ATTAINMENT VS OP26</div>
-        <div class="value">94.4%</div>
-        <div class="sub">$1.6M behind MTD plan</div>
+      <div style="background:#EEF5FB;border-radius:12px;padding:14px 16px;text-align:left;border:1px solid rgba(15,23,42,0.05);transition:transform 0.25s cubic-bezier(0.16,1,0.3,1),box-shadow 0.25s cubic-bezier(0.4,0,0.2,1);flex:1;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 6px 16px rgba(15,23,42,0.07),0 2px 4px rgba(15,23,42,0.04)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+        <div class="label">MTD ATTAINMENT VS OP'26</div>
+        <div class="value" style="color:#0000C9;">92.3%</div>
+        <div class="sub"><span class="delta-neg">$20.6M</span> behind MTD plan</div>
       </div>
-      <div class="stat-tile">
-        <div class="label">YTD ATTAINMENT VS OP26</div>
-        <div class="value">93.6%</div>
-        <div class="sub">$112K behind YTD plan</div>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-title">Weekly Gross Sales vs Budget</div>
-      <div class="card-subtitle">Last 14 weeks · $M</div>
-      <div class="chart-container">
-        <svg class="chart" preserveAspectRatio="none" viewBox="0 0 800 260">
-          <line x1="60" y1="230" x2="780" y2="230" stroke="#e5e7eb" stroke-width="1"/>
-          <line x1="60" y1="180" x2="780" y2="180" stroke="#f3f4f6" stroke-width="1" stroke-dasharray="4"/>
-          <line x1="60" y1="130" x2="780" y2="130" stroke="#f3f4f6" stroke-width="1" stroke-dasharray="4"/>
-          <line x1="60" y1="80" x2="780" y2="80" stroke="#f3f4f6" stroke-width="1" stroke-dasharray="4"/>
-          <line x1="60" y1="30" x2="780" y2="30" stroke="#f3f4f6" stroke-width="1" stroke-dasharray="4"/>
-          <text x="50" y="234" text-anchor="end" font-size="10" fill="#9ca3af">$0M</text>
-          <text x="50" y="184" text-anchor="end" font-size="10" fill="#9ca3af">$8M</text>
-          <text x="50" y="134" text-anchor="end" font-size="10" fill="#9ca3af">$16M</text>
-          <text x="50" y="84" text-anchor="end" font-size="10" fill="#9ca3af">$24M</text>
-          <text x="50" y="34" text-anchor="end" font-size="10" fill="#9ca3af">$32M</text>
-          <rect x="72" y="120" width="18" height="110" fill="#1e3a5f" rx="2"/>
-          <rect x="92" y="100" width="18" height="130" fill="#d1d5db" rx="2"/>
-          <rect x="122" y="110" width="18" height="120" fill="#1e3a5f" rx="2"/>
-          <rect x="142" y="100" width="18" height="130" fill="#d1d5db" rx="2"/>
-          <rect x="172" y="105" width="18" height="125" fill="#1e3a5f" rx="2"/>
-          <rect x="192" y="100" width="18" height="130" fill="#d1d5db" rx="2"/>
-          <rect x="222" y="95" width="18" height="135" fill="#1e3a5f" rx="2"/>
-          <rect x="242" y="100" width="18" height="130" fill="#d1d5db" rx="2"/>
-          <rect x="272" y="90" width="18" height="140" fill="#1e3a5f" rx="2"/>
-          <rect x="292" y="95" width="18" height="135" fill="#d1d5db" rx="2"/>
-          <rect x="322" y="85" width="18" height="145" fill="#1e3a5f" rx="2"/>
-          <rect x="342" y="90" width="18" height="140" fill="#d1d5db" rx="2"/>
-          <rect x="372" y="68" width="18" height="162" fill="#1e3a5f" rx="2"/>
-          <rect x="392" y="75" width="18" height="155" fill="#d1d5db" rx="2"/>
-          <rect x="422" y="72" width="18" height="158" fill="#1e3a5f" rx="2"/>
-          <rect x="442" y="75" width="18" height="155" fill="#d1d5db" rx="2"/>
-          <rect x="472" y="65" width="18" height="165" fill="#1e3a5f" rx="2"/>
-          <rect x="492" y="70" width="18" height="160" fill="#d1d5db" rx="2"/>
-          <rect x="522" y="58" width="18" height="172" fill="#1e3a5f" rx="2"/>
-          <rect x="542" y="65" width="18" height="165" fill="#d1d5db" rx="2"/>
-          <rect x="572" y="55" width="18" height="175" fill="#1e3a5f" rx="2"/>
-          <rect x="592" y="60" width="18" height="170" fill="#d1d5db" rx="2"/>
-          <rect x="622" y="50" width="18" height="180" fill="#1e3a5f" rx="2"/>
-          <rect x="642" y="55" width="18" height="175" fill="#d1d5db" rx="2"/>
-          <rect x="672" y="45" width="18" height="185" fill="#1e3a5f" rx="2"/>
-          <rect x="692" y="50" width="18" height="180" fill="#d1d5db" rx="2"/>
-          <rect x="722" y="42" width="18" height="188" fill="#1e3a5f" rx="2"/>
-          <rect x="742" y="48" width="18" height="182" fill="#d1d5db" rx="2"/>
-          <text x="88" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 1</text>
-          <text x="138" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 2</text>
-          <text x="188" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 3</text>
-          <text x="238" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 4</text>
-          <text x="288" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 5</text>
-          <text x="338" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 6</text>
-          <text x="388" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 7</text>
-          <text x="438" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 8</text>
-          <text x="488" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 9</text>
-          <text x="538" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 10</text>
-          <text x="588" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 11</text>
-          <text x="638" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 12</text>
-          <text x="688" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 13</text>
-          <text x="738" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 14</text>
-        </svg>
-      </div>
-      <div class="axis-info"><span>Y-Axis: Gross Sales ($M)</span><span>X-Axis: Time Period (Week)</span></div>
-        <div class="legend">
-        <div class="legend-item"><div class="legend-dot" style="background:#1e3a5f;border-radius:2px;width:12px;"></div>Actual</div>
-        <div class="legend-item"><div class="legend-dot" style="background:#d1d5db;border-radius:2px;width:12px;"></div>Budget</div>
+      <div style="background:#EEF5FB;border-radius:12px;padding:14px 16px;text-align:left;border:1px solid rgba(15,23,42,0.05);transition:transform 0.25s cubic-bezier(0.16,1,0.3,1),box-shadow 0.25s cubic-bezier(0.4,0,0.2,1);flex:1;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 6px 16px rgba(15,23,42,0.07),0 2px 4px rgba(15,23,42,0.04)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+        <div class="label">YTD ATTAINMENT VS OP'26</div>
+        <div class="value" style="color:#0000C9;">95.9%</div>
+        <div class="sub"><span class="delta-neg">$100.3M</span> behind YTD plan</div>
       </div>
     </div>
 
-    <div class="card">
-      <div class="card-title">Script vs Budget — MTD & YTD growth</div>
-      <div class="card-subtitle">Δ '25-'26 · Nurtec & oiCGRP</div>
-      <table>
-        <thead>
-          <tr><th>BRAND</th><th style="text-align:right">SCRIPT Δ MTD</th><th style="text-align:right">SCRIPT Δ YTD</th><th style="text-align:right">BUDGET ATTN MTD</th><th style="text-align:right">BUDGET ATTN YTD</th></tr>
-        </thead>
-        <tbody>
-          <tr><td><strong>Nurtec NBRx</strong></td><td style="text-align:right"><span class="delta-pos">+15.6%</span></td><td style="text-align:right"><span class="delta-pos">+11.3%</span></td><td style="text-align:right">100.5%</td><td style="text-align:right">98.3%</td></tr>
-          <tr><td><strong>oiCGRP NBRx</strong></td><td style="text-align:right"><span class="delta-pos">+12.1%</span></td><td style="text-align:right"><span class="delta-pos">+10.1%</span></td><td style="text-align:right">—</td><td style="text-align:right">—</td></tr>
-          <tr><td><strong>Nurtec TRx</strong></td><td style="text-align:right"><span class="delta-pos">+16.5%</span></td><td style="text-align:right"><span class="delta-pos">+16.1%</span></td><td style="text-align:right">94.4%</td><td style="text-align:right">93.5%</td></tr>
-          <tr><td><strong>oiCGRP TRx</strong></td><td style="text-align:right"><span class="delta-pos">+15.8%</span></td><td style="text-align:right"><span class="delta-pos">+17.1%</span></td><td style="text-align:right">95.8%</td><td style="text-align:right">94.3%</td></tr>
-        </tbody>
-      </table>
+        <div class="card">
+      <div class="card-title">Weekly Gross Revenue vs Budget (2026)</div>
+      <div class="card-subtitle">Actuals · STLY · Budget OP'26 · $M</div>
+      FIN_GROSS_CHART_PLACEHOLDER
+      <div class="legend" style="font-size:10px;margin-top:8px;">
+        <div class="legend-item"><div class="legend-dot" style="background:#7C6CFC;border-radius:2px;width:12px;"></div>Actual</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#0000C9"></div>Actual (STLY)</div>
+        <div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#9ca3af" stroke-width="2" stroke-dasharray="3"/></svg>Budget</div>
+      </div>
     </div>
+
     </div>
 
     <div id="net-view" style="display:none;">
     <div class="row">
-      <div class="stat-tile">
-        <div class="label">NET SALES W/E 06/19</div>
-        <div class="value">$18.6M</div>
-        <div class="sub"><span class="delta-pos">+3.1%</span>&nbsp;&nbsp;WoW · +$0.8M</div>
+      <div style="background:#EEF5FB;border-radius:12px;padding:14px 16px;text-align:left;border:1px solid rgba(15,23,42,0.05);transition:transform 0.25s cubic-bezier(0.16,1,0.3,1),box-shadow 0.25s cubic-bezier(0.4,0,0.2,1);flex:1;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 6px 16px rgba(15,23,42,0.07),0 2px 4px rgba(15,23,42,0.04)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+        <div class="label">NET SALES P04'26</div>
+        <div class="value" style="color:#0000C9;">$106.8M</div>
+        <div class="sub"><span class="delta-pos">+21.4%</span>&nbsp;&nbsp;vs Prior Year</div>
       </div>
-      <div class="stat-tile">
-        <div class="label">NET MTD ATTAINMENT VS OP26</div>
-        <div class="value">92.1%</div>
-        <div class="sub">$2.1M behind MTD plan</div>
+      <div style="background:#EEF5FB;border-radius:12px;padding:14px 16px;text-align:left;border:1px solid rgba(15,23,42,0.05);transition:transform 0.25s cubic-bezier(0.16,1,0.3,1),box-shadow 0.25s cubic-bezier(0.4,0,0.2,1);flex:1;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 6px 16px rgba(15,23,42,0.07),0 2px 4px rgba(15,23,42,0.04)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+        <div class="label">LATEST MONTH ATTAINMENT VS OP'26</div>
+        <div class="value" style="color:#0000C9;">96.6%</div>
+        <div class="sub"><span class="delta-neg">$3.7M</span> behind monthly plan</div>
       </div>
-      <div class="stat-tile">
-        <div class="label">NET YTD ATTAINMENT VS OP26</div>
-        <div class="value">91.8%</div>
-        <div class="sub">$186K behind YTD plan</div>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-title">Weekly Net Sales vs Budget</div>
-      <div class="card-subtitle">Last 14 weeks · $M</div>
-      <div class="chart-container">
-        <svg class="chart" preserveAspectRatio="none" viewBox="0 0 800 260">
-          <line x1="60" y1="230" x2="780" y2="230" stroke="#e5e7eb" stroke-width="1"/>
-          <line x1="60" y1="180" x2="780" y2="180" stroke="#f3f4f6" stroke-width="1" stroke-dasharray="4"/>
-          <line x1="60" y1="130" x2="780" y2="130" stroke="#f3f4f6" stroke-width="1" stroke-dasharray="4"/>
-          <line x1="60" y1="80" x2="780" y2="80" stroke="#f3f4f6" stroke-width="1" stroke-dasharray="4"/>
-          <line x1="60" y1="30" x2="780" y2="30" stroke="#f3f4f6" stroke-width="1" stroke-dasharray="4"/>
-          <text x="50" y="234" text-anchor="end" font-size="10" fill="#9ca3af">$0M</text>
-          <text x="50" y="184" text-anchor="end" font-size="10" fill="#9ca3af">$8M</text>
-          <text x="50" y="134" text-anchor="end" font-size="10" fill="#9ca3af">$16M</text>
-          <text x="50" y="84" text-anchor="end" font-size="10" fill="#9ca3af">$24M</text>
-          <text x="50" y="34" text-anchor="end" font-size="10" fill="#9ca3af">$32M</text>
-          <rect x="72" y="120" width="18" height="110" fill="#1e3a5f" rx="2"/>
-          <rect x="92" y="100" width="18" height="130" fill="#d1d5db" rx="2"/>
-          <rect x="122" y="110" width="18" height="120" fill="#1e3a5f" rx="2"/>
-          <rect x="142" y="100" width="18" height="130" fill="#d1d5db" rx="2"/>
-          <rect x="172" y="105" width="18" height="125" fill="#1e3a5f" rx="2"/>
-          <rect x="192" y="100" width="18" height="130" fill="#d1d5db" rx="2"/>
-          <rect x="222" y="95" width="18" height="135" fill="#1e3a5f" rx="2"/>
-          <rect x="242" y="100" width="18" height="130" fill="#d1d5db" rx="2"/>
-          <rect x="272" y="90" width="18" height="140" fill="#1e3a5f" rx="2"/>
-          <rect x="292" y="95" width="18" height="135" fill="#d1d5db" rx="2"/>
-          <rect x="322" y="85" width="18" height="145" fill="#1e3a5f" rx="2"/>
-          <rect x="342" y="90" width="18" height="140" fill="#d1d5db" rx="2"/>
-          <rect x="372" y="68" width="18" height="162" fill="#1e3a5f" rx="2"/>
-          <rect x="392" y="75" width="18" height="155" fill="#d1d5db" rx="2"/>
-          <rect x="422" y="72" width="18" height="158" fill="#1e3a5f" rx="2"/>
-          <rect x="442" y="75" width="18" height="155" fill="#d1d5db" rx="2"/>
-          <rect x="472" y="65" width="18" height="165" fill="#1e3a5f" rx="2"/>
-          <rect x="492" y="70" width="18" height="160" fill="#d1d5db" rx="2"/>
-          <rect x="522" y="58" width="18" height="172" fill="#1e3a5f" rx="2"/>
-          <rect x="542" y="65" width="18" height="165" fill="#d1d5db" rx="2"/>
-          <rect x="572" y="55" width="18" height="175" fill="#1e3a5f" rx="2"/>
-          <rect x="592" y="60" width="18" height="170" fill="#d1d5db" rx="2"/>
-          <rect x="622" y="50" width="18" height="180" fill="#1e3a5f" rx="2"/>
-          <rect x="642" y="55" width="18" height="175" fill="#d1d5db" rx="2"/>
-          <rect x="672" y="45" width="18" height="185" fill="#1e3a5f" rx="2"/>
-          <rect x="692" y="50" width="18" height="180" fill="#d1d5db" rx="2"/>
-          <rect x="722" y="42" width="18" height="188" fill="#1e3a5f" rx="2"/>
-          <rect x="742" y="48" width="18" height="182" fill="#d1d5db" rx="2"/>
-          <text x="88" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 1</text>
-          <text x="138" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 2</text>
-          <text x="188" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 3</text>
-          <text x="238" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 4</text>
-          <text x="288" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 5</text>
-          <text x="338" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 6</text>
-          <text x="388" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 7</text>
-          <text x="438" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 8</text>
-          <text x="488" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 9</text>
-          <text x="538" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 10</text>
-          <text x="588" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 11</text>
-          <text x="638" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 12</text>
-          <text x="688" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 13</text>
-          <text x="738" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 14</text>
-        </svg>
-      </div>
-      <div class="axis-info"><span>Y-Axis: Net Sales ($M)</span><span>X-Axis: Time Period (Week)</span></div>
-        <div class="legend">
-        <div class="legend-item"><div class="legend-dot" style="background:#1e3a5f;border-radius:2px;width:12px;"></div>Actual</div>
-        <div class="legend-item"><div class="legend-dot" style="background:#d1d5db;border-radius:2px;width:12px;"></div>Budget</div>
+      <div style="background:#EEF5FB;border-radius:12px;padding:14px 16px;text-align:left;border:1px solid rgba(15,23,42,0.05);transition:transform 0.25s cubic-bezier(0.16,1,0.3,1),box-shadow 0.25s cubic-bezier(0.4,0,0.2,1);flex:1;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 6px 16px rgba(15,23,42,0.07),0 2px 4px rgba(15,23,42,0.04)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+        <div class="label">YTD ATTAINMENT VS OP'26</div>
+        <div class="value" style="color:#0000C9;">109.4%</div>
+        <div class="sub"><span class="delta-pos">+$35.9M</span> ahead of YTD plan</div>
       </div>
     </div>
 
-    <div class="card">
-      <div class="card-title">Net Revenue vs Budget — MTD & YTD growth</div>
-      <div class="card-subtitle">Δ '25-'26 · Nurtec & oiCGRP</div>
-      <table>
-        <thead>
-          <tr><th>BRAND</th><th style="text-align:right">SCRIPT Δ MTD</th><th style="text-align:right">SCRIPT Δ YTD</th><th style="text-align:right">BUDGET ATTN MTD</th><th style="text-align:right">BUDGET ATTN YTD</th></tr>
-        </thead>
-        <tbody>
-          <tr><td><strong>Nurtec NBRx</strong></td><td style="text-align:right"><span class="delta-pos">+15.6%</span></td><td style="text-align:right"><span class="delta-pos">+11.3%</span></td><td style="text-align:right">100.5%</td><td style="text-align:right">98.3%</td></tr>
-          <tr><td><strong>oiCGRP NBRx</strong></td><td style="text-align:right"><span class="delta-pos">+12.1%</span></td><td style="text-align:right"><span class="delta-pos">+10.1%</span></td><td style="text-align:right">—</td><td style="text-align:right">—</td></tr>
-          <tr><td><strong>Nurtec TRx</strong></td><td style="text-align:right"><span class="delta-pos">+16.5%</span></td><td style="text-align:right"><span class="delta-pos">+16.1%</span></td><td style="text-align:right">92.1%</td><td style="text-align:right">93.5%</td></tr>
-          <tr><td><strong>oiCGRP TRx</strong></td><td style="text-align:right"><span class="delta-pos">+15.8%</span></td><td style="text-align:right"><span class="delta-pos">+17.1%</span></td><td style="text-align:right">95.8%</td><td style="text-align:right">94.3%</td></tr>
-        </tbody>
-      </table>
+        <div class="card">
+      <div class="card-title">Monthly Net Revenue vs Budget (2026)</div>
+      <div class="card-subtitle">Actuals · STLY · Budget OP'26 · $M</div>
+      FIN_NET_CHART_PLACEHOLDER
+      <div class="legend" style="font-size:10px;margin-top:8px;">
+        <div class="legend-item"><div class="legend-dot" style="background:#7C6CFC;border-radius:2px;width:12px;"></div>Actual</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#0000C9"></div>Actual (STLY)</div>
+        <div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#9ca3af" stroke-width="2" stroke-dasharray="3"/></svg>Budget</div>
+      </div>
+    </div>
+
     </div>
 </div>
 </div>
-</div>
-</div>
-            </div>
+
         </section>
 
         <!-- 3. AGENTS -->
@@ -1716,7 +1776,13 @@ BRAND_CHART_DATA_PLACEHOLDER
         var matchingSub = newsletterSub.querySelector('[data-panel="' + panelId + '"]');
         if (matchingSub) matchingSub.classList.add('active');
         // Trigger resize for Plotly charts
-        setTimeout(function() { window.dispatchEvent(new Event('resize')); }, 100);
+        setTimeout(function() {
+            document.querySelectorAll('.plotly-graph-div').forEach(function(gd) {
+                if (gd && gd.data && typeof Plotly !== 'undefined') {
+                    Plotly.relayout(gd, {autosize: true});
+                }
+            });
+        }, 150);
     }
 
     var switching = false;
@@ -1734,8 +1800,14 @@ BRAND_CHART_DATA_PLACEHOLDER
             next.classList.add('is-active');
             void next.offsetWidth;
             next.classList.add('is-visible');
-            // Trigger resize for Plotly charts
-            window.dispatchEvent(new Event('resize'));
+            // Trigger resize for Plotly charts - staggered for reliability
+            setTimeout(function() {
+                document.querySelectorAll('.plotly-graph-div').forEach(function(gd) {
+                    if (gd && gd.data && typeof Plotly !== 'undefined') {
+                        Plotly.relayout(gd, {autosize: true});
+                    }
+                });
+            }, 400);
             if (toolbarSection && label) toolbarSection.textContent = label;
             switching = false;
         }, 220);
@@ -1829,6 +1901,11 @@ BRAND_CHART_DATA_PLACEHOLDER
             document.getElementById('gross-view').style.display = 'none';
             document.getElementById('net-view').style.display = 'block';
         }
+        setTimeout(function() {
+            document.querySelectorAll('.plotly-graph-div').forEach(function(gd) {
+                if (gd && gd.data && typeof Plotly !== 'undefined') { Plotly.relayout(gd, {autosize: true}); }
+            });
+        }, 100);
     };
     
     
@@ -1840,8 +1917,47 @@ BRAND_CHART_DATA_PLACEHOLDER
             var template = el.getAttribute('data-xp-metric');
             el.textContent = template.replace('{XM}', label);
         });
+        // Toggle Xponent charts
+        var pTrx = document.getElementById('xpt-payer-trx');
+        var pNrx = document.getElementById('xpt-payer-nrx');
+        var cTrx = document.getElementById('xpt-ch-trx');
+        var cNrx = document.getElementById('xpt-ch-nrx');
+        if (metric === 'trx') {
+            pTrx.style.height = ''; pTrx.style.visibility = '';
+            pNrx.style.height = '0'; pNrx.style.visibility = 'hidden';
+            cTrx.style.height = ''; cTrx.style.visibility = '';
+            cNrx.style.height = '0'; cNrx.style.visibility = 'hidden';
+        } else {
+            pTrx.style.height = '0'; pTrx.style.visibility = 'hidden';
+            pNrx.style.height = ''; pNrx.style.visibility = '';
+            cTrx.style.height = '0'; cTrx.style.visibility = 'hidden';
+            cNrx.style.height = ''; cNrx.style.visibility = '';
+        }
+        window.dispatchEvent(new Event('resize'));
+        // Toggle Xponent table tbody (TRx/NRx)
+        document.querySelectorAll('.xpt-trx-body').forEach(function(el) {
+            el.style.display = metric === 'trx' ? '' : 'none';
+        });
+        document.querySelectorAll('.xpt-nrx-body').forEach(function(el) {
+            el.style.display = metric === 'nrx' ? '' : 'none';
+        });
     };
     
+    window.filterPayerTable = function(payer) {
+        var rows = document.querySelectorAll('#payer-table-body tr');
+        var shown = 0;
+        rows.forEach(function(row) {
+            var rowPayer = row.getAttribute('data-payer');
+            if (rowPayer === payer) {
+                row.style.display = shown < 5 ? '' : 'none';
+                shown++;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    };
+    filterPayerTable('commercial');
+
     window.switchAcuteChannel = function(brand) {
         document.getElementById('acute-ch-nurtec').classList.toggle('active', brand === 'nurtec');
         document.getElementById('acute-ch-ubrelvy').classList.toggle('active', brand === 'ubrelvy');
@@ -1913,15 +2029,48 @@ BRAND_CHART_DATA_PLACEHOLDER
             if (trxEl) trxEl.style.display = (b === activeBrand && metric === 'trx') ? 'block' : 'none';
             if (nbrxEl) nbrxEl.style.display = (b === activeBrand && metric === 'nbrx') ? 'block' : 'none';
         });
+        // Toggle NPA table tbody (TRx/NBRx)
+        document.querySelectorAll('.npa-table-trx').forEach(function(el) {
+            el.style.display = metric === 'trx' ? '' : 'none';
+        });
+        document.querySelectorAll('.npa-table-nbrx').forEach(function(el) {
+            el.style.display = metric === 'nbrx' ? '' : 'none';
+        });
         window.dispatchEvent(new Event('resize'));
     };
-    // Initial resize trigger for Plotly
-    setTimeout(function() { window.dispatchEvent(new Event('resize')); }, 500);
+    // Definitive fix: MutationObserver watches for any element becoming visible,
+    // then resizes all Plotly charts. Handles hidden tabs, section switches, toggles.
+    function resizeVisiblePlotly() {
+        document.querySelectorAll('.plotly-graph-div').forEach(function(gd) {
+            if (gd && gd.data && typeof Plotly !== 'undefined' && gd.offsetWidth > 0) {
+                Plotly.relayout(gd, {autosize: true});
+            }
+        });
+    }
+    var observer = new MutationObserver(function(mutations) {
+        var needsResize = false;
+        mutations.forEach(function(m) {
+            if (m.type === 'attributes' && (m.attributeName === 'style' || m.attributeName === 'class')) {
+                needsResize = true;
+            }
+        });
+        if (needsResize) {
+            setTimeout(resizeVisiblePlotly, 50);
+            setTimeout(resizeVisiblePlotly, 300);
+        }
+    });
+    observer.observe(document.body, {attributes: true, subtree: true, attributeFilter: ['style', 'class']});
+    // Also fire on initial load with longer delays for iframe settling
+    setTimeout(resizeVisiblePlotly, 500);
+    setTimeout(resizeVisiblePlotly, 1000);
+    setTimeout(resizeVisiblePlotly, 2000);
+    setTimeout(resizeVisiblePlotly, 3500);
 })();
 </script>
 </body>
 </html>
 """
+
 
 # Inject live Plotly chart - replace the entire chart container
 trx_nbrx_html = '<div id="trx-brand-chart" style="width:100%;overflow:hidden;">' + brand_chart_svg + '</div><div id="nbrx-brand-chart" style="width:100%;overflow:hidden;display:none;">' + nbrx_chart_svg + '</div>'
@@ -1936,15 +2085,15 @@ channel_html += '<div id="ch-qulipta-trx" style="width:100%;overflow:hidden;disp
 channel_html += '<div id="ch-qulipta-nbrx" style="width:100%;overflow:hidden;display:none;">' + ch_qulipta_nbrx + '</div>'
 # Acute Channel chart injection (brand toggle: nurtec/ubrelvy, side by side TRx|NBRx)
 acute_ch_legend = '<div class="legend" style="margin-top:8px;justify-content:center;"><div class="legend-item"><div class="legend-dot" style="background:#0891b2"></div>Retail Actuals</div><div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#0891b2" stroke-width="2" stroke-dasharray="3"/></svg>Retail STLY</div><div class="legend-item"><div class="legend-dot" style="background:#7c3aed"></div>Mail-Order Actuals</div><div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#7c3aed" stroke-width="2" stroke-dasharray="3"/></svg>Mail-Order STLY</div><div class="legend-item"><div class="legend-dot" style="background:#9ca3af"></div>LTC Actuals</div><div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#9ca3af" stroke-width="2" stroke-dasharray="3"/></svg>LTC STLY</div></div>'
-acute_ch_html = '<div id="ap-ch-nurtec-acute" style="width:100%;"><div class="split-section"><div class="split-col"><div class="section-label">TRx</div>' + ap_ch_nurtec_acute_trx + '</div><div class="split-col"><div class="section-label">NBRx</div>' + ap_ch_nurtec_acute_nbrx + '</div></div></div>'
-acute_ch_html += '<div id="ap-ch-ubrelvy-acute" style="width:100%;display:none;"><div class="split-section"><div class="split-col"><div class="section-label">TRx</div>' + ap_ch_ubrelvy_acute_trx + '</div><div class="split-col"><div class="section-label">NBRx</div>' + ap_ch_ubrelvy_acute_nbrx + '</div></div></div>'
+acute_ch_html = '<div id="ap-ch-nurtec-acute" style="width:100%;"><div class="split-section chart-split"><div class="split-col"><div class="section-label">TRx</div>' + ap_ch_nurtec_acute_trx + '</div><div class="split-col"><div class="section-label">NBRx</div>' + ap_ch_nurtec_acute_nbrx + '</div></div></div>'
+acute_ch_html += '<div id="ap-ch-ubrelvy-acute" style="width:100%;display:none;"><div class="split-section chart-split"><div class="split-col"><div class="section-label">TRx</div>' + ap_ch_ubrelvy_acute_trx + '</div><div class="split-col"><div class="section-label">NBRx</div>' + ap_ch_ubrelvy_acute_nbrx + '</div></div></div>'
 acute_ch_html += acute_ch_legend
 html_content = html_content.replace('ACUTE_CHANNEL_CHART_PLACEHOLDER', acute_ch_html)
 
 # Preventive Channel chart injection (brand toggle: nurtec/qulipta, side by side TRx|NBRx)
 prev_ch_legend = '<div class="legend" style="margin-top:8px;justify-content:center;"><div class="legend-item"><div class="legend-dot" style="background:#0891b2"></div>Retail Actuals</div><div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#0891b2" stroke-width="2" stroke-dasharray="3"/></svg>Retail STLY</div><div class="legend-item"><div class="legend-dot" style="background:#7c3aed"></div>Mail-Order Actuals</div><div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#7c3aed" stroke-width="2" stroke-dasharray="3"/></svg>Mail-Order STLY</div><div class="legend-item"><div class="legend-dot" style="background:#9ca3af"></div>LTC Actuals</div><div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#9ca3af" stroke-width="2" stroke-dasharray="3"/></svg>LTC STLY</div></div>'
-prev_ch_html = '<div id="ap-ch-nurtec-prev" style="width:100%;"><div class="split-section"><div class="split-col"><div class="section-label">TRx</div>' + ap_ch_nurtec_prev_trx + '</div><div class="split-col"><div class="section-label">NBRx</div>' + ap_ch_nurtec_prev_nbrx + '</div></div></div>'
-prev_ch_html += '<div id="ap-ch-qulipta-prev" style="width:100%;display:none;"><div class="split-section"><div class="split-col"><div class="section-label">TRx</div>' + ap_ch_qulipta_prev_trx + '</div><div class="split-col"><div class="section-label">NBRx</div>' + ap_ch_qulipta_prev_nbrx + '</div></div></div>'
+prev_ch_html = '<div id="ap-ch-nurtec-prev" style="width:100%;"><div class="split-section chart-split"><div class="split-col"><div class="section-label">TRx</div>' + ap_ch_nurtec_prev_trx + '</div><div class="split-col"><div class="section-label">NBRx</div>' + ap_ch_nurtec_prev_nbrx + '</div></div></div>'
+prev_ch_html += '<div id="ap-ch-qulipta-prev" style="width:100%;display:none;"><div class="split-section chart-split"><div class="split-col"><div class="section-label">TRx</div>' + ap_ch_qulipta_prev_trx + '</div><div class="split-col"><div class="section-label">NBRx</div>' + ap_ch_qulipta_prev_nbrx + '</div></div></div>'
 prev_ch_html += prev_ch_legend
 html_content = html_content.replace('PREV_CHANNEL_CHART_PLACEHOLDER', prev_ch_html)
 
@@ -1952,12 +2101,40 @@ html_content = html_content.replace('PREV_CHANNEL_CHART_PLACEHOLDER', prev_ch_ht
 html_content = html_content.replace('CHANNEL_CHART_PLACEHOLDER', channel_html)
 
 # Acute/Preventive chart injection - side by side TRx | NBRx
-acute_legend = '<div class="legend" style="margin-top:8px;justify-content:center;"><div class="legend-item"><div class="legend-dot" style="background:#16a34a"></div>Nurtec Acute Actuals</div><div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#16a34a" stroke-width="2" stroke-dasharray="3"/></svg>Nurtec Acute STLY</div><div class="legend-item"><div class="legend-dot" style="background:#f59e0b"></div>Ubrelvy Acute Actuals</div><div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#f59e0b" stroke-width="2" stroke-dasharray="3"/></svg>Ubrelvy Acute STLY</div></div>'
-acute_html = '<div class="split-section"><div class="split-col"><div class="section-label">TRx</div>' + acute_trx_chart + '</div><div class="split-col"><div class="section-label">NBRx</div>' + acute_nbrx_chart + '</div></div>' + acute_legend
+acute_legend = '<div class="legend" style="margin-top:8px;justify-content:center;"><div class="legend-item"><div class="legend-dot" style="background:#7C6CFC"></div>Nurtec Acute Actuals</div><div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#7C6CFC" stroke-width="2" stroke-dasharray="3"/></svg>Nurtec Acute STLY</div><div class="legend-item"><div class="legend-dot" style="background:#4ADE80"></div>Ubrelvy Acute Actuals</div><div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#4ADE80" stroke-width="2" stroke-dasharray="3"/></svg>Ubrelvy Acute STLY</div></div>'
+acute_html = '<div class="split-section chart-split"><div class="split-col"><div class="section-label">TRx</div>' + acute_trx_chart + '</div><div class="split-col"><div class="section-label">NBRx</div>' + acute_nbrx_chart + '</div></div>' + acute_legend
 html_content = html_content.replace('ACUTE_BRAND_CHART_PLACEHOLDER', acute_html)
 
-prev_legend = '<div class="legend" style="margin-top:8px;justify-content:center;"><div class="legend-item"><div class="legend-dot" style="background:#16a34a"></div>Nurtec Prev Actuals</div><div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#16a34a" stroke-width="2" stroke-dasharray="3"/></svg>Nurtec Prev STLY</div><div class="legend-item"><div class="legend-dot" style="background:#3b82f6"></div>Qulipta Prev Actuals</div><div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#3b82f6" stroke-width="2" stroke-dasharray="3"/></svg>Qulipta Prev STLY</div></div>'
-prev_html = '<div class="split-section"><div class="split-col"><div class="section-label">TRx</div>' + prev_trx_chart + '</div><div class="split-col"><div class="section-label">NBRx</div>' + prev_nbrx_chart + '</div></div>' + prev_legend
+prev_legend = '<div class="legend" style="margin-top:8px;justify-content:center;"><div class="legend-item"><div class="legend-dot" style="background:#7C6CFC"></div>Nurtec Prev Actuals</div><div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#7C6CFC" stroke-width="2" stroke-dasharray="3"/></svg>Nurtec Prev STLY</div><div class="legend-item"><div class="legend-dot" style="background:#FB923C"></div>Qulipta Prev Actuals</div><div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#FB923C" stroke-width="2" stroke-dasharray="3"/></svg>Qulipta Prev STLY</div></div>'
+prev_html = '<div class="split-section chart-split"><div class="split-col"><div class="section-label">TRx</div>' + prev_trx_chart + '</div><div class="split-col"><div class="section-label">NBRx</div>' + prev_nbrx_chart + '</div></div>' + prev_legend
 html_content = html_content.replace('PREV_BRAND_CHART_PLACEHOLDER', prev_html)
 
-components.html(html_content, height=920, scrolling=False)
+# Xponent Trends chart injection
+html_content = html_content.replace('XPT_PAYER_TRX_PLACEHOLDER', xpt_payer_trx_html)
+html_content = html_content.replace('XPT_PAYER_NRX_PLACEHOLDER', xpt_payer_nrx_html)
+html_content = html_content.replace('XPT_CH_TRX_PLACEHOLDER', xpt_ch_trx_html)
+html_content = html_content.replace('XPT_CH_NRX_PLACEHOLDER', xpt_ch_nrx_html)
+
+# Finance chart injection
+if FINANCE_RESTRICTED:
+    _fin_restricted_msg = '<div style="display:flex;align-items:center;justify-content:center;height:300px;color:#9ca3af;font-size:14px;font-style:italic;">Access Restricted</div>'
+    html_content = html_content.replace('FIN_GROSS_CHART_PLACEHOLDER', _fin_restricted_msg)
+    html_content = html_content.replace('FIN_NET_CHART_PLACEHOLDER', _fin_restricted_msg)
+    # Blank out KPI values
+    html_content = html_content.replace('$124.6M', '—')
+    html_content = html_content.replace('+14.2%', '—')
+    html_content = html_content.replace('92.3%', '—')
+    html_content = html_content.replace('$20.6M', '—')
+    html_content = html_content.replace('95.9%', '—')
+    html_content = html_content.replace('$100.3M', '—')
+    html_content = html_content.replace('$106.8M', '—')
+    html_content = html_content.replace('+21.4%', '—')
+    html_content = html_content.replace('96.6%', '—')
+    html_content = html_content.replace('$3.7M', '—')
+    html_content = html_content.replace('109.4%', '—')
+    html_content = html_content.replace('+$35.9M', '—')
+else:
+    html_content = html_content.replace('FIN_GROSS_CHART_PLACEHOLDER', fin_gross_html)
+    html_content = html_content.replace('FIN_NET_CHART_PLACEHOLDER', fin_net_html)
+
+components.html(html_content, height=960, scrolling=False)
