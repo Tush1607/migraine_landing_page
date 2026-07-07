@@ -12,10 +12,37 @@ import plotly.graph_objects as go
 from datetime import datetime
 
 # --- User Access Restriction (resolved after finance data loads) ---
-try:
-    _current_user_email = st.experimental_user.email or ''
-except:
-    _current_user_email = ''
+def _get_current_user_email():
+    """Get current user email - tries multiple methods for DSS compatibility."""
+    # Method 1: Dataiku API (DSS webapps)
+    try:
+        import dataiku
+        client = dataiku.api_client()
+        user = client.get_own_user()
+        settings = user.get_settings().get_raw()
+        email = settings.get('email', '') or settings.get('login', '') or ''
+        if email:
+            return email
+    except:
+        pass
+    # Method 2: Dataiku webapp config / environ
+    try:
+        import os
+        email = os.environ.get('DKU_CURRENT_USER', '') or os.environ.get('DATAIKU_USER', '')
+        if email:
+            return email
+    except:
+        pass
+    # Method 3: Streamlit experimental_user (Streamlit Cloud / SiS)
+    try:
+        email = st.experimental_user.email or ''
+        if email:
+            return email
+    except:
+        pass
+    return ''
+
+_current_user_email = _get_current_user_email()
 
 def _resolve_finance_restriction():
     """Dynamically build restricted email list from data + hardcoded additions."""
