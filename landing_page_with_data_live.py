@@ -109,8 +109,8 @@ def _get_xpt_series(df, cut_type, cut_value, prescription):
 
 _xpt_payer_trx = {k: _get_xpt_series(_xpt_df, 'Payer', k, 'TRx') for k in ['Commercial', 'Medicare', 'Medicaid', 'Other']}
 _xpt_payer_nrx = {k: _get_xpt_series(_xpt_df, 'Payer', k, 'NRx') for k in ['Commercial', 'Medicare', 'Medicaid', 'Other']}
-_xpt_ch_trx = {k: _get_xpt_series(_xpt_df, 'Channel', k, 'TRx') for k in ['RETAIL', 'MAIL_ORDER', 'LTC']}
-_xpt_ch_nrx = {k: _get_xpt_series(_xpt_df, 'Channel', k, 'NRx') for k in ['RETAIL', 'MAIL_ORDER', 'LTC']}
+_xpt_ch_trx = {'Retail': _get_xpt_series(_xpt_df, 'Channel', 'RETAIL', 'TRx'), 'Mail-Order': _get_xpt_series(_xpt_df, 'Channel', 'MAIL_ORDER', 'TRx'), 'LTC': _get_xpt_series(_xpt_df, 'Channel', 'LTC', 'TRx')}
+_xpt_ch_nrx = {'Retail': _get_xpt_series(_xpt_df, 'Channel', 'RETAIL', 'NRx'), 'Mail-Order': _get_xpt_series(_xpt_df, 'Channel', 'MAIL_ORDER', 'NRx'), 'LTC': _get_xpt_series(_xpt_df, 'Channel', 'LTC', 'NRx')}
 
 # --- Finance Trends Data (Live) ---
 _fin_df = load_finance_trends()
