@@ -175,9 +175,6 @@ _fin_kpi_df = load_finance_stacked()
 # Resolve finance access restriction (must be after load_finance_stacked is available)
 FINANCE_RESTRICTED = _resolve_finance_restriction()
 
-# DEBUG: Remove after testing
-st.write(f"DEBUG: email=[{_current_user_email}] restricted=[{FINANCE_RESTRICTED}]")
-
 
 # --- Acute/Preventive Brand Charts ---
 def build_acute_prev_chart(df, brand1, brand2, brand1_name, brand2_name, brand1_color, brand2_color, metric_label, dates_list):
