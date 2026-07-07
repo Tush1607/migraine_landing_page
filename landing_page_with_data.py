@@ -11,6 +11,15 @@ st.set_page_config(
 import plotly.graph_objects as go
 from datetime import datetime
 
+# --- User Access Restriction ---
+FINANCE_RESTRICTED_EMAILS = ['ishan.rastogi@pfizer.com']
+# Get current user email (works on Streamlit in Snowflake / SiS)
+try:
+    _current_user_email = st.experimental_user.email or ''
+except:
+    _current_user_email = ''  # Local dev - no restriction
+FINANCE_RESTRICTED = _current_user_email.lower() in [e.lower() for e in FINANCE_RESTRICTED_EMAILS]
+
 def week_to_date(wid):
     return datetime.strptime(str(wid), '%Y%m%d')
 
@@ -2366,7 +2375,25 @@ html_content = html_content.replace('XPT_CH_TRX_PLACEHOLDER', xpt_ch_trx_html)
 html_content = html_content.replace('XPT_CH_NRX_PLACEHOLDER', xpt_ch_nrx_html)
 
 # Finance chart injection
-html_content = html_content.replace('FIN_GROSS_CHART_PLACEHOLDER', fin_gross_html)
-html_content = html_content.replace('FIN_NET_CHART_PLACEHOLDER', fin_net_html)
+if FINANCE_RESTRICTED:
+    _fin_restricted_msg = '<div style="display:flex;align-items:center;justify-content:center;height:300px;color:#9ca3af;font-size:14px;font-style:italic;">Access Restricted</div>'
+    html_content = html_content.replace('FIN_GROSS_CHART_PLACEHOLDER', _fin_restricted_msg)
+    html_content = html_content.replace('FIN_NET_CHART_PLACEHOLDER', _fin_restricted_msg)
+    # Blank out KPI values
+    html_content = html_content.replace('$124.6M', '—')
+    html_content = html_content.replace('+14.2%', '—')
+    html_content = html_content.replace('92.3%', '—')
+    html_content = html_content.replace('$20.6M', '—')
+    html_content = html_content.replace('95.9%', '—')
+    html_content = html_content.replace('$100.3M', '—')
+    html_content = html_content.replace('$106.8M', '—')
+    html_content = html_content.replace('+21.4%', '—')
+    html_content = html_content.replace('96.6%', '—')
+    html_content = html_content.replace('$3.7M', '—')
+    html_content = html_content.replace('109.4%', '—')
+    html_content = html_content.replace('+$35.9M', '—')
+else:
+    html_content = html_content.replace('FIN_GROSS_CHART_PLACEHOLDER', fin_gross_html)
+    html_content = html_content.replace('FIN_NET_CHART_PLACEHOLDER', fin_net_html)
 
 components.html(html_content, height=960, scrolling=False)
