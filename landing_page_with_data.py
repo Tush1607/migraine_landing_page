@@ -590,6 +590,43 @@ fig_xpt_c_nrx.update_layout(height=300, margin=dict(l=50, r=20, t=10, b=100), pl
 xpt_ch_nrx_html = fig_xpt_c_nrx.to_html(full_html=False, include_plotlyjs=False, config={'displayModeBar': False, 'responsive': True})
 xpt_ch_nrx_html = xpt_ch_nrx_html.replace('class="plotly-graph-div" style="', 'class="plotly-graph-div" style="width:100%;')
 
+# --- Finance Trends Charts ---
+_fin_gross_labels = ['4 Jan','11 Jan','18 Jan','25 Jan','1 Feb','8 Feb','15 Feb','22 Feb','1 Mar','8 Mar','15 Mar','22 Mar','29 Mar','5 Apr','12 Apr','19 Apr','26 Apr','3 May','10 May','17 May','24 May','31 May','7 Jun','14 Jun','21 Jun','28 Jun','5 Jul','12 Jul','19 Jul','26 Jul','2 Aug','9 Aug','16 Aug','23 Aug','30 Aug','6 Sep','13 Sep','20 Sep','27 Sep','4 Oct','11 Oct','18 Oct','25 Oct','1 Nov','8 Nov','15 Nov','22 Nov','29 Nov','6 Dec','13 Dec','20 Dec','27 Dec','31 Dec']
+_fin_gross_actuals = [82.7,142.3,149.4,115.3,126.6,113.1,125.4,112.4,116.1,126.6,127.5,113.0,158.2,124.9,126.2,126.5,130.0,124.1,124.6,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None]
+_fin_gross_stly = [83.5,120.8,105.4,87.9,102.9,74.2,85.2,90.2,104.3,107.2,113.4,103.6,105.2,100.3,107.0,100.7,105.7,97.0,109.1,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None]
+_fin_gross_budget = [116.8,116.8,116.8,116.8,131.0,131.0,131.0,131.0,132.8,132.8,132.8,132.8,132.8,135.2,135.2,135.2,135.2,134.7,134.7,134.7,134.7,139.9,139.9,139.9,139.9,139.9,138.9,138.9,138.9,138.9,141.9,141.9,141.9,141.9,140.0,140.0,140.0,140.0,140.0,151.6,151.6,151.6,151.6,153.3,153.3,153.3,153.3,153.3,137.9,137.9,137.9,137.9,137.9]
+
+fig_fin_gross = go.Figure()
+fig_fin_gross.add_trace(go.Bar(x=_fin_gross_labels, y=_fin_gross_actuals, name='Actual', marker_color='#7C6CFC'))
+fig_fin_gross.add_trace(go.Scatter(x=_fin_gross_labels, y=_fin_gross_stly, mode='lines', name='Actual (STLY)', line=dict(color='#0000C9', width=2.5)))
+fig_fin_gross.add_trace(go.Scatter(x=_fin_gross_labels, y=_fin_gross_budget, mode='lines', name='Budget', line=dict(color='#9ca3af', width=2, dash='dash')))
+fig_fin_gross.update_layout(height=340, margin=dict(l=60, r=20, t=10, b=100), plot_bgcolor='white', paper_bgcolor='white',
+    xaxis=dict(tickfont=dict(size=8, color='#374151', family='Inter, sans-serif'), tickangle=-90, showgrid=False, hoverformat='', showline=True, linewidth=1, linecolor='#1a2332'),
+    yaxis=dict(title=dict(text='Gross Sales ($M)', font=dict(size=10, color='#4b5563')), tickfont=dict(size=9, color='#374151', family='Inter, sans-serif'), showgrid=False, tickprefix='$', ticksuffix='M'),
+    showlegend=False, hovermode='x unified', barmode='group', bargap=0.3,
+    hoverlabel=dict(bgcolor='white', font=dict(size=11, color='#1a2332', family='Inter, sans-serif'), bordercolor='rgba(0,0,0,0)'))
+fin_gross_html = fig_fin_gross.to_html(full_html=False, include_plotlyjs=False, config={'displayModeBar': False, 'responsive': True})
+fin_gross_html = fin_gross_html.replace('class="plotly-graph-div" style="', 'class="plotly-graph-div" style="width:100%;')
+
+# Net Sales chart (monthly)
+_fin_net_labels = ["P01'26","P02'26","P03'26","P04'26","P05'26","P06'26","P07'26","P08'26","P09'26","P10'26","P11'26","P12'26"]
+_fin_net_actuals = [82.5,73.6,153.2,106.8,None,None,None,None,None,None,None,None]
+_fin_net_stly = [63.2,49.2,112.6,88.0,None,None,None,None,None,None,None,None]
+_fin_net_budget = [72.8,81.7,115.2,110.5,110.1,138.3,127.2,130.0,156.8,137.8,174.2,152.7]
+
+fig_fin_net = go.Figure()
+fig_fin_net.add_trace(go.Bar(x=_fin_net_labels, y=_fin_net_actuals, name='Actual', marker_color='#7C6CFC'))
+fig_fin_net.add_trace(go.Scatter(x=_fin_net_labels, y=_fin_net_stly, mode='lines', name='Actual (STLY)', line=dict(color='#0000C9', width=2.5)))
+fig_fin_net.add_trace(go.Scatter(x=_fin_net_labels, y=_fin_net_budget, mode='lines', name='Budget', line=dict(color='#9ca3af', width=2, dash='dash')))
+fig_fin_net.update_layout(height=340, margin=dict(l=60, r=10, t=10, b=80), plot_bgcolor='white', paper_bgcolor='white', autosize=True,
+    xaxis=dict(type='category', categoryorder='array', categoryarray=_fin_net_labels, tickfont=dict(size=9, color='#374151', family='Inter, sans-serif'), tickangle=0, showgrid=False, hoverformat='', showline=True, linewidth=1, linecolor='#1a2332', range=[-0.5, 11.5], constrain='domain'),
+    yaxis=dict(title=dict(text='Net Sales ($M)', font=dict(size=10, color='#4b5563')), tickfont=dict(size=9, color='#374151', family='Inter, sans-serif'), showgrid=False, tickprefix='$', ticksuffix='M'),
+    showlegend=False, hovermode='x unified', barmode='group', bargap=0.15,
+    hoverlabel=dict(bgcolor='white', font=dict(size=11, color='#1a2332', family='Inter, sans-serif'), bordercolor='rgba(0,0,0,0)'))
+fin_net_html = fig_fin_net.to_html(full_html=False, include_plotlyjs='cdn', config={'displayModeBar': False, 'responsive': True})
+fin_net_html = fin_net_html.replace('class="plotly-graph-div" style="', 'class="plotly-graph-div" style="width:100%;')
+
+
 
 
 
@@ -1812,218 +1849,83 @@ BRAND_CHART_DATA_PLACEHOLDER
 <div class="nl-tab" id="nl-financial-tab">
 <div style="padding:8px 32px 24px;">
 <div class="section-head"><h2>Financial Tracker</h2><p>Weekly gross and net sales performance vs. budget and plan attainment.</p></div>
-    <div class="pill-group" id="financial-toggle">
+    <div class="pill-group" id="financial-toggle" style="margin-bottom:16px;">
       <div class="pill active" onclick="switchFinancial('gross')">Gross Sales</div>
       <div class="pill" onclick="switchFinancial('net')">Net Sales</div>
+    </div>
+    <div style="display:flex;justify-content:flex-end;margin-bottom:6px;margin-top:-10px;">
+      <div style="position:relative;display:inline-block;">
+        <div style="width:28px;height:28px;border-radius:50%;background:#ffffff;color:#0000C9;font-size:16px;font-weight:800;display:flex;align-items:center;justify-content:center;cursor:pointer;border:1px solid #c7d2fe;" onmouseover="this.nextElementSibling.style.display='block'" onmouseout="this.nextElementSibling.style.display='none'">i</div>
+        <div style="display:none;position:absolute;right:0;top:32px;background:#1a2332;color:#fff;padding:8px 12px;border-radius:6px;font-size:11px;line-height:1.5;width:auto;white-space:nowrap;z-index:10;box-shadow:0 4px 12px rgba(0,0,0,0.15);"><strong>Reporting Cadence:</strong><br>Gross Sales = Weekly &nbsp;|&nbsp; Net Sales = Monthly</div>
+      </div>
     </div>
 
     <div id="gross-view">
     <div class="row">
       <div style="background:#EEF5FB;border-radius:12px;padding:14px 16px;text-align:left;border:1px solid rgba(15,23,42,0.05);transition:transform 0.25s cubic-bezier(0.16,1,0.3,1),box-shadow 0.25s cubic-bezier(0.4,0,0.2,1);flex:1;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 6px 16px rgba(15,23,42,0.07),0 2px 4px rgba(15,23,42,0.04)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
-        <div class="label">GROSS SALES W/E 06/19</div>
-        <div class="value" style="color:#0000C9;">$28.4M</div>
-        <div class="sub"><span class="delta-pos">+2.8%</span>&nbsp;&nbsp;WoW · +$0.8M</div>
+        <div class="label">GROSS SALES W/E 10 May'26</div>
+        <div class="value" style="color:#0000C9;">$124.6M</div>
+        <div class="sub"><span class="delta-pos">+14.2%</span>&nbsp;&nbsp;vs Prior Year</div>
       </div>
       <div style="background:#EEF5FB;border-radius:12px;padding:14px 16px;text-align:left;border:1px solid rgba(15,23,42,0.05);transition:transform 0.25s cubic-bezier(0.16,1,0.3,1),box-shadow 0.25s cubic-bezier(0.4,0,0.2,1);flex:1;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 6px 16px rgba(15,23,42,0.07),0 2px 4px rgba(15,23,42,0.04)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
-        <div class="label">MTD ATTAINMENT VS OP26</div>
-        <div class="value" style="color:#0000C9;">94.4%</div>
-        <div class="sub">$1.6M behind MTD plan</div>
+        <div class="label">MTD ATTAINMENT VS OP'26</div>
+        <div class="value" style="color:#0000C9;">92.3%</div>
+        <div class="sub"><span class="delta-neg">$20.6M</span> behind MTD plan</div>
       </div>
       <div style="background:#EEF5FB;border-radius:12px;padding:14px 16px;text-align:left;border:1px solid rgba(15,23,42,0.05);transition:transform 0.25s cubic-bezier(0.16,1,0.3,1),box-shadow 0.25s cubic-bezier(0.4,0,0.2,1);flex:1;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 6px 16px rgba(15,23,42,0.07),0 2px 4px rgba(15,23,42,0.04)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
-        <div class="label">YTD ATTAINMENT VS OP26</div>
-        <div class="value" style="color:#0000C9;">93.6%</div>
-        <div class="sub">$112K behind YTD plan</div>
+        <div class="label">YTD ATTAINMENT VS OP'26</div>
+        <div class="value" style="color:#0000C9;">95.9%</div>
+        <div class="sub"><span class="delta-neg">$100.3M</span> behind YTD plan</div>
       </div>
     </div>
 
-    <div class="card">
-      <div class="card-title">Weekly Gross Sales vs Budget</div>
-      <div class="card-subtitle">Last 14 weeks · $M</div>
-      <div class="chart-container">
-        <svg class="chart" preserveAspectRatio="none" viewBox="0 0 800 260">
-          <line x1="60" y1="230" x2="780" y2="230" stroke="#e5e7eb" stroke-width="1"/>
-          <line x1="60" y1="180" x2="780" y2="180" stroke="#f3f4f6" stroke-width="1" stroke-dasharray="4"/>
-          <line x1="60" y1="130" x2="780" y2="130" stroke="#f3f4f6" stroke-width="1" stroke-dasharray="4"/>
-          <line x1="60" y1="80" x2="780" y2="80" stroke="#f3f4f6" stroke-width="1" stroke-dasharray="4"/>
-          <line x1="60" y1="30" x2="780" y2="30" stroke="#f3f4f6" stroke-width="1" stroke-dasharray="4"/>
-          <text x="50" y="234" text-anchor="end" font-size="10" fill="#9ca3af">$0M</text>
-          <text x="50" y="184" text-anchor="end" font-size="10" fill="#9ca3af">$8M</text>
-          <text x="50" y="134" text-anchor="end" font-size="10" fill="#9ca3af">$16M</text>
-          <text x="50" y="84" text-anchor="end" font-size="10" fill="#9ca3af">$24M</text>
-          <text x="50" y="34" text-anchor="end" font-size="10" fill="#9ca3af">$32M</text>
-          <rect x="72" y="120" width="18" height="110" fill="#1e3a5f" rx="2"/>
-          <rect x="92" y="100" width="18" height="130" fill="#d1d5db" rx="2"/>
-          <rect x="122" y="110" width="18" height="120" fill="#1e3a5f" rx="2"/>
-          <rect x="142" y="100" width="18" height="130" fill="#d1d5db" rx="2"/>
-          <rect x="172" y="105" width="18" height="125" fill="#1e3a5f" rx="2"/>
-          <rect x="192" y="100" width="18" height="130" fill="#d1d5db" rx="2"/>
-          <rect x="222" y="95" width="18" height="135" fill="#1e3a5f" rx="2"/>
-          <rect x="242" y="100" width="18" height="130" fill="#d1d5db" rx="2"/>
-          <rect x="272" y="90" width="18" height="140" fill="#1e3a5f" rx="2"/>
-          <rect x="292" y="95" width="18" height="135" fill="#d1d5db" rx="2"/>
-          <rect x="322" y="85" width="18" height="145" fill="#1e3a5f" rx="2"/>
-          <rect x="342" y="90" width="18" height="140" fill="#d1d5db" rx="2"/>
-          <rect x="372" y="68" width="18" height="162" fill="#1e3a5f" rx="2"/>
-          <rect x="392" y="75" width="18" height="155" fill="#d1d5db" rx="2"/>
-          <rect x="422" y="72" width="18" height="158" fill="#1e3a5f" rx="2"/>
-          <rect x="442" y="75" width="18" height="155" fill="#d1d5db" rx="2"/>
-          <rect x="472" y="65" width="18" height="165" fill="#1e3a5f" rx="2"/>
-          <rect x="492" y="70" width="18" height="160" fill="#d1d5db" rx="2"/>
-          <rect x="522" y="58" width="18" height="172" fill="#1e3a5f" rx="2"/>
-          <rect x="542" y="65" width="18" height="165" fill="#d1d5db" rx="2"/>
-          <rect x="572" y="55" width="18" height="175" fill="#1e3a5f" rx="2"/>
-          <rect x="592" y="60" width="18" height="170" fill="#d1d5db" rx="2"/>
-          <rect x="622" y="50" width="18" height="180" fill="#1e3a5f" rx="2"/>
-          <rect x="642" y="55" width="18" height="175" fill="#d1d5db" rx="2"/>
-          <rect x="672" y="45" width="18" height="185" fill="#1e3a5f" rx="2"/>
-          <rect x="692" y="50" width="18" height="180" fill="#d1d5db" rx="2"/>
-          <rect x="722" y="42" width="18" height="188" fill="#1e3a5f" rx="2"/>
-          <rect x="742" y="48" width="18" height="182" fill="#d1d5db" rx="2"/>
-          <text x="88" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 1</text>
-          <text x="138" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 2</text>
-          <text x="188" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 3</text>
-          <text x="238" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 4</text>
-          <text x="288" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 5</text>
-          <text x="338" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 6</text>
-          <text x="388" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 7</text>
-          <text x="438" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 8</text>
-          <text x="488" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 9</text>
-          <text x="538" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 10</text>
-          <text x="588" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 11</text>
-          <text x="638" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 12</text>
-          <text x="688" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 13</text>
-          <text x="738" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 14</text>
-        </svg>
-      </div>
-      <div class="axis-info"><span>Y-Axis: Gross Sales ($M)</span><span>X-Axis: Time Period (Week)</span></div>
-        <div class="legend">
-        <div class="legend-item"><div class="legend-dot" style="background:#1e3a5f;border-radius:2px;width:12px;"></div>Actual</div>
-        <div class="legend-item"><div class="legend-dot" style="background:#d1d5db;border-radius:2px;width:12px;"></div>Budget</div>
+        <div class="card">
+      <div class="card-title">Weekly Gross Revenue vs Budget (2026)</div>
+      <div class="card-subtitle">Actuals · STLY · Budget OP'26 · $M</div>
+      FIN_GROSS_CHART_PLACEHOLDER
+      <div class="legend" style="font-size:10px;margin-top:8px;">
+        <div class="legend-item"><div class="legend-dot" style="background:#7C6CFC;border-radius:2px;width:12px;"></div>Actual</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#0000C9"></div>Actual (STLY)</div>
+        <div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#9ca3af" stroke-width="2" stroke-dasharray="3"/></svg>Budget</div>
       </div>
     </div>
 
-    <div class="card">
-      <div class="card-title">Script vs Budget — MTD & YTD growth</div>
-      <div class="card-subtitle">Δ '25-'26 · Nurtec & oiCGRP</div>
-      <table>
-        <thead>
-          <tr><th>BRAND</th><th style="text-align:right">SCRIPT Δ MTD</th><th style="text-align:right">SCRIPT Δ YTD</th><th style="text-align:right">BUDGET ATTN MTD</th><th style="text-align:right">BUDGET ATTN YTD</th></tr>
-        </thead>
-        <tbody>
-          <tr><td><strong>Nurtec NBRx</strong></td><td style="text-align:right"><span class="delta-pos">+15.6%</span></td><td style="text-align:right"><span class="delta-pos">+11.3%</span></td><td style="text-align:right">100.5%</td><td style="text-align:right">98.3%</td></tr>
-          <tr><td><strong>oiCGRP NBRx</strong></td><td style="text-align:right"><span class="delta-pos">+12.1%</span></td><td style="text-align:right"><span class="delta-pos">+10.1%</span></td><td style="text-align:right">—</td><td style="text-align:right">—</td></tr>
-          <tr><td><strong>Nurtec TRx</strong></td><td style="text-align:right"><span class="delta-pos">+16.5%</span></td><td style="text-align:right"><span class="delta-pos">+16.1%</span></td><td style="text-align:right">94.4%</td><td style="text-align:right">93.5%</td></tr>
-          <tr><td><strong>oiCGRP TRx</strong></td><td style="text-align:right"><span class="delta-pos">+15.8%</span></td><td style="text-align:right"><span class="delta-pos">+17.1%</span></td><td style="text-align:right">95.8%</td><td style="text-align:right">94.3%</td></tr>
-        </tbody>
-      </table>
-    </div>
     </div>
 
     <div id="net-view" style="display:none;">
     <div class="row">
       <div style="background:#EEF5FB;border-radius:12px;padding:14px 16px;text-align:left;border:1px solid rgba(15,23,42,0.05);transition:transform 0.25s cubic-bezier(0.16,1,0.3,1),box-shadow 0.25s cubic-bezier(0.4,0,0.2,1);flex:1;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 6px 16px rgba(15,23,42,0.07),0 2px 4px rgba(15,23,42,0.04)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
-        <div class="label">NET SALES W/E 06/19</div>
-        <div class="value" style="color:#0000C9;">$18.6M</div>
-        <div class="sub"><span class="delta-pos">+3.1%</span>&nbsp;&nbsp;WoW · +$0.8M</div>
+        <div class="label">NET SALES P04'26</div>
+        <div class="value" style="color:#0000C9;">$106.8M</div>
+        <div class="sub"><span class="delta-pos">+21.4%</span>&nbsp;&nbsp;vs Prior Year</div>
       </div>
       <div style="background:#EEF5FB;border-radius:12px;padding:14px 16px;text-align:left;border:1px solid rgba(15,23,42,0.05);transition:transform 0.25s cubic-bezier(0.16,1,0.3,1),box-shadow 0.25s cubic-bezier(0.4,0,0.2,1);flex:1;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 6px 16px rgba(15,23,42,0.07),0 2px 4px rgba(15,23,42,0.04)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
-        <div class="label">NET MTD ATTAINMENT VS OP26</div>
-        <div class="value" style="color:#0000C9;">92.1%</div>
-        <div class="sub">$2.1M behind MTD plan</div>
+        <div class="label">LATEST MONTH ATTAINMENT VS OP'26</div>
+        <div class="value" style="color:#0000C9;">96.6%</div>
+        <div class="sub"><span class="delta-neg">$3.7M</span> behind monthly plan</div>
       </div>
       <div style="background:#EEF5FB;border-radius:12px;padding:14px 16px;text-align:left;border:1px solid rgba(15,23,42,0.05);transition:transform 0.25s cubic-bezier(0.16,1,0.3,1),box-shadow 0.25s cubic-bezier(0.4,0,0.2,1);flex:1;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 6px 16px rgba(15,23,42,0.07),0 2px 4px rgba(15,23,42,0.04)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
-        <div class="label">NET YTD ATTAINMENT VS OP26</div>
-        <div class="value" style="color:#0000C9;">91.8%</div>
-        <div class="sub">$186K behind YTD plan</div>
+        <div class="label">YTD ATTAINMENT VS OP'26</div>
+        <div class="value" style="color:#0000C9;">109.4%</div>
+        <div class="sub"><span class="delta-pos">+$35.9M</span> ahead of YTD plan</div>
       </div>
     </div>
 
-    <div class="card">
-      <div class="card-title">Weekly Net Sales vs Budget</div>
-      <div class="card-subtitle">Last 14 weeks · $M</div>
-      <div class="chart-container">
-        <svg class="chart" preserveAspectRatio="none" viewBox="0 0 800 260">
-          <line x1="60" y1="230" x2="780" y2="230" stroke="#e5e7eb" stroke-width="1"/>
-          <line x1="60" y1="180" x2="780" y2="180" stroke="#f3f4f6" stroke-width="1" stroke-dasharray="4"/>
-          <line x1="60" y1="130" x2="780" y2="130" stroke="#f3f4f6" stroke-width="1" stroke-dasharray="4"/>
-          <line x1="60" y1="80" x2="780" y2="80" stroke="#f3f4f6" stroke-width="1" stroke-dasharray="4"/>
-          <line x1="60" y1="30" x2="780" y2="30" stroke="#f3f4f6" stroke-width="1" stroke-dasharray="4"/>
-          <text x="50" y="234" text-anchor="end" font-size="10" fill="#9ca3af">$0M</text>
-          <text x="50" y="184" text-anchor="end" font-size="10" fill="#9ca3af">$8M</text>
-          <text x="50" y="134" text-anchor="end" font-size="10" fill="#9ca3af">$16M</text>
-          <text x="50" y="84" text-anchor="end" font-size="10" fill="#9ca3af">$24M</text>
-          <text x="50" y="34" text-anchor="end" font-size="10" fill="#9ca3af">$32M</text>
-          <rect x="72" y="120" width="18" height="110" fill="#1e3a5f" rx="2"/>
-          <rect x="92" y="100" width="18" height="130" fill="#d1d5db" rx="2"/>
-          <rect x="122" y="110" width="18" height="120" fill="#1e3a5f" rx="2"/>
-          <rect x="142" y="100" width="18" height="130" fill="#d1d5db" rx="2"/>
-          <rect x="172" y="105" width="18" height="125" fill="#1e3a5f" rx="2"/>
-          <rect x="192" y="100" width="18" height="130" fill="#d1d5db" rx="2"/>
-          <rect x="222" y="95" width="18" height="135" fill="#1e3a5f" rx="2"/>
-          <rect x="242" y="100" width="18" height="130" fill="#d1d5db" rx="2"/>
-          <rect x="272" y="90" width="18" height="140" fill="#1e3a5f" rx="2"/>
-          <rect x="292" y="95" width="18" height="135" fill="#d1d5db" rx="2"/>
-          <rect x="322" y="85" width="18" height="145" fill="#1e3a5f" rx="2"/>
-          <rect x="342" y="90" width="18" height="140" fill="#d1d5db" rx="2"/>
-          <rect x="372" y="68" width="18" height="162" fill="#1e3a5f" rx="2"/>
-          <rect x="392" y="75" width="18" height="155" fill="#d1d5db" rx="2"/>
-          <rect x="422" y="72" width="18" height="158" fill="#1e3a5f" rx="2"/>
-          <rect x="442" y="75" width="18" height="155" fill="#d1d5db" rx="2"/>
-          <rect x="472" y="65" width="18" height="165" fill="#1e3a5f" rx="2"/>
-          <rect x="492" y="70" width="18" height="160" fill="#d1d5db" rx="2"/>
-          <rect x="522" y="58" width="18" height="172" fill="#1e3a5f" rx="2"/>
-          <rect x="542" y="65" width="18" height="165" fill="#d1d5db" rx="2"/>
-          <rect x="572" y="55" width="18" height="175" fill="#1e3a5f" rx="2"/>
-          <rect x="592" y="60" width="18" height="170" fill="#d1d5db" rx="2"/>
-          <rect x="622" y="50" width="18" height="180" fill="#1e3a5f" rx="2"/>
-          <rect x="642" y="55" width="18" height="175" fill="#d1d5db" rx="2"/>
-          <rect x="672" y="45" width="18" height="185" fill="#1e3a5f" rx="2"/>
-          <rect x="692" y="50" width="18" height="180" fill="#d1d5db" rx="2"/>
-          <rect x="722" y="42" width="18" height="188" fill="#1e3a5f" rx="2"/>
-          <rect x="742" y="48" width="18" height="182" fill="#d1d5db" rx="2"/>
-          <text x="88" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 1</text>
-          <text x="138" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 2</text>
-          <text x="188" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 3</text>
-          <text x="238" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 4</text>
-          <text x="288" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 5</text>
-          <text x="338" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 6</text>
-          <text x="388" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 7</text>
-          <text x="438" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 8</text>
-          <text x="488" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 9</text>
-          <text x="538" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 10</text>
-          <text x="588" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 11</text>
-          <text x="638" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 12</text>
-          <text x="688" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 13</text>
-          <text x="738" y="248" text-anchor="middle" font-size="9" fill="#9ca3af">Wk 14</text>
-        </svg>
-      </div>
-      <div class="axis-info"><span>Y-Axis: Net Sales ($M)</span><span>X-Axis: Time Period (Week)</span></div>
-        <div class="legend">
-        <div class="legend-item"><div class="legend-dot" style="background:#1e3a5f;border-radius:2px;width:12px;"></div>Actual</div>
-        <div class="legend-item"><div class="legend-dot" style="background:#d1d5db;border-radius:2px;width:12px;"></div>Budget</div>
+        <div class="card">
+      <div class="card-title">Monthly Net Revenue vs Budget (2026)</div>
+      <div class="card-subtitle">Actuals · STLY · Budget OP'26 · $M</div>
+      FIN_NET_CHART_PLACEHOLDER
+      <div class="legend" style="font-size:10px;margin-top:8px;">
+        <div class="legend-item"><div class="legend-dot" style="background:#7C6CFC;border-radius:2px;width:12px;"></div>Actual</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#0000C9"></div>Actual (STLY)</div>
+        <div class="legend-item"><svg width="20" height="2" style="margin-right:4px"><line x1="0" y1="1" x2="20" y2="1" stroke="#9ca3af" stroke-width="2" stroke-dasharray="3"/></svg>Budget</div>
       </div>
     </div>
 
-    <div class="card">
-      <div class="card-title">Net Revenue vs Budget — MTD & YTD growth</div>
-      <div class="card-subtitle">Δ '25-'26 · Nurtec & oiCGRP</div>
-      <table>
-        <thead>
-          <tr><th>BRAND</th><th style="text-align:right">SCRIPT Δ MTD</th><th style="text-align:right">SCRIPT Δ YTD</th><th style="text-align:right">BUDGET ATTN MTD</th><th style="text-align:right">BUDGET ATTN YTD</th></tr>
-        </thead>
-        <tbody>
-          <tr><td><strong>Nurtec NBRx</strong></td><td style="text-align:right"><span class="delta-pos">+15.6%</span></td><td style="text-align:right"><span class="delta-pos">+11.3%</span></td><td style="text-align:right">100.5%</td><td style="text-align:right">98.3%</td></tr>
-          <tr><td><strong>oiCGRP NBRx</strong></td><td style="text-align:right"><span class="delta-pos">+12.1%</span></td><td style="text-align:right"><span class="delta-pos">+10.1%</span></td><td style="text-align:right">—</td><td style="text-align:right">—</td></tr>
-          <tr><td><strong>Nurtec TRx</strong></td><td style="text-align:right"><span class="delta-pos">+16.5%</span></td><td style="text-align:right"><span class="delta-pos">+16.1%</span></td><td style="text-align:right">92.1%</td><td style="text-align:right">93.5%</td></tr>
-          <tr><td><strong>oiCGRP TRx</strong></td><td style="text-align:right"><span class="delta-pos">+15.8%</span></td><td style="text-align:right"><span class="delta-pos">+17.1%</span></td><td style="text-align:right">95.8%</td><td style="text-align:right">94.3%</td></tr>
-        </tbody>
-      </table>
     </div>
 </div>
 </div>
-</div>
-</div>
-            </div>
+
         </section>
 
         <!-- 3. AGENTS -->
@@ -2249,6 +2151,11 @@ BRAND_CHART_DATA_PLACEHOLDER
             document.getElementById('gross-view').style.display = 'none';
             document.getElementById('net-view').style.display = 'block';
         }
+        setTimeout(function() {
+            document.querySelectorAll('.plotly-graph-div').forEach(function(gd) {
+                if (gd && gd.data && typeof Plotly !== 'undefined') { Plotly.relayout(gd, {autosize: true}); }
+            });
+        }, 100);
     };
     
     
@@ -2381,16 +2288,33 @@ BRAND_CHART_DATA_PLACEHOLDER
         });
         window.dispatchEvent(new Event('resize'));
     };
-    // Initial resize trigger for Plotly - staggered to ensure charts fill width on first load
-    function resizeAllPlotly() {
-        window.dispatchEvent(new Event('resize'));
+    // Definitive fix: MutationObserver watches for any element becoming visible,
+    // then resizes all Plotly charts. Handles hidden tabs, section switches, toggles.
+    function resizeVisiblePlotly() {
         document.querySelectorAll('.plotly-graph-div').forEach(function(gd) {
-            if (gd && gd.data && typeof Plotly !== 'undefined') { Plotly.relayout(gd, {autosize: true}); }
+            if (gd && gd.data && typeof Plotly !== 'undefined' && gd.offsetWidth > 0) {
+                Plotly.relayout(gd, {autosize: true});
+            }
         });
     }
-    setTimeout(resizeAllPlotly, 300);
-    setTimeout(resizeAllPlotly, 800);
-    setTimeout(resizeAllPlotly, 1500);
+    var observer = new MutationObserver(function(mutations) {
+        var needsResize = false;
+        mutations.forEach(function(m) {
+            if (m.type === 'attributes' && (m.attributeName === 'style' || m.attributeName === 'class')) {
+                needsResize = true;
+            }
+        });
+        if (needsResize) {
+            setTimeout(resizeVisiblePlotly, 50);
+            setTimeout(resizeVisiblePlotly, 300);
+        }
+    });
+    observer.observe(document.body, {attributes: true, subtree: true, attributeFilter: ['style', 'class']});
+    // Also fire on initial load with longer delays for iframe settling
+    setTimeout(resizeVisiblePlotly, 500);
+    setTimeout(resizeVisiblePlotly, 1000);
+    setTimeout(resizeVisiblePlotly, 2000);
+    setTimeout(resizeVisiblePlotly, 3500);
 })();
 </script>
 </body>
@@ -2441,4 +2365,8 @@ html_content = html_content.replace('XPT_PAYER_NRX_PLACEHOLDER', xpt_payer_nrx_h
 html_content = html_content.replace('XPT_CH_TRX_PLACEHOLDER', xpt_ch_trx_html)
 html_content = html_content.replace('XPT_CH_NRX_PLACEHOLDER', xpt_ch_nrx_html)
 
-components.html(html_content, height=920, scrolling=False)
+# Finance chart injection
+html_content = html_content.replace('FIN_GROSS_CHART_PLACEHOLDER', fin_gross_html)
+html_content = html_content.replace('FIN_NET_CHART_PLACEHOLDER', fin_net_html)
+
+components.html(html_content, height=960, scrolling=False)
