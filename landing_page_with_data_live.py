@@ -205,7 +205,7 @@ def _fmt_att(v):
         return '—'
     return f'{float(v):.1f}%'
 
-def _build_npa_table_rows(brand, prescription, rx_class):
+def _build_npa_table_rows(brand, prescription, rx_class, compact=False):
     sub = _npa_stacked_df[
         (_npa_stacked_df['BRAND'] == brand) &
         (_npa_stacked_df['PRESCRIPTION'] == prescription) &
@@ -233,39 +233,46 @@ def _build_npa_table_rows(brand, prescription, rx_class):
         row_html += f'<td style="text-align:right">{_fmt_val(qtd_val)}</td>'
         row_html += f'<td style="text-align:right">{_fmt_val(ytd_val)}</td>'
         row_html += f'<td style="text-align:right">{_fmt_pct(wk_pct)}</td>'
-        row_html += f'<td style="text-align:right">{_fmt_pct(qtd_pct)}</td>'
-        row_html += f'<td style="text-align:right">{_fmt_pct(ytd_pct)}</td>'
+        if not compact:
+            row_html += f'<td style="text-align:right">{_fmt_pct(qtd_pct)}</td>'
+            row_html += f'<td style="text-align:right">{_fmt_pct(ytd_pct)}</td>'
         row_html += f'<td style="text-align:right">{_fmt_ms(wk_ms)}</td>'
-        row_html += f'<td style="text-align:right">{_fmt_ms(qtd_ms)}</td>'
-        row_html += f'<td style="text-align:right">{_fmt_ms(ytd_ms)}</td>'
+        if not compact:
+            row_html += f'<td style="text-align:right">{_fmt_ms(qtd_ms)}</td>'
+            row_html += f'<td style="text-align:right">{_fmt_ms(ytd_ms)}</td>'
         row_html += '</tr>'
         rows.append(row_html)
-    # Goal Attainment row (from Actuals '26)
-    att_rd = sub[(sub['ROW_LABEL'] == "Actuals '26")]
-    if len(att_rd) > 0:
-        wk_att = att_rd[att_rd['TIME_PERIOD'] == 'Latest Week']
-        qtd_att = att_rd[att_rd['TIME_PERIOD'] == 'QTD']
-        ytd_att = att_rd[att_rd['TIME_PERIOD'] == 'YTD']
-        wk_a = wk_att.iloc[0]['GOAL_ATTAINMENT_PCT'] if len(wk_att) > 0 else None
-        qtd_a = qtd_att.iloc[0]['GOAL_ATTAINMENT_PCT'] if len(qtd_att) > 0 else None
-        ytd_a = ytd_att.iloc[0]['GOAL_ATTAINMENT_PCT'] if len(ytd_att) > 0 else None
-        if wk_a is not None or qtd_a is not None or ytd_a is not None:
-            row_html = f"<tr><td>Goal Attainment '26</td>"
-            row_html += f'<td style="text-align:right">{_fmt_att(wk_a)}</td>'
-            row_html += f'<td style="text-align:right">{_fmt_att(qtd_a)}</td>'
-            row_html += f'<td style="text-align:right">{_fmt_att(ytd_a)}</td>'
-            row_html += '<td style="text-align:right">—</td><td style="text-align:right">—</td><td style="text-align:right">—</td>'
-            row_html += '<td style="text-align:right">—</td><td style="text-align:right">—</td><td style="text-align:right">—</td></tr>'
-            rows.append(row_html)
+    # Goal Attainment row (only for OVERALL)
+    if not compact:
+        att_rd = sub[(sub['ROW_LABEL'] == "Actuals '26")]
+        if len(att_rd) > 0:
+            wk_att = att_rd[att_rd['TIME_PERIOD'] == 'Latest Week']
+            qtd_att = att_rd[att_rd['TIME_PERIOD'] == 'QTD']
+            ytd_att = att_rd[att_rd['TIME_PERIOD'] == 'YTD']
+            wk_a = wk_att.iloc[0]['GOAL_ATTAINMENT_PCT'] if len(wk_att) > 0 else None
+            qtd_a = qtd_att.iloc[0]['GOAL_ATTAINMENT_PCT'] if len(qtd_att) > 0 else None
+            ytd_a = ytd_att.iloc[0]['GOAL_ATTAINMENT_PCT'] if len(ytd_att) > 0 else None
+            if wk_a is not None or qtd_a is not None or ytd_a is not None:
+                row_html = f"<tr><td>Goal Attainment '26</td>"
+                row_html += f'<td style="text-align:right">{_fmt_att(wk_a)}</td>'
+                row_html += f'<td style="text-align:right">{_fmt_att(qtd_a)}</td>'
+                row_html += f'<td style="text-align:right">{_fmt_att(ytd_a)}</td>'
+                row_html += '<td style="text-align:right">\u2014</td><td style="text-align:right">\u2014</td><td style="text-align:right">\u2014</td>'
+                row_html += '<td style="text-align:right">\u2014</td><td style="text-align:right">\u2014</td><td style="text-align:right">\u2014</td></tr>'
+                rows.append(row_html)
     return '\n'.join(rows)
 
 # Build all NPA table HTML
 _npa_tables = {}
 for _brand in ['NURTEC', 'UBRELVY', 'QULIPTA']:
     for _rx in ['TRx', 'NBRx']:
-        for _cls in ['OVERALL', 'ACUTE', 'PREVENTIVE']:
-            _key = f'{_brand}_{_rx}_{_cls}'
-            _npa_tables[_key] = _build_npa_table_rows(_brand, _rx, _cls)
+        _npa_tables[f'{_brand}_{_rx}_OVERALL'] = _build_npa_table_rows(_brand, _rx, 'OVERALL', compact=False)
+for _brand in ['NURTEC', 'UBRELVY']:
+    for _rx in ['TRx', 'NBRx']:
+        _npa_tables[f'{_brand}_{_rx}_ACUTE'] = _build_npa_table_rows(_brand, _rx, 'ACUTE', compact=True)
+for _brand in ['NURTEC', 'QULIPTA']:
+    for _rx in ['TRx', 'NBRx']:
+        _npa_tables[f'{_brand}_{_rx}_PREVENTIVE'] = _build_npa_table_rows(_brand, _rx, 'PREVENTIVE', compact=True)
 
 # Build Hero KPI values from NPA stacked
 def _get_npa_kpi(brand, prescription, rx_class, time_period, field):
