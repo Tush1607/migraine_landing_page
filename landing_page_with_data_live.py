@@ -44,6 +44,9 @@ def _get_current_user_email():
 
 _current_user_email = _get_current_user_email()
 
+# DEBUG: Remove this line after testing
+st.write(f"DEBUG USER: [{_current_user_email}]")
+
 def _resolve_finance_restriction():
     """Dynamically build restricted email list from data + hardcoded additions."""
     restricted = ['tushar@pfizer.com']  # Additional test emails
