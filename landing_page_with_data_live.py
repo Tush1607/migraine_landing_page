@@ -451,12 +451,7 @@ fig_fin_gross.update_layout(height=340, margin=dict(l=60, r=20, t=10, b=100), pl
 fin_gross_html = fig_fin_gross.to_html(full_html=False, include_plotlyjs=False, config={'displayModeBar': False, 'responsive': True})
 fin_gross_html = fin_gross_html.replace('class="plotly-graph-div" style="', 'class="plotly-graph-div" style="width:100%;')
 
-# Net Sales chart (monthly)
-_fin_net_labels = ["P01'26","P02'26","P03'26","P04'26","P05'26","P06'26","P07'26","P08'26","P09'26","P10'26","P11'26","P12'26"]
-_fin_net_actuals = [82.5,73.6,153.2,106.8,None,None,None,None,None,None,None,None]
-_fin_net_stly = [63.2,49.2,112.6,88.0,None,None,None,None,None,None,None,None]
-_fin_net_budget = [72.8,81.7,115.2,110.5,110.1,138.3,127.2,130.0,156.8,137.8,174.2,152.7]
-
+# Net Sales chart (monthly - uses live data from lines 163-166)
 fig_fin_net = go.Figure()
 fig_fin_net.add_trace(go.Bar(x=_fin_net_labels, y=_fin_net_actuals, name='Actual', marker_color='#7C6CFC'))
 fig_fin_net.add_trace(go.Scatter(x=_fin_net_labels, y=_fin_net_stly, mode='lines', name='Actual (STLY)', line=dict(color='#0000C9', width=2.5)))
