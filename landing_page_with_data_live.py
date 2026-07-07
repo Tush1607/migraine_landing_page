@@ -172,6 +172,115 @@ _xpt_national = _xpt_kpi_df[_xpt_kpi_df['CUT_TYPE'] == 'National'].iloc[0] if le
 # --- Finance KPI values (Live) ---
 _fin_kpi_df = load_finance_stacked()
 
+# --- NPA Stacked Metrics (for tables & KPIs) ---
+@st.cache_data(ttl=3600)
+def load_npa_stacked():
+    return fetch_npa_stacked(stack_key='NPA_STACKED_MATRICES')
+
+_npa_stacked_df = load_npa_stacked()
+
+def _fmt_val(v):
+    if v is None or (isinstance(v, float) and v != v):
+        return '—'
+    v = float(v)
+    if v >= 1000000:
+        return f'{v/1000000:.1f}M' if v % 1000000 != 0 else f'{int(v/1000000)}M'
+    return f'{int(v):,}'
+
+def _fmt_pct(v, prefix=True):
+    if v is None or (isinstance(v, float) and v != v):
+        return '—'
+    v = float(v)
+    sign = '+' if v >= 0 and prefix else ''
+    cls = 'delta-pos' if v >= 0 else 'delta-neg'
+    return f'<span class="{cls}">{sign}{v:.1f}%</span>'
+
+def _fmt_ms(v):
+    if v is None or (isinstance(v, float) and v != v):
+        return '—'
+    return f'{float(v):.1f}%'
+
+def _fmt_att(v):
+    if v is None or (isinstance(v, float) and v != v):
+        return '—'
+    return f'{float(v):.1f}%'
+
+def _build_npa_table_rows(brand, prescription, rx_class):
+    sub = _npa_stacked_df[
+        (_npa_stacked_df['BRAND'] == brand) &
+        (_npa_stacked_df['PRESCRIPTION'] == prescription) &
+        (_npa_stacked_df['RX_CLASSIFICATION'] == rx_class)
+    ]
+    rows = []
+    for row_label in ["Actuals '26", "Actuals '25", "Latest Goal OP'26"]:
+        rd = sub[sub['ROW_LABEL'] == row_label]
+        if len(rd) == 0:
+            continue
+        wk_row = rd[rd['TIME_PERIOD'] == 'Latest Week']
+        qtd_row = rd[rd['TIME_PERIOD'] == 'QTD']
+        ytd_row = rd[rd['TIME_PERIOD'] == 'YTD']
+        wk_val = wk_row.iloc[0]['CURR_VALUE'] if len(wk_row) > 0 else None
+        qtd_val = qtd_row.iloc[0]['CURR_VALUE'] if len(qtd_row) > 0 else None
+        ytd_val = ytd_row.iloc[0]['CURR_VALUE'] if len(ytd_row) > 0 else None
+        wk_pct = wk_row.iloc[0]['GROWTH_PCT'] if len(wk_row) > 0 else None
+        qtd_pct = qtd_row.iloc[0]['GROWTH_PCT'] if len(qtd_row) > 0 else None
+        ytd_pct = ytd_row.iloc[0]['GROWTH_PCT'] if len(ytd_row) > 0 else None
+        wk_ms = wk_row.iloc[0]['MARKET_SHARE_PCT'] if len(wk_row) > 0 else None
+        qtd_ms = qtd_row.iloc[0]['MARKET_SHARE_PCT'] if len(qtd_row) > 0 else None
+        ytd_ms = ytd_row.iloc[0]['MARKET_SHARE_PCT'] if len(ytd_row) > 0 else None
+        row_html = f'<tr><td>{row_label}</td>'
+        row_html += f'<td style="text-align:right">{_fmt_val(wk_val)}</td>'
+        row_html += f'<td style="text-align:right">{_fmt_val(qtd_val)}</td>'
+        row_html += f'<td style="text-align:right">{_fmt_val(ytd_val)}</td>'
+        row_html += f'<td style="text-align:right">{_fmt_pct(wk_pct)}</td>'
+        row_html += f'<td style="text-align:right">{_fmt_pct(qtd_pct)}</td>'
+        row_html += f'<td style="text-align:right">{_fmt_pct(ytd_pct)}</td>'
+        row_html += f'<td style="text-align:right">{_fmt_ms(wk_ms)}</td>'
+        row_html += f'<td style="text-align:right">{_fmt_ms(qtd_ms)}</td>'
+        row_html += f'<td style="text-align:right">{_fmt_ms(ytd_ms)}</td>'
+        row_html += '</tr>'
+        rows.append(row_html)
+    # Goal Attainment row (from Actuals '26)
+    att_rd = sub[(sub['ROW_LABEL'] == "Actuals '26")]
+    if len(att_rd) > 0:
+        wk_att = att_rd[att_rd['TIME_PERIOD'] == 'Latest Week']
+        qtd_att = att_rd[att_rd['TIME_PERIOD'] == 'QTD']
+        ytd_att = att_rd[att_rd['TIME_PERIOD'] == 'YTD']
+        wk_a = wk_att.iloc[0]['GOAL_ATTAINMENT_PCT'] if len(wk_att) > 0 else None
+        qtd_a = qtd_att.iloc[0]['GOAL_ATTAINMENT_PCT'] if len(qtd_att) > 0 else None
+        ytd_a = ytd_att.iloc[0]['GOAL_ATTAINMENT_PCT'] if len(ytd_att) > 0 else None
+        if wk_a is not None or qtd_a is not None or ytd_a is not None:
+            row_html = f"<tr><td>Goal Attainment '26</td>"
+            row_html += f'<td style="text-align:right">{_fmt_att(wk_a)}</td>'
+            row_html += f'<td style="text-align:right">{_fmt_att(qtd_a)}</td>'
+            row_html += f'<td style="text-align:right">{_fmt_att(ytd_a)}</td>'
+            row_html += '<td style="text-align:right">—</td><td style="text-align:right">—</td><td style="text-align:right">—</td>'
+            row_html += '<td style="text-align:right">—</td><td style="text-align:right">—</td><td style="text-align:right">—</td></tr>'
+            rows.append(row_html)
+    return '\n'.join(rows)
+
+# Build all NPA table HTML
+_npa_tables = {}
+for _brand in ['NURTEC', 'UBRELVY', 'QULIPTA']:
+    for _rx in ['TRx', 'NBRx']:
+        for _cls in ['OVERALL', 'ACUTE', 'PREVENTIVE']:
+            _key = f'{_brand}_{_rx}_{_cls}'
+            _npa_tables[_key] = _build_npa_table_rows(_brand, _rx, _cls)
+
+# Build Hero KPI values from NPA stacked
+def _get_npa_kpi(brand, prescription, rx_class, time_period, field):
+    sub = _npa_stacked_df[
+        (_npa_stacked_df['BRAND'] == brand) &
+        (_npa_stacked_df['PRESCRIPTION'] == prescription) &
+        (_npa_stacked_df['RX_CLASSIFICATION'] == rx_class) &
+        (_npa_stacked_df['ROW_LABEL'] == "Actuals '26") &
+        (_npa_stacked_df['TIME_PERIOD'] == time_period)
+    ]
+    if len(sub) > 0:
+        return sub.iloc[0][field]
+    return None
+
+
 # Resolve finance access restriction (must be after load_finance_stacked is available)
 FINANCE_RESTRICTED = _resolve_finance_restriction()
 
@@ -893,11 +1002,11 @@ a { color: inherit; text-decoration: none; }
                 <span class="hero-badge"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 5V3M12 21v-2M16.95 7.05l1.41-1.41M5.64 18.36l1.41-1.41M19 12h2M3 12h2M16.95 16.95l1.41 1.41M5.64 5.64l1.41 1.41"/></svg>Executive KPIs</span>
             </div>
             <div class="hero-kpis">
-                <div class="hero-kpi"><div class="kpi-label">Nurtec TRx</div><div class="kpi-value">1.81M</div><div class="kpi-delta up"><span class="tri">&#9650;</span>+16.3% <span class="vs">vs STLY</span></div></div>
-                <div class="hero-kpi"><div class="kpi-label">Nurtec NBRx</div><div class="kpi-value">237K</div><div class="kpi-delta up"><span class="tri">&#9650;</span>+11.2% <span class="vs">vs STLY</span></div></div>
-                <div class="hero-kpi"><div class="kpi-label">Nurtec oCGRP Mkt Share</div><div class="kpi-value">43.0%</div><div class="kpi-delta up"><span class="tri">&#9650;</span>+0.1% <span class="vs">vs STLY</span></div></div>
-                <div class="hero-kpi"><div class="kpi-label">Acute Nurtec oCGRP Share</div><div class="kpi-value">47.4%</div><div class="kpi-delta up"><span class="tri">&#9650;</span>+0.6% <span class="vs">vs STLY</span></div></div>
-                <div class="hero-kpi"><div class="kpi-label">Preventive Nurtec oCGRP Share</div><div class="kpi-value">36.2%</div><div class="kpi-delta down"><span class="tri">&#9660;</span>-0.3% <span class="vs">vs STLY</span></div></div>
+                <div class="hero-kpi"><div class="kpi-label">Nurtec TRx</div><div class="kpi-value">HERO_TRX_YTD_VAL</div><div class="kpi-delta up"><span class="tri">&#9650;</span>HERO_TRX_GROWTH_VAL <span class="vs">vs STLY</span></div></div>
+                <div class="hero-kpi"><div class="kpi-label">Nurtec NBRx</div><div class="kpi-value">HERO_NBRX_YTD_VAL</div><div class="kpi-delta up"><span class="tri">&#9650;</span>HERO_NBRX_GROWTH_VAL <span class="vs">vs STLY</span></div></div>
+                <div class="hero-kpi"><div class="kpi-label">Nurtec oCGRP Mkt Share</div><div class="kpi-value">HERO_OVERALL_MS_VAL</div><div class="kpi-delta up"><span class="tri">&#9650;</span>HERO_OVERALL_MS_DELTA <span class="vs">vs STLY</span></div></div>
+                <div class="hero-kpi"><div class="kpi-label">Acute Nurtec oCGRP Share</div><div class="kpi-value">HERO_ACUTE_MS_VAL</div><div class="kpi-delta up"><span class="tri">&#9650;</span>HERO_ACUTE_MS_DELTA <span class="vs">vs STLY</span></div></div>
+                <div class="hero-kpi"><div class="kpi-label">Preventive Nurtec oCGRP Share</div><div class="kpi-value">HERO_PREV_MS_VAL</div><div class="kpi-delta down"><span class="tri">&#9660;</span>HERO_PREV_MS_DELTA <span class="vs">vs STLY</span></div></div>
             </div>
         </div>
 
@@ -1297,10 +1406,7 @@ BRAND_CHART_DATA_PLACEHOLDER
         <table>
           <thead><tr><th></th><th style="text-align:right">LATEST WK</th><th style="text-align:right">QTD</th><th style="text-align:right">YTD</th><th style="text-align:right">WK %</th><th style="text-align:right">QTD %</th><th style="text-align:right">YTD %</th><th style="text-align:right">WK MS</th><th style="text-align:right">QTD MS</th><th style="text-align:right">YTD MS</th></tr></thead>
           <tbody class="npa-table-trx">
-            <tr><td>Actuals '26</td><td style="text-align:right">77,737</td><td style="text-align:right">896,296</td><td style="text-align:right">1,809,152</td><td style="text-align:right"><span class="delta-pos">+16.9%</span></td><td style="text-align:right"><span class="delta-pos">+16.5%</span></td><td style="text-align:right"><span class="delta-pos">+16.3%</span></td><td style="text-align:right">43.5%</td><td style="text-align:right">43.3%</td><td style="text-align:right">43.0%</td></tr>
-            <tr><td>Actuals '25</td><td style="text-align:right">66,493</td><td style="text-align:right">835,126</td><td style="text-align:right">3,397,510</td><td style="text-align:right"><span class="delta-pos">+11.2%</span></td><td style="text-align:right"><span class="delta-pos">+11.4%</span></td><td style="text-align:right"><span class="delta-pos">+12.4%</span></td><td style="text-align:right">43.2%</td><td style="text-align:right">43.1%</td><td style="text-align:right">42.9%</td></tr>
-            <tr><td>Latest Goal OP'26</td><td style="text-align:right">81,534</td><td style="text-align:right">685,559</td><td style="text-align:right">1,649,919</td><td style="text-align:right"><span class="delta-pos">+22.6%</span></td><td style="text-align:right"><span class="delta-neg">-10.9%</span></td><td style="text-align:right"><span class="delta-pos">+6.0%</span></td><td style="text-align:right">—</td><td style="text-align:right">—</td><td style="text-align:right">—</td></tr>
-            <tr><td>Goal Attainment '26</td><td style="text-align:right">95.3%</td><td style="text-align:right">130.7%</td><td style="text-align:right">109.7%</td><td style="text-align:right">—</td><td style="text-align:right">—</td><td style="text-align:right">—</td><td style="text-align:right">—</td><td style="text-align:right">—</td><td style="text-align:right">—</td></tr>
+NPA_OVERALL_ROWS_NURTEC_TRx
           </tbody>
           <tbody class="npa-table-nbrx" style="display:none;">
             <tr><td>Actuals '26</td><td style="text-align:right">9,881</td><td style="text-align:right">115,686</td><td style="text-align:right">236,508</td><td style="text-align:right"><span class="delta-pos">+16.1%</span></td><td style="text-align:right"><span class="delta-pos">+12.7%</span></td><td style="text-align:right"><span class="delta-pos">+11.2%</span></td><td style="text-align:right">43.0%</td><td style="text-align:right">43.4%</td><td style="text-align:right">43.3%</td></tr>
@@ -1314,8 +1420,7 @@ BRAND_CHART_DATA_PLACEHOLDER
         <table>
           <thead><tr><th></th><th style="text-align:right">LATEST WK</th><th style="text-align:right">QTD</th><th style="text-align:right">YTD</th><th style="text-align:right">WK %</th><th style="text-align:right">QTD %</th><th style="text-align:right">YTD %</th><th style="text-align:right">WK MS</th><th style="text-align:right">QTD MS</th><th style="text-align:right">YTD MS</th></tr></thead>
           <tbody class="npa-table-trx">
-            <tr><td>Actuals '26</td><td style="text-align:right">56,372</td><td style="text-align:right">654,931</td><td style="text-align:right">1,351,214</td><td style="text-align:right"><span class="delta-pos">+9.9%</span></td><td style="text-align:right"><span class="delta-pos">+11.1%</span></td><td style="text-align:right"><span class="delta-pos">+14.0%</span></td><td style="text-align:right">31.5%</td><td style="text-align:right">31.7%</td><td style="text-align:right">32.1%</td></tr>
-            <tr><td>Actuals '25</td><td style="text-align:right">51,297</td><td style="text-align:right">640,379</td><td style="text-align:right">2,624,367</td><td style="text-align:right"><span class="delta-pos">+16.5%</span></td><td style="text-align:right"><span class="delta-pos">+16.0%</span></td><td style="text-align:right"><span class="delta-pos">+17.9%</span></td><td style="text-align:right">33.3%</td><td style="text-align:right">33.1%</td><td style="text-align:right">33.2%</td></tr>
+NPA_OVERALL_ROWS_UBRELVY_TRx
           </tbody>
           <tbody class="npa-table-nbrx" style="display:none;">
             <tr><td>Actuals '26</td><td style="text-align:right">8,338</td><td style="text-align:right">94,712</td><td style="text-align:right">193,647</td><td style="text-align:right"><span class="delta-pos">+14.0%</span></td><td style="text-align:right"><span class="delta-pos">+9.5%</span></td><td style="text-align:right"><span class="delta-pos">+9.6%</span></td><td style="text-align:right">36.2%</td><td style="text-align:right">35.5%</td><td style="text-align:right">35.5%</td></tr>
@@ -1329,8 +1434,7 @@ BRAND_CHART_DATA_PLACEHOLDER
         <table>
           <thead><tr><th></th><th style="text-align:right">LATEST WK</th><th style="text-align:right">QTD</th><th style="text-align:right">YTD</th><th style="text-align:right">WK %</th><th style="text-align:right">QTD %</th><th style="text-align:right">YTD %</th><th style="text-align:right">WK MS</th><th style="text-align:right">QTD MS</th><th style="text-align:right">YTD MS</th></tr></thead>
           <tbody class="npa-table-trx">
-            <tr><td>Actuals '26</td><td style="text-align:right">44,775</td><td style="text-align:right">517,036</td><td style="text-align:right">1,042,664</td><td style="text-align:right"><span class="delta-pos">+23.5%</span></td><td style="text-align:right"><span class="delta-pos">+21.8%</span></td><td style="text-align:right"><span class="delta-pos">+22.5%</span></td><td style="text-align:right">25.0%</td><td style="text-align:right">25.0%</td><td style="text-align:right">24.8%</td></tr>
-            <tr><td>Actuals '25</td><td style="text-align:right">36,259</td><td style="text-align:right">460,078</td><td style="text-align:right">1,891,025</td><td style="text-align:right"><span class="delta-pos">+28.9%</span></td><td style="text-align:right"><span class="delta-pos">+30.6%</span></td><td style="text-align:right"><span class="delta-pos">+28.9%</span></td><td style="text-align:right">23.5%</td><td style="text-align:right">23.8%</td><td style="text-align:right">23.9%</td></tr>
+NPA_OVERALL_ROWS_QULIPTA_TRx
           </tbody>
           <tbody class="npa-table-nbrx" style="display:none;">
             <tr><td>Actuals '26</td><td style="text-align:right">4,785</td><td style="text-align:right">56,442</td><td style="text-align:right">115,690</td><td style="text-align:right"><span class="delta-pos">+7.8%</span></td><td style="text-align:right"><span class="delta-pos">+9.3%</span></td><td style="text-align:right"><span class="delta-pos">+8.4%</span></td><td style="text-align:right">20.8%</td><td style="text-align:right">21.2%</td><td style="text-align:right">21.2%</td></tr>
@@ -1387,8 +1491,7 @@ BRAND_CHART_DATA_PLACEHOLDER
               <table>
                 <thead><tr><th></th><th style="text-align:right">LATEST WK</th><th style="text-align:right">QTD</th><th style="text-align:right">YTD</th><th style="text-align:right">WK %</th><th style="text-align:right">WK MS</th></tr></thead>
                 <tbody>
-                  <tr><td>Actuals '26</td><td style="text-align:right">52,695</td><td style="text-align:right">604,478</td><td style="text-align:right">1,217,341</td><td style="text-align:right"><span class="delta-pos">+15.9%</span></td><td style="text-align:right">48.3%</td></tr>
-                  <tr><td>Actuals '25</td><td style="text-align:right">45,461</td><td style="text-align:right">570,048</td><td style="text-align:right">2,312,576</td><td style="text-align:right"><span class="delta-pos">+10.5%</span></td><td style="text-align:right">47.0%</td></tr>
+NPA_ACUTE_ROWS_NURTEC_TRx
                 </tbody>
               </table>
             </div>
@@ -1398,8 +1501,7 @@ BRAND_CHART_DATA_PLACEHOLDER
               <table>
                 <thead><tr><th></th><th style="text-align:right">LATEST WK</th><th style="text-align:right">QTD</th><th style="text-align:right">YTD</th><th style="text-align:right">WK %</th><th style="text-align:right">WK MS</th></tr></thead>
                 <tbody>
-                  <tr><td>Actuals '26</td><td style="text-align:right">56,372</td><td style="text-align:right">654,931</td><td style="text-align:right">1,351,214</td><td style="text-align:right"><span class="delta-pos">+9.9%</span></td><td style="text-align:right">51.7%</td></tr>
-                  <tr><td>Actuals '25</td><td style="text-align:right">51,297</td><td style="text-align:right">640,379</td><td style="text-align:right">2,624,367</td><td style="text-align:right"><span class="delta-pos">+16.5%</span></td><td style="text-align:right">53.0%</td></tr>
+NPA_ACUTE_ROWS_UBRELVY_TRx
                 </tbody>
               </table>
             </div>
@@ -1411,8 +1513,7 @@ BRAND_CHART_DATA_PLACEHOLDER
               <table>
                 <thead><tr><th></th><th style="text-align:right">LATEST WK</th><th style="text-align:right">QTD</th><th style="text-align:right">YTD</th><th style="text-align:right">WK %</th><th style="text-align:right">WK MS</th></tr></thead>
                 <tbody>
-                  <tr><td>Actuals '26</td><td style="text-align:right">7,682</td><td style="text-align:right">90,200</td><td style="text-align:right">183,606</td><td style="text-align:right"><span class="delta-pos">+15.4%</span></td><td style="text-align:right">48.0%</td></tr>
-                  <tr><td>Actuals '25</td><td style="text-align:right">6,654</td><td style="text-align:right">87,392</td><td style="text-align:right">348,969</td><td style="text-align:right"><span class="delta-pos">+6.6%</span></td><td style="text-align:right">47.6%</td></tr>
+NPA_ACUTE_ROWS_NURTEC_NBRx
                 </tbody>
               </table>
             </div>
@@ -1422,8 +1523,7 @@ BRAND_CHART_DATA_PLACEHOLDER
               <table>
                 <thead><tr><th></th><th style="text-align:right">LATEST WK</th><th style="text-align:right">QTD</th><th style="text-align:right">YTD</th><th style="text-align:right">WK %</th><th style="text-align:right">WK MS</th></tr></thead>
                 <tbody>
-                  <tr><td>Actuals '26</td><td style="text-align:right">8,338</td><td style="text-align:right">94,712</td><td style="text-align:right">193,647</td><td style="text-align:right"><span class="delta-pos">+14.0%</span></td><td style="text-align:right">52.0%</td></tr>
-                  <tr><td>Actuals '25</td><td style="text-align:right">7,315</td><td style="text-align:right">93,778</td><td style="text-align:right">380,580</td><td style="text-align:right"><span class="delta-pos">+9.2%</span></td><td style="text-align:right">52.4%</td></tr>
+NPA_ACUTE_ROWS_UBRELVY_NBRx
                 </tbody>
               </table>
             </div>
@@ -1463,8 +1563,7 @@ BRAND_CHART_DATA_PLACEHOLDER
               <table>
                 <thead><tr><th></th><th style="text-align:right">LATEST WK</th><th style="text-align:right">QTD</th><th style="text-align:right">YTD</th><th style="text-align:right">WK %</th><th style="text-align:right">WK MS</th></tr></thead>
                 <tbody>
-                  <tr><td>Actuals '26</td><td style="text-align:right">25,042</td><td style="text-align:right">291,818</td><td style="text-align:right">591,811</td><td style="text-align:right"><span class="delta-pos">+19.1%</span></td><td style="text-align:right">35.9%</td></tr>
-                  <tr><td>Actuals '25</td><td style="text-align:right">21,032</td><td style="text-align:right">265,078</td><td style="text-align:right">1,084,934</td><td style="text-align:right"><span class="delta-pos">+12.5%</span></td><td style="text-align:right">36.7%</td></tr>
+NPA_PREV_ROWS_NURTEC_TRx
                 </tbody>
               </table>
             </div>
@@ -1474,8 +1573,7 @@ BRAND_CHART_DATA_PLACEHOLDER
               <table>
                 <thead><tr><th></th><th style="text-align:right">LATEST WK</th><th style="text-align:right">QTD</th><th style="text-align:right">YTD</th><th style="text-align:right">WK %</th><th style="text-align:right">WK MS</th></tr></thead>
                 <tbody>
-                  <tr><td>Actuals '26</td><td style="text-align:right">44,775</td><td style="text-align:right">517,036</td><td style="text-align:right">1,042,664</td><td style="text-align:right"><span class="delta-pos">+23.5%</span></td><td style="text-align:right">64.1%</td></tr>
-                  <tr><td>Actuals '25</td><td style="text-align:right">36,259</td><td style="text-align:right">460,078</td><td style="text-align:right">1,891,025</td><td style="text-align:right"><span class="delta-pos">+28.9%</span></td><td style="text-align:right">63.3%</td></tr>
+NPA_PREV_ROWS_QULIPTA_TRx
                 </tbody>
               </table>
             </div>
@@ -1487,8 +1585,7 @@ BRAND_CHART_DATA_PLACEHOLDER
               <table>
                 <thead><tr><th></th><th style="text-align:right">LATEST WK</th><th style="text-align:right">QTD</th><th style="text-align:right">YTD</th><th style="text-align:right">WK %</th><th style="text-align:right">WK MS</th></tr></thead>
                 <tbody>
-                  <tr><td>Actuals '26</td><td style="text-align:right">2,199</td><td style="text-align:right">25,486</td><td style="text-align:right">52,902</td><td style="text-align:right"><span class="delta-pos">+18.2%</span></td><td style="text-align:right">31.5%</td></tr>
-                  <tr><td>Actuals '25</td><td style="text-align:right">1,860</td><td style="text-align:right">24,070</td><td style="text-align:right">97,653</td><td style="text-align:right"><span class="delta-neg">-13.2%</span></td><td style="text-align:right">29.5%</td></tr>
+NPA_PREV_ROWS_NURTEC_NBRx
                 </tbody>
               </table>
             </div>
@@ -1498,8 +1595,7 @@ BRAND_CHART_DATA_PLACEHOLDER
               <table>
                 <thead><tr><th></th><th style="text-align:right">LATEST WK</th><th style="text-align:right">QTD</th><th style="text-align:right">YTD</th><th style="text-align:right">WK %</th><th style="text-align:right">WK MS</th></tr></thead>
                 <tbody>
-                  <tr><td>Actuals '26</td><td style="text-align:right">4,785</td><td style="text-align:right">56,442</td><td style="text-align:right">115,690</td><td style="text-align:right"><span class="delta-pos">+7.8%</span></td><td style="text-align:right">68.5%</td></tr>
-                  <tr><td>Actuals '25</td><td style="text-align:right">4,438</td><td style="text-align:right">56,087</td><td style="text-align:right">229,304</td><td style="text-align:right"><span class="delta-pos">+14.8%</span></td><td style="text-align:right">70.5%</td></tr>
+NPA_PREV_ROWS_QULIPTA_NBRx
                 </tbody>
               </table>
             </div>
@@ -2232,5 +2328,56 @@ if FINANCE_RESTRICTED:
 else:
     html_content = html_content.replace('FIN_GROSS_CHART_PLACEHOLDER', fin_gross_html)
     html_content = html_content.replace('FIN_NET_CHART_PLACEHOLDER', fin_net_html)
+
+
+# NPA Table dynamic injection
+# Overall tables
+for _brand in ['NURTEC', 'UBRELVY', 'QULIPTA']:
+    for _rx, _cls_name in [('TRx', 'npa-table-trx'), ('NBRx', 'npa-table-nbrx')]:
+        _key = f'{_brand}_{_rx}_OVERALL'
+        _placeholder = f'NPA_OVERALL_ROWS_{_brand}_{_rx}'
+        html_content = html_content.replace(_placeholder, _npa_tables.get(_key, ''))
+
+# Acute tables
+for _brand in ['NURTEC', 'UBRELVY']:
+    for _rx in ['TRx', 'NBRx']:
+        _key = f'{_brand}_{_rx}_ACUTE'
+        _placeholder = f'NPA_ACUTE_ROWS_{_brand}_{_rx}'
+        html_content = html_content.replace(_placeholder, _npa_tables.get(_key, ''))
+
+# Preventive tables
+for _brand in ['NURTEC', 'QULIPTA']:
+    for _rx in ['TRx', 'NBRx']:
+        _key = f'{_brand}_{_rx}_PREVENTIVE'
+        _placeholder = f'NPA_PREV_ROWS_{_brand}_{_rx}'
+        html_content = html_content.replace(_placeholder, _npa_tables.get(_key, ''))
+
+# Hero KPI dynamic injection
+_hero_trx_ytd = _get_npa_kpi('NURTEC', 'TRx', 'OVERALL', 'YTD', 'CURR_VALUE')
+_hero_nbrx_ytd = _get_npa_kpi('NURTEC', 'NBRx', 'OVERALL', 'YTD', 'CURR_VALUE')
+_hero_trx_growth = _get_npa_kpi('NURTEC', 'TRx', 'OVERALL', 'YTD', 'GROWTH_PCT')
+_hero_nbrx_growth = _get_npa_kpi('NURTEC', 'NBRx', 'OVERALL', 'YTD', 'GROWTH_PCT')
+_hero_overall_ms = _get_npa_kpi('NURTEC', 'TRx', 'OVERALL', 'YTD', 'MARKET_SHARE_PCT')
+_hero_acute_ms = _get_npa_kpi('NURTEC', 'TRx', 'ACUTE', 'YTD', 'MARKET_SHARE_PCT')
+_hero_prev_ms = _get_npa_kpi('NURTEC', 'TRx', 'PREVENTIVE', 'YTD', 'MARKET_SHARE_PCT')
+# Previous year market shares for delta calculation
+_hero_overall_ms_py = _npa_stacked_df[(_npa_stacked_df['BRAND']=='NURTEC')&(_npa_stacked_df['PRESCRIPTION']=='TRx')&(_npa_stacked_df['RX_CLASSIFICATION']=='OVERALL')&(_npa_stacked_df['ROW_LABEL']=="Actuals '25")&(_npa_stacked_df['TIME_PERIOD']=='YTD')]
+_hero_overall_ms_py = _hero_overall_ms_py.iloc[0]['MARKET_SHARE_PCT'] if len(_hero_overall_ms_py) > 0 else 0
+_hero_acute_ms_py = _npa_stacked_df[(_npa_stacked_df['BRAND']=='NURTEC')&(_npa_stacked_df['PRESCRIPTION']=='TRx')&(_npa_stacked_df['RX_CLASSIFICATION']=='ACUTE')&(_npa_stacked_df['ROW_LABEL']=="Actuals '25")&(_npa_stacked_df['TIME_PERIOD']=='YTD')]
+_hero_acute_ms_py = _hero_acute_ms_py.iloc[0]['MARKET_SHARE_PCT'] if len(_hero_acute_ms_py) > 0 else 0
+_hero_prev_ms_py = _npa_stacked_df[(_npa_stacked_df['BRAND']=='NURTEC')&(_npa_stacked_df['PRESCRIPTION']=='TRx')&(_npa_stacked_df['RX_CLASSIFICATION']=='PREVENTIVE')&(_npa_stacked_df['ROW_LABEL']=="Actuals '25")&(_npa_stacked_df['TIME_PERIOD']=='YTD')]
+_hero_prev_ms_py = _hero_prev_ms_py.iloc[0]['MARKET_SHARE_PCT'] if len(_hero_prev_ms_py) > 0 else 0
+
+html_content = html_content.replace('HERO_TRX_YTD_VAL', f'{_hero_trx_ytd/1e6:.2f}M' if _hero_trx_ytd else '—')
+html_content = html_content.replace('HERO_NBRX_YTD_VAL', f'{int(_hero_nbrx_ytd/1000)}K' if _hero_nbrx_ytd else '—')
+html_content = html_content.replace('HERO_TRX_GROWTH_VAL', f'+{_hero_trx_growth:.1f}%' if _hero_trx_growth else '—')
+html_content = html_content.replace('HERO_NBRX_GROWTH_VAL', f'+{_hero_nbrx_growth:.1f}%' if _hero_nbrx_growth else '—')
+html_content = html_content.replace('HERO_OVERALL_MS_VAL', f'{_hero_overall_ms:.1f}%' if _hero_overall_ms else '—')
+html_content = html_content.replace('HERO_ACUTE_MS_VAL', f'{_hero_acute_ms:.1f}%' if _hero_acute_ms else '—')
+html_content = html_content.replace('HERO_PREV_MS_VAL', f'{_hero_prev_ms:.1f}%' if _hero_prev_ms else '—')
+html_content = html_content.replace('HERO_OVERALL_MS_DELTA', f'+{_hero_overall_ms - _hero_overall_ms_py:.1f}%' if _hero_overall_ms and _hero_overall_ms_py else '—')
+html_content = html_content.replace('HERO_ACUTE_MS_DELTA', f'+{_hero_acute_ms - _hero_acute_ms_py:.1f}%' if _hero_acute_ms and _hero_acute_ms_py else '—')
+_prev_delta = _hero_prev_ms - _hero_prev_ms_py if _hero_prev_ms and _hero_prev_ms_py else 0
+html_content = html_content.replace('HERO_PREV_MS_DELTA', f'{_prev_delta:+.1f}%' if _hero_prev_ms else '—')
 
 components.html(html_content, height=960, scrolling=False)
