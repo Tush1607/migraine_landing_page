@@ -1317,10 +1317,10 @@ a { color: inherit; text-decoration: none; }
     
 
 <div class="row">
-        <div style="background:#EEF5FB;border-radius:12px;padding:14px 16px;text-align:left;border:1px solid rgba(15,23,42,0.05);transition:transform 0.25s cubic-bezier(0.16,1,0.3,1),box-shadow 0.25s cubic-bezier(0.4,0,0.2,1);flex:1;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 6px 16px rgba(15,23,42,0.07),0 2px 4px rgba(15,23,42,0.04)'" onmouseout="this.style.transform='';this.style.boxShadow=''"><div class="label">NRX MTD</div><div class="value" style="color:#0000C9;">28.6K</div><div class="sub delta-pos">+14.4%</div></div>
-        <div style="background:#EEF5FB;border-radius:12px;padding:14px 16px;text-align:left;border:1px solid rgba(15,23,42,0.05);transition:transform 0.25s cubic-bezier(0.16,1,0.3,1),box-shadow 0.25s cubic-bezier(0.4,0,0.2,1);flex:1;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 6px 16px rgba(15,23,42,0.07),0 2px 4px rgba(15,23,42,0.04)'" onmouseout="this.style.transform='';this.style.boxShadow=''"><div class="label">NRX YTD</div><div class="value" style="color:#0000C9;">627.7K</div><div class="sub delta-pos">+14.7%</div></div>
-        <div style="background:#EEF5FB;border-radius:12px;padding:14px 16px;text-align:left;border:1px solid rgba(15,23,42,0.05);transition:transform 0.25s cubic-bezier(0.16,1,0.3,1),box-shadow 0.25s cubic-bezier(0.4,0,0.2,1);flex:1;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 6px 16px rgba(15,23,42,0.07),0 2px 4px rgba(15,23,42,0.04)'" onmouseout="this.style.transform='';this.style.boxShadow=''"><div class="label">TRX MTD</div><div class="value" style="color:#0000C9;">75.5K</div><div class="sub delta-pos">+17.0%</div></div>
-        <div style="background:#EEF5FB;border-radius:12px;padding:14px 16px;text-align:left;border:1px solid rgba(15,23,42,0.05);transition:transform 0.25s cubic-bezier(0.16,1,0.3,1),box-shadow 0.25s cubic-bezier(0.4,0,0.2,1);flex:1;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 6px 16px rgba(15,23,42,0.07),0 2px 4px rgba(15,23,42,0.04)'" onmouseout="this.style.transform='';this.style.boxShadow=''"><div class="label">TRX YTD</div><div class="value" style="color:#0000C9;">1.59M</div><div class="sub delta-pos">+15.6%</div></div>
+        <div style="background:#EEF5FB;border-radius:12px;padding:14px 16px;text-align:left;border:1px solid rgba(15,23,42,0.05);transition:transform 0.25s cubic-bezier(0.16,1,0.3,1),box-shadow 0.25s cubic-bezier(0.4,0,0.2,1);flex:1;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 6px 16px rgba(15,23,42,0.07),0 2px 4px rgba(15,23,42,0.04)'" onmouseout="this.style.transform='';this.style.boxShadow=''"><div class="label">NRX MTD</div><div class="value" style="color:#0000C9;">28.6K</div><div class="sub"><span class="delta-pos">+14.4%</span> vs STLY</div></div>
+        <div style="background:#EEF5FB;border-radius:12px;padding:14px 16px;text-align:left;border:1px solid rgba(15,23,42,0.05);transition:transform 0.25s cubic-bezier(0.16,1,0.3,1),box-shadow 0.25s cubic-bezier(0.4,0,0.2,1);flex:1;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 6px 16px rgba(15,23,42,0.07),0 2px 4px rgba(15,23,42,0.04)'" onmouseout="this.style.transform='';this.style.boxShadow=''"><div class="label">NRX YTD</div><div class="value" style="color:#0000C9;">627.7K</div><div class="sub"><span class="delta-pos">+14.7%</span> vs STLY</div></div>
+        <div style="background:#EEF5FB;border-radius:12px;padding:14px 16px;text-align:left;border:1px solid rgba(15,23,42,0.05);transition:transform 0.25s cubic-bezier(0.16,1,0.3,1),box-shadow 0.25s cubic-bezier(0.4,0,0.2,1);flex:1;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 6px 16px rgba(15,23,42,0.07),0 2px 4px rgba(15,23,42,0.04)'" onmouseout="this.style.transform='';this.style.boxShadow=''"><div class="label">TRX MTD</div><div class="value" style="color:#0000C9;">75.5K</div><div class="sub"><span class="delta-pos">+17.0%</span> vs STLY</div></div>
+        <div style="background:#EEF5FB;border-radius:12px;padding:14px 16px;text-align:left;border:1px solid rgba(15,23,42,0.05);transition:transform 0.25s cubic-bezier(0.16,1,0.3,1),box-shadow 0.25s cubic-bezier(0.4,0,0.2,1);flex:1;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 6px 16px rgba(15,23,42,0.07),0 2px 4px rgba(15,23,42,0.04)'" onmouseout="this.style.transform='';this.style.boxShadow=''"><div class="label">TRX YTD</div><div class="value" style="color:#0000C9;">1.59M</div><div class="sub"><span class="delta-pos">+15.6%</span> vs STLY</div></div>
       </div>
     </div>
 
@@ -1688,7 +1688,10 @@ BRAND_CHART_DATA_PLACEHOLDER
           <div class="card-title">Rolled-up NRx Share by Access-Change Cohort</div>
           <div class="card-subtitle">Calculated share across all plans grouped by access change since Jan 2025. Plans contribute to their cohort only after their change effective date — pre-change months roll into Control.</div>
         </div>
-        <div style="display:flex;align-items:center;gap:8px;font-size:11px;">Start <input type="month" value="2025-01" style="padding:4px 8px;border:1px solid #d1d5db;border-radius:4px;font-size:11px;"></div>
+                <div style="position:relative;display:inline-block;">
+          <div style="width:28px;height:28px;border-radius:50%;background:#ffffff;color:#0000C9;font-size:16px;font-weight:800;display:flex;align-items:center;justify-content:center;cursor:pointer;border:1px solid #c7d2fe;" onmouseover="this.nextElementSibling.style.display='block'" onmouseout="this.nextElementSibling.style.display='none'">i</div>
+          <div style="display:none;position:absolute;right:0;top:32px;background:#1a2332;color:#fff;padding:8px 12px;border-radius:6px;font-size:11px;line-height:1.5;width:auto;white-space:nowrap;z-index:10;box-shadow:0 4px 12px rgba(0,0,0,0.15);">Data Considered from 2025 onwards only</div>
+        </div>
       </div>
 
     <div class="row">
@@ -1826,30 +1829,34 @@ BRAND_CHART_DATA_PLACEHOLDER
         </div>
         <div class="filter-group">
           <span style="font-size:11px;">Payer</span><select class="filter-select"><option>All</option></select>
-          <span style="font-size:11px;">Status</span><select class="filter-select"><option>All</option></select>
         </div>
       </div>
       <div class="chart-container">
         <svg class="chart" preserveAspectRatio="none" viewBox="0 0 800 250">
-          <line x1="60" y1="220" x2="780" y2="220" stroke="#e5e7eb" stroke-width="1"/>
+          <line x1="60" y1="220" x2="780" y2="220" stroke="#1a2332" stroke-width="1"/>
           <text x="50" y="224" text-anchor="end" font-size="10" fill="#9ca3af">0M</text>
           <text x="50" y="174" text-anchor="end" font-size="10" fill="#9ca3af">35M</text>
           <text x="50" y="124" text-anchor="end" font-size="10" fill="#9ca3af">70M</text>
           <text x="50" y="74" text-anchor="end" font-size="10" fill="#9ca3af">105M</text>
           <text x="50" y="24" text-anchor="end" font-size="10" fill="#9ca3af">140M</text>
-          <polygon fill="rgba(156,163,175,0.3)" points="80,220 120,180 200,140 300,100 400,70 500,55 600,45 700,38 760,35 760,220"/>
-          <polygon fill="rgba(22,163,74,0.3)" points="80,220 120,205 200,195 300,185 400,175 500,165 600,155 700,148 760,145 760,220"/>
-          <polygon fill="rgba(220,38,38,0.2)" points="80,220 120,215 200,213 300,212 400,214 500,215 600,216 700,217 760,217 760,220"/>
-          <polyline fill="none" stroke="#16a34a" stroke-width="2" points="80,205 120,195 200,185 300,175 400,165 500,155 600,148 700,142 760,140"/>
-          <polyline fill="none" stroke="#dc2626" stroke-width="1.5" points="80,215 120,213 200,212 300,213 400,214 500,215 600,216 700,217 760,217"/>
-          <polyline fill="none" stroke="#9ca3af" stroke-width="2" points="80,180 120,140 200,100 300,70 400,55 500,45 600,40 700,36 760,34"/>
+          <polyline fill="none" stroke="#16a34a" stroke-width="2.5" points="80,205 120,195 200,185 300,175 400,165 500,155 600,148 700,142 760,140"/>
+          <polyline fill="none" stroke="#dc2626" stroke-width="2.5" points="80,215 120,213 200,212 300,213 400,214 500,215 600,216 700,217 760,217"/>
+          <polyline fill="none" stroke="#9ca3af" stroke-width="2.5" points="80,180 120,140 200,100 300,70 400,55 500,45 600,40 700,36 760,34"/>
+          <text x="80" y="238" text-anchor="middle" font-size="9" fill="#9ca3af">Jan'25</text>
+          <text x="165" y="238" text-anchor="middle" font-size="9" fill="#9ca3af">Mar'25</text>
+          <text x="250" y="238" text-anchor="middle" font-size="9" fill="#9ca3af">May'25</text>
+          <text x="335" y="238" text-anchor="middle" font-size="9" fill="#9ca3af">Jul'25</text>
+          <text x="420" y="238" text-anchor="middle" font-size="9" fill="#9ca3af">Sep'25</text>
+          <text x="505" y="238" text-anchor="middle" font-size="9" fill="#9ca3af">Nov'25</text>
+          <text x="590" y="238" text-anchor="middle" font-size="9" fill="#9ca3af">Jan'26</text>
+          <text x="675" y="238" text-anchor="middle" font-size="9" fill="#9ca3af">Mar'26</text>
+          <text x="760" y="238" text-anchor="middle" font-size="9" fill="#9ca3af">May'26</text>
         </svg>
       </div>
       <div class="axis-info"><span>Y-Axis: Covered Lives (M)</span><span>X-Axis: Time Period (Month)</span></div>
         <div class="legend">
         <div class="legend-item"><div class="legend-dot" style="background:#16a34a"></div>Gain</div>
         <div class="legend-item"><div class="legend-dot" style="background:#dc2626"></div>Loss</div>
-        <div class="legend-item"><div class="legend-dot" style="background:#f59e0b"></div>Restriction</div>
         <div class="legend-item"><div class="legend-dot" style="background:#9ca3af"></div>Control</div>
       </div>
     </div>
