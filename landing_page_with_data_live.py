@@ -11,13 +11,24 @@ st.set_page_config(
 import plotly.graph_objects as go
 from datetime import datetime
 
-# --- User Access Restriction ---
-FINANCE_RESTRICTED_EMAILS = ['ishan.rastogi@pfizer.com']
+# --- User Access Restriction (resolved after finance data loads) ---
 try:
     _current_user_email = st.experimental_user.email or ''
 except:
     _current_user_email = ''
-FINANCE_RESTRICTED = _current_user_email.lower() in [e.lower() for e in FINANCE_RESTRICTED_EMAILS]
+
+def _resolve_finance_restriction():
+    """Dynamically build restricted email list from data + hardcoded additions."""
+    restricted = ['tushar@pfizer.com']  # Additional test emails
+    try:
+        fin_df = load_finance_stacked()
+        if 'USER_EMAIL_RESTRICT' in fin_df.columns:
+            raw = fin_df['USER_EMAIL_RESTRICT'].dropna().iloc[0] if len(fin_df) > 0 else ''
+            if raw:
+                restricted += [e.strip() for e in str(raw).split(';') if e.strip()]
+    except:
+        pass
+    return _current_user_email.lower() in [e.lower() for e in restricted]
 
 def week_to_date(wid):
     return datetime.strptime(str(int(wid)), '%Y%m%d')
@@ -133,6 +144,9 @@ _xpt_national = _xpt_kpi_df[_xpt_kpi_df['CUT_TYPE'] == 'National'].iloc[0] if le
 
 # --- Finance KPI values (Live) ---
 _fin_kpi_df = load_finance_stacked()
+
+# Resolve finance access restriction (must be after load_finance_stacked is available)
+FINANCE_RESTRICTED = _resolve_finance_restriction()
 
 
 # --- Acute/Preventive Brand Charts ---
@@ -2177,7 +2191,7 @@ html_content = html_content.replace('XPT_CH_NRX_PLACEHOLDER', xpt_ch_nrx_html)
 
 # Finance chart injection
 if FINANCE_RESTRICTED:
-    _fin_restricted_msg = '<div style="display:flex;align-items:center;justify-content:center;height:300px;color:#9ca3af;font-size:14px;font-style:italic;">Access Restricted</div>'
+    _fin_restricted_msg = '<div style="display:flex;align-items:center;justify-content:center;height:300px;color:#9ca3af;font-size:24px;font-weight:700;">—</div>'
     html_content = html_content.replace('FIN_GROSS_CHART_PLACEHOLDER', _fin_restricted_msg)
     html_content = html_content.replace('FIN_NET_CHART_PLACEHOLDER', _fin_restricted_msg)
     # Blank out KPI values
