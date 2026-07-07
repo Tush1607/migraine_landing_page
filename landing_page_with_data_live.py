@@ -44,9 +44,6 @@ def _get_current_user_email():
 
 _current_user_email = _get_current_user_email()
 
-# DEBUG: Remove this line after testing
-st.write(f"DEBUG USER: [{_current_user_email}]")
-
 def _resolve_finance_restriction():
     """Dynamically build restricted email list from data + hardcoded additions."""
     restricted = ['tushar@pfizer.com']  # Additional test emails
@@ -177,6 +174,9 @@ _fin_kpi_df = load_finance_stacked()
 
 # Resolve finance access restriction (must be after load_finance_stacked is available)
 FINANCE_RESTRICTED = _resolve_finance_restriction()
+
+# DEBUG: Remove after testing
+st.write(f"DEBUG: email=[{_current_user_email}] restricted=[{FINANCE_RESTRICTED}]")
 
 
 # --- Acute/Preventive Brand Charts ---
