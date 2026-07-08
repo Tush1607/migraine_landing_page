@@ -1192,31 +1192,20 @@ a { color: inherit; text-decoration: none; }
     <!-- PERFORMANCE INSIGHTS -->
     <div style="background:#ffffff;border:1px solid #e8ecf0;border-left:4px solid #0000C9;border-radius:8px;padding:24px 28px;margin-bottom:24px;">
       <div style="font-size:18px;font-weight:700;color:#1a2332;margin-bottom:6px;">Performance Insights</div>
-      <div style="font-size:12px;color:#6b7280;margin-bottom:20px;">Key observations for week ending 06/19/2026 &middot; Numbers in bold update weekly</div>
+      <div style="font-size:12px;color:#6b7280;margin-bottom:20px;">Key observations for week ending EXEC_PERF_WEEK_DATE &middot; Numbers in bold update weekly</div>
 
       <div style="font-size:14px;font-weight:700;color:#1a2332;margin-bottom:4px;text-decoration:underline;">Weekly Insights</div>
       <div style="font-size:11px;color:#6b7280;margin-bottom:12px;">Week-over-week changes and weekly-level observations</div>
       <ul style="list-style-type:disc;padding-left:20px;margin-bottom:16px;color:#0000C9;">
-        <li style="margin-bottom:8px;font-size:13px;line-height:1.7;"><span style="color:#374151;">Nurtec NBRx volume this week was <strong style="color:#0000C9;">48.2K</strong>, up <strong style="color:#0000C9;">+3.1%</strong> vs. prior week (46.7K) and <strong style="color:#0000C9;">+5.8%</strong> vs. same week last year.</span></li>
-        <li style="margin-bottom:8px;font-size:13px;line-height:1.7;"><span style="color:#374151;">Nurtec TRx volume came in at <strong style="color:#0000C9;">612.4K</strong>, an increase of <strong style="color:#0000C9;">+2.4%</strong> WoW, with retail channel contributing <strong style="color:#0000C9;">+0.2%</strong> share gain vs. same week last year.</span></li>
-        <li style="margin-bottom:8px;font-size:13px;line-height:1.7;"><span style="color:#374151;">Nurtec oCGRP TRx market share moved to <strong style="color:#0000C9;">38.7%</strong> this week, up <strong style="color:#0000C9;">+0.2%</strong> WoW. Ubrelvy flat at <strong style="color:#0000C9;">31.4%</strong>; Qulipta gained <strong style="color:#0000C9;">+0.1%</strong> to <strong style="color:#0000C9;">24.8%</strong>.</span></li>
-        <li style="margin-bottom:8px;font-size:13px;line-height:1.7;"><span style="color:#374151;">Acute oCGRP share for Nurtec at <strong style="color:#0000C9;">54.1%</strong> (<strong style="color:#0000C9;">+0.3%</strong> WoW); Preventive share at <strong style="color:#0000C9;">21.2%</strong> (<strong style="color:#0000C9;">-0.1%</strong> WoW).</span></li>
-        <li style="margin-bottom:8px;font-size:13px;line-height:1.7;"><span style="color:#374151;">Gross sales for the week were <strong style="color:#0000C9;">$28.4M</strong>, up <strong style="color:#0000C9;">+2.8%</strong> vs. prior week ($27.6M). MTD attainment at <strong style="color:#0000C9;">94.4%</strong> vs. OP26.</span></li>
-        <li style="margin-bottom:8px;font-size:13px;line-height:1.7;"><span style="color:#374151;">Preventive segment: Qulipta weekly volume grew <strong style="color:#0000C9;">+4.2%</strong> WoW vs. Nurtec Preventive at <strong style="color:#0000C9;">+1.1%</strong> WoW &#8212; gap widening by <strong style="color:#0000C9;">3.1%</strong> this week.</span></li>
+EXEC_WEEKLY_INSIGHTS_BULLETS
       </ul>
 
       <hr style="border:none;border-top:1px solid #e8ecf0;margin:24px 0;">
 
       <div style="font-size:14px;font-weight:700;color:#1a2332;margin-bottom:4px;text-decoration:underline;">Year to Date Insights</div>
-      <div style="font-size:11px;color:#6b7280;margin-bottom:12px;">Cumulative performance statements as of week ending 06/19/2026</div>
+      <div style="font-size:11px;color:#6b7280;margin-bottom:12px;">Cumulative performance statements as of week ending EXEC_PERF_WEEK_DATE</div>
       <ul style="list-style-type:disc;padding-left:20px;margin-bottom:16px;color:#0000C9;">
-        <li style="margin-bottom:8px;font-size:13px;line-height:1.7;"><span style="color:#374151;">As of <strong style="color:#0000C9;">June 19, 2026</strong>, the oral CGRP TRx market is growing at <strong style="color:#0000C9;">17.0% YTD</strong> vs. same time last year, which is <strong style="color:#0000C9;">1.5%</strong> lower growth than the same time period in 2025 vs. 2024 (18.5%).</span></li>
-        <li style="margin-bottom:8px;font-size:13px;line-height:1.7;"><span style="color:#374151;">Nurtec TRx is growing at <strong style="color:#0000C9;">16.3% YTD</strong>, which is <strong style="color:#0000C9;">2.7%</strong> higher than Nurtec's growth in 2025 by this point in the year (13.5%).</span></li>
-        <li style="margin-bottom:8px;font-size:13px;line-height:1.7;"><span style="color:#374151;">Comparatively, Ubrelvy's YTD growth is <strong style="color:#0000C9;">14.0%</strong> (3.0% lower than in 2025), and Qulipta's is <strong style="color:#0000C9;">22.5%</strong> (9.0% lower than in 2025).</span></li>
-        <li style="margin-bottom:8px;font-size:13px;line-height:1.7;"><span style="color:#374151;">Nurtec remains the market leader in Oral CGRP with <strong style="color:#0000C9;">43.0% TRx share YTD</strong> and <strong style="color:#0000C9;">43.3% NBRx share YTD</strong> (-0.3% TRx share and +0.5% NBRx share vs. same period last year).</span></li>
-        <li style="margin-bottom:8px;font-size:13px;line-height:1.7;"><span style="color:#374151;">Ubrelvy has <strong style="color:#0000C9;">32.1%</strong> TRx share YTD and <strong style="color:#0000C9;">35.5%</strong> NBRx share YTD (-0.9% and -0.1% respectively vs. same time last year).</span></li>
-        <li style="margin-bottom:8px;font-size:13px;line-height:1.7;"><span style="color:#374151;">Qulipta has <strong style="color:#0000C9;">24.8%</strong> TRx share YTD and <strong style="color:#0000C9;">21.2%</strong> NBRx share YTD (+1.1% and -0.3% respectively vs. same time last year).</span></li>
-        <li style="margin-bottom:8px;font-size:13px;line-height:1.7;"><span style="color:#374151;">vs Budget: Nurtec TRx attainment is <strong style="color:#0000C9;">93.5% YTD</strong>; oCGRP TRx attainment is <strong style="color:#0000C9;">94.3% YTD</strong>.</span></li>
+EXEC_YTD_INSIGHTS_BULLETS
       </ul>
     </div>
 
@@ -2554,6 +2543,216 @@ _latest_week_id = str(int(npa_brand_df['WEEK_ID'].max()))
 _exec_week_date = f'{_latest_week_id[4:6]}/{_latest_week_id[6:8]}/{_latest_week_id[0:4]}' if len(_latest_week_id) == 8 else '\u2014'
 html_content = html_content.replace('EXEC_PERF_WEEK_DATE', _exec_week_date)
 
+# --- Performance Insights dynamic bullets ---
+def _li(text):
+    return f'<li style="margin-bottom:8px;font-size:13px;line-height:1.7;"><span style="color:#374151;">{text}</span></li>'
+
+def _b(v):
+    return f'<strong style="color:#0000C9;">{v}</strong>'
+
+def _wow_dir(pct):
+    return 'up' if pct >= 0 else 'down'
+
+def _build_weekly_insights():
+    bullets = []
+    latest_wk = npa_brand_df['WEEK_ID'].max()
+    all_weeks = sorted(npa_brand_df['WEEK_ID'].unique(), reverse=True)
+    prev_wk = all_weeks[1] if len(all_weeks) > 1 else latest_wk
+
+    # Bullet 1: Nurtec NBRx volume, WoW, vs STLY
+    nbrx_curr = nbrx_brand_df[(nbrx_brand_df['BRAND']=='NURTEC')&(nbrx_brand_df['WEEK_ID']==latest_wk)]['ACTUALS'].sum()
+    nbrx_prev = nbrx_brand_df[(nbrx_brand_df['BRAND']=='NURTEC')&(nbrx_brand_df['WEEK_ID']==prev_wk)]['ACTUALS'].sum()
+    nbrx_stly = nbrx_brand_df[(nbrx_brand_df['BRAND']=='NURTEC')&(nbrx_brand_df['WEEK_ID']==latest_wk)]['STLY'].sum()
+    nbrx_wow = (nbrx_curr - nbrx_prev) / nbrx_prev * 100 if nbrx_prev else 0
+    nbrx_vs_stly = (nbrx_curr - nbrx_stly) / nbrx_stly * 100 if nbrx_stly else 0
+    bullets.append(_li(
+        f'Nurtec NBRx volume this week was {_b(f"{nbrx_curr/1000:.1f}K")}, '
+        f'{_wow_dir(nbrx_wow)} {_b(f"{nbrx_wow:+.1f}%")} vs. prior week ({nbrx_prev/1000:.1f}K) '
+        f'and {_b(f"{nbrx_vs_stly:+.1f}%")} vs. same week last year.'
+    ))
+
+    # Bullet 2: Nurtec TRx volume, WoW, retail share delta
+    trx_curr = npa_brand_df[(npa_brand_df['BRAND']=='NURTEC')&(npa_brand_df['WEEK_ID']==latest_wk)]['ACTUALS'].sum()
+    trx_prev = npa_brand_df[(npa_brand_df['BRAND']=='NURTEC')&(npa_brand_df['WEEK_ID']==prev_wk)]['ACTUALS'].sum()
+    trx_wow = (trx_curr - trx_prev) / trx_prev * 100 if trx_prev else 0
+    # Retail share delta vs STLY
+    ret_nurtec_curr = load_channel_data("TRx", "NURTEC")
+    ret_nurtec_wk = ret_nurtec_curr[(ret_nurtec_curr['CHANNEL_TYPE']=='Retail')&(ret_nurtec_curr['WEEK_ID']==latest_wk)]
+    r_n_curr = ret_nurtec_wk['ACTUALS'].sum() if len(ret_nurtec_wk) > 0 else 0
+    r_n_stly = ret_nurtec_wk['STLY'].sum() if len(ret_nurtec_wk) > 0 else 0
+    ret_total_curr = r_n_curr
+    ret_total_stly = r_n_stly
+    for _br in ['UBRELVY', 'QULIPTA']:
+        _ch = load_channel_data("TRx", _br)
+        _wk = _ch[(_ch['CHANNEL_TYPE']=='Retail')&(_ch['WEEK_ID']==latest_wk)]
+        ret_total_curr += _wk['ACTUALS'].sum() if len(_wk) > 0 else 0
+        ret_total_stly += _wk['STLY'].sum() if len(_wk) > 0 else 0
+    ret_share_curr = (r_n_curr / ret_total_curr * 100) if ret_total_curr else 0
+    ret_share_stly = (r_n_stly / ret_total_stly * 100) if ret_total_stly else 0
+    ret_share_delta = ret_share_curr - ret_share_stly
+    delta_word = 'gain' if ret_share_delta >= 0 else 'loss'
+    bullets.append(_li(
+        f'Nurtec TRx volume came in at {_b(f"{trx_curr/1000:.1f}K")}, '
+        f'{"an increase" if trx_wow >= 0 else "a decrease"} of {_b(f"{trx_wow:+.1f}%")} WoW, '
+        f'with retail channel contributing {_b(f"{ret_share_delta:+.1f}%")} share {delta_word} vs. same week last year.'
+    ))
+
+    # Bullet 3: oCGRP TRx market shares all brands
+    def _wk_share(brand):
+        c = npa_brand_df[(npa_brand_df['BRAND']==brand)&(npa_brand_df['WEEK_ID']==latest_wk)]['ACTUALS'].sum()
+        t = npa_brand_df[npa_brand_df['WEEK_ID']==latest_wk]['ACTUALS'].sum()
+        return (c / t * 100) if t else 0
+    def _prev_share(brand):
+        c = npa_brand_df[(npa_brand_df['BRAND']==brand)&(npa_brand_df['WEEK_ID']==prev_wk)]['ACTUALS'].sum()
+        t = npa_brand_df[npa_brand_df['WEEK_ID']==prev_wk]['ACTUALS'].sum()
+        return (c / t * 100) if t else 0
+    n_share = _wk_share('NURTEC'); n_wow_s = n_share - _prev_share('NURTEC')
+    u_share = _wk_share('UBRELVY'); u_wow_s = u_share - _prev_share('UBRELVY')
+    q_share = _wk_share('QULIPTA'); q_wow_s = q_share - _prev_share('QULIPTA')
+    u_desc = f'flat at {_b(f"{u_share:.1f}%")}' if abs(u_wow_s) < 0.1 else f'{"gained" if u_wow_s > 0 else "lost"} {_b(f"{u_wow_s:+.1f}%")} to {_b(f"{u_share:.1f}%")}'
+    q_desc = f'flat at {_b(f"{q_share:.1f}%")}' if abs(q_wow_s) < 0.1 else f'{"gained" if q_wow_s > 0 else "lost"} {_b(f"{q_wow_s:+.1f}%")} to {_b(f"{q_share:.1f}%")}'
+    bullets.append(_li(
+        f'Nurtec oCGRP TRx market share moved to {_b(f"{n_share:.1f}%")} this week, '
+        f'{_wow_dir(n_wow_s)} {_b(f"{n_wow_s:+.1f}%")} WoW. Ubrelvy {u_desc}; Qulipta {q_desc}.'
+    ))
+
+    # Bullet 4: Acute & Preventive share
+    acute_curr = _get_npa_kpi('NURTEC', 'TRx', 'ACUTE', 'Latest Week', 'MARKET_SHARE_PCT') or 0
+    acute_py = _npa_stacked_df[(_npa_stacked_df['BRAND']=='NURTEC')&(_npa_stacked_df['PRESCRIPTION']=='TRx')&(_npa_stacked_df['RX_CLASSIFICATION']=='ACUTE')&(_npa_stacked_df['ROW_LABEL']=="Actuals '25")&(_npa_stacked_df['TIME_PERIOD']=='Latest Week')]
+    acute_delta = acute_curr - (acute_py.iloc[0]['MARKET_SHARE_PCT'] if len(acute_py) > 0 else 0)
+    prev_curr = _get_npa_kpi('NURTEC', 'TRx', 'PREVENTIVE', 'Latest Week', 'MARKET_SHARE_PCT') or 0
+    prev_py = _npa_stacked_df[(_npa_stacked_df['BRAND']=='NURTEC')&(_npa_stacked_df['PRESCRIPTION']=='TRx')&(_npa_stacked_df['RX_CLASSIFICATION']=='PREVENTIVE')&(_npa_stacked_df['ROW_LABEL']=="Actuals '25")&(_npa_stacked_df['TIME_PERIOD']=='Latest Week')]
+    prev_delta = prev_curr - (prev_py.iloc[0]['MARKET_SHARE_PCT'] if len(prev_py) > 0 else 0)
+    bullets.append(_li(
+        f'Acute oCGRP share for Nurtec at {_b(f"{acute_curr:.1f}%")} ({_b(f"{acute_delta:+.1f}%")} WoW); '
+        f'Preventive share at {_b(f"{prev_curr:.1f}%")} ({_b(f"{prev_delta:+.1f}%")} WoW).'
+    ))
+
+    # Bullet 5: Gross sales
+    gross_wk_row = _fin_kpi_df[_fin_kpi_df['KPI_TITLE'].str.contains('LATEST_WEEK', na=False) & (_fin_kpi_df['SECTION_NAME'] == 'Gross')]
+    gross_mtd_row = _fin_kpi_df[_fin_kpi_df['KPI_TITLE'].str.contains('MTD', na=False) & (_fin_kpi_df['SECTION_NAME'] == 'Gross')]
+    if len(gross_wk_row) > 0:
+        gw = gross_wk_row.iloc[0]
+        g_actual = gw['ACTUAL_VALUE'] / 1e6
+        g_py_pct = gw['VARIANCE_TO_PY_PCT']
+        mtd_att = gross_mtd_row.iloc[0]['BUDGET_ATT'] if len(gross_mtd_row) > 0 else 0
+        bullets.append(_li(
+            f'Gross sales for the week were {_b(f"${g_actual:.1f}M")}, '
+            f'{"up" if g_py_pct >= 0 else "down"} {_b(f"{g_py_pct:+.1f}%")} vs. prior year. '
+            f'MTD attainment at {_b(f"{mtd_att:.1f}%")} vs. OP26.'
+        ))
+
+    # Bullet 6: Preventive segment gap
+    prev_brand_df = load_acute_prev_brand_data("TRx", "Preventive")
+    q_p_curr = prev_brand_df[(prev_brand_df['BRAND']=='QULIPTA')&(prev_brand_df['WEEK_ID']==latest_wk)]['ACTUALS'].sum()
+    q_p_prev = prev_brand_df[(prev_brand_df['BRAND']=='QULIPTA')&(prev_brand_df['WEEK_ID']==prev_wk)]['ACTUALS'].sum()
+    n_p_curr = prev_brand_df[(prev_brand_df['BRAND']=='NURTEC')&(prev_brand_df['WEEK_ID']==latest_wk)]['ACTUALS'].sum()
+    n_p_prev = prev_brand_df[(prev_brand_df['BRAND']=='NURTEC')&(prev_brand_df['WEEK_ID']==prev_wk)]['ACTUALS'].sum()
+    q_p_wow = (q_p_curr - q_p_prev) / q_p_prev * 100 if q_p_prev else 0
+    n_p_wow = (n_p_curr - n_p_prev) / n_p_prev * 100 if n_p_prev else 0
+    gap = abs(q_p_wow - n_p_wow)
+    gap_word = 'widening' if q_p_wow > n_p_wow else 'narrowing'
+    bullets.append(_li(
+        f'Preventive segment: Qulipta weekly volume {"grew" if q_p_wow >= 0 else "fell"} {_b(f"{q_p_wow:+.1f}%")} WoW '
+        f'vs. Nurtec Preventive at {_b(f"{n_p_wow:+.1f}%")} WoW '
+        f'&#8212; gap {gap_word} by {_b(f"{gap:.1f}%")} this week.'
+    ))
+
+    return '\n'.join(bullets)
+
+def _build_ytd_insights():
+    bullets = []
+    def _ytd(brand, presc, field):
+        return _get_npa_kpi(brand, presc, 'OVERALL', 'YTD', field)
+    def _ytd_py_share(brand, presc):
+        r = _npa_stacked_df[(_npa_stacked_df['BRAND']==brand)&(_npa_stacked_df['PRESCRIPTION']==presc)&(_npa_stacked_df['RX_CLASSIFICATION']=='OVERALL')&(_npa_stacked_df['ROW_LABEL']=="Actuals '25")&(_npa_stacked_df['TIME_PERIOD']=='YTD')]
+        return r.iloc[0]['MARKET_SHARE_PCT'] if len(r) > 0 else 0
+    def _ytd_py_growth(brand, presc):
+        r = _npa_stacked_df[(_npa_stacked_df['BRAND']==brand)&(_npa_stacked_df['PRESCRIPTION']==presc)&(_npa_stacked_df['RX_CLASSIFICATION']=='OVERALL')&(_npa_stacked_df['ROW_LABEL']=="Actuals '25")&(_npa_stacked_df['TIME_PERIOD']=='YTD')]
+        return r.iloc[0]['GROWTH_PCT'] if len(r) > 0 else 0
+
+    # Bullet 1: oCGRP market growth
+    n_growth = _ytd('NURTEC', 'TRx', 'GROWTH_PCT') or 0
+    total_curr = npa_brand_df['ACTUALS'].sum()
+    total_stly = npa_brand_df['STLY'].sum()
+    mkt_growth = (total_curr - total_stly) / total_stly * 100 if total_stly else 0
+    n_py_g = _ytd_py_growth('NURTEC', 'TRx')
+    u_py_g = _ytd_py_growth('UBRELVY', 'TRx')
+    q_py_g = _ytd_py_growth('QULIPTA', 'TRx')
+    mkt_py_growth = (n_py_g * 0.43 + u_py_g * 0.33 + q_py_g * 0.24) if (n_py_g and u_py_g and q_py_g) else 0
+    mkt_diff = mkt_growth - mkt_py_growth
+    from datetime import datetime as _dtf
+    try:
+        dt = _dtf.strptime(_latest_week_id, '%Y%m%d')
+        date_fmt = dt.strftime('%B %d, %Y')
+    except:
+        date_fmt = _exec_week_date
+    bullets.append(_li(
+        f'As of {_b(date_fmt)}, the oral CGRP TRx market is growing at {_b(f"{mkt_growth:.1f}% YTD")} vs. same time last year, '
+        f'which is {_b(f"{abs(mkt_diff):.1f}%")} {"lower" if mkt_diff < 0 else "higher"} growth than the same time period in 2025 vs. 2024 ({mkt_py_growth:.1f}%).'
+    ))
+
+    # Bullet 2: Nurtec TRx YTD growth
+    n_diff = n_growth - n_py_g if n_py_g else 0
+    bullets.append(_li(
+        f'Nurtec TRx is growing at {_b(f"{n_growth:.1f}% YTD")}, which is {_b(f"{abs(n_diff):.1f}%")} '
+        f'{"higher" if n_diff >= 0 else "lower"} than Nurtec\'s growth in 2025 by this point in the year ({n_py_g:.1f}%).'
+    ))
+
+    # Bullet 3: Ubrelvy & Qulipta YTD growth
+    u_growth = _ytd('UBRELVY', 'TRx', 'GROWTH_PCT') or 0
+    q_growth = _ytd('QULIPTA', 'TRx', 'GROWTH_PCT') or 0
+    u_diff = u_growth - u_py_g if u_py_g else 0
+    q_diff = q_growth - q_py_g if q_py_g else 0
+    bullets.append(_li(
+        f"Comparatively, Ubrelvy's YTD growth is {_b(f'{u_growth:.1f}%')} ({abs(u_diff):.1f}% {'lower' if u_diff < 0 else 'higher'} than in 2025), "
+        f"and Qulipta's is {_b(f'{q_growth:.1f}%')} ({abs(q_diff):.1f}% {'lower' if q_diff < 0 else 'higher'} than in 2025)."
+    ))
+
+    # Bullet 4: Nurtec share leader
+    n_trx_s = _ytd('NURTEC', 'TRx', 'MARKET_SHARE_PCT') or 0
+    n_nbrx_s = _ytd('NURTEC', 'NBRx', 'MARKET_SHARE_PCT') or 0
+    n_trx_d = n_trx_s - _ytd_py_share('NURTEC', 'TRx')
+    n_nbrx_d = n_nbrx_s - _ytd_py_share('NURTEC', 'NBRx')
+    bullets.append(_li(
+        f'Nurtec remains the market leader in Oral CGRP with {_b(f"{n_trx_s:.1f}% TRx share YTD")} '
+        f'and {_b(f"{n_nbrx_s:.1f}% NBRx share YTD")} '
+        f'({n_trx_d:+.1f}% TRx share and {n_nbrx_d:+.1f}% NBRx share vs. same period last year).'
+    ))
+
+    # Bullet 5: Ubrelvy shares
+    u_trx_s = _ytd('UBRELVY', 'TRx', 'MARKET_SHARE_PCT') or 0
+    u_nbrx_s = _ytd('UBRELVY', 'NBRx', 'MARKET_SHARE_PCT') or 0
+    u_trx_d = u_trx_s - _ytd_py_share('UBRELVY', 'TRx')
+    u_nbrx_d = u_nbrx_s - _ytd_py_share('UBRELVY', 'NBRx')
+    bullets.append(_li(
+        f'Ubrelvy has {_b(f"{u_trx_s:.1f}%")} TRx share YTD and {_b(f"{u_nbrx_s:.1f}%")} NBRx share YTD '
+        f'({u_trx_d:+.1f}% and {u_nbrx_d:+.1f}% respectively vs. same time last year).'
+    ))
+
+    # Bullet 6: Qulipta shares
+    q_trx_s = _ytd('QULIPTA', 'TRx', 'MARKET_SHARE_PCT') or 0
+    q_nbrx_s = _ytd('QULIPTA', 'NBRx', 'MARKET_SHARE_PCT') or 0
+    q_trx_d = q_trx_s - _ytd_py_share('QULIPTA', 'TRx')
+    q_nbrx_d = q_nbrx_s - _ytd_py_share('QULIPTA', 'NBRx')
+    bullets.append(_li(
+        f'Qulipta has {_b(f"{q_trx_s:.1f}%")} TRx share YTD and {_b(f"{q_nbrx_s:.1f}%")} NBRx share YTD '
+        f'({q_trx_d:+.1f}% and {q_nbrx_d:+.1f}% respectively vs. same time last year).'
+    ))
+
+    # Bullet 7: Budget attainment
+    n_goal = _ytd('NURTEC', 'TRx', 'GOAL_ATTAINMENT_PCT') or 0
+    ocgrp_rows = _npa_stacked_df[(_npa_stacked_df['PRESCRIPTION']=='TRx')&(_npa_stacked_df['RX_CLASSIFICATION']=='OVERALL')&(_npa_stacked_df['ROW_LABEL']=="Actuals '26")&(_npa_stacked_df['TIME_PERIOD']=='YTD')&(_npa_stacked_df['GOAL_ATTAINMENT_PCT'].notna())]
+    ocgrp_att = ocgrp_rows['GOAL_ATTAINMENT_PCT'].mean() if len(ocgrp_rows) > 0 else 0
+    bullets.append(_li(
+        f'vs Budget: Nurtec TRx attainment is {_b(f"{n_goal:.1f}% YTD")}; '
+        f'oCGRP TRx attainment is {_b(f"{ocgrp_att:.1f}% YTD")}.'
+    ))
+
+    return '\n'.join(bullets)
+
+html_content = html_content.replace('EXEC_WEEKLY_INSIGHTS_BULLETS', _build_weekly_insights())
+html_content = html_content.replace('EXEC_YTD_INSIGHTS_BULLETS', _build_ytd_insights())
 
 def _calc_r4w_avg(prescription):
     """Calculate Rolling 4-Week Average from NPA trends weekly data."""
