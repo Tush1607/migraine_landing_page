@@ -1261,10 +1261,10 @@ EXEC_PERF_SNAPSHOT_ROWS
     
 
 <div class="row">
-        <div style="background:#EEF5FB;border-radius:12px;padding:14px 16px;text-align:left;border:1px solid rgba(15,23,42,0.05);transition:transform 0.25s cubic-bezier(0.16,1,0.3,1),box-shadow 0.25s cubic-bezier(0.4,0,0.2,1);flex:1;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 6px 16px rgba(15,23,42,0.07),0 2px 4px rgba(15,23,42,0.04)'" onmouseout="this.style.transform='';this.style.boxShadow=''"><div class="label">NRX MTD</div><div class="value" style="color:#0000C9;">28.6K</div><div class="sub"><span class="delta-pos">+14.4%</span> vs STLY</div></div>
-        <div style="background:#EEF5FB;border-radius:12px;padding:14px 16px;text-align:left;border:1px solid rgba(15,23,42,0.05);transition:transform 0.25s cubic-bezier(0.16,1,0.3,1),box-shadow 0.25s cubic-bezier(0.4,0,0.2,1);flex:1;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 6px 16px rgba(15,23,42,0.07),0 2px 4px rgba(15,23,42,0.04)'" onmouseout="this.style.transform='';this.style.boxShadow=''"><div class="label">NRX YTD</div><div class="value" style="color:#0000C9;">627.7K</div><div class="sub"><span class="delta-pos">+14.7%</span> vs STLY</div></div>
-        <div style="background:#EEF5FB;border-radius:12px;padding:14px 16px;text-align:left;border:1px solid rgba(15,23,42,0.05);transition:transform 0.25s cubic-bezier(0.16,1,0.3,1),box-shadow 0.25s cubic-bezier(0.4,0,0.2,1);flex:1;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 6px 16px rgba(15,23,42,0.07),0 2px 4px rgba(15,23,42,0.04)'" onmouseout="this.style.transform='';this.style.boxShadow=''"><div class="label">TRX MTD</div><div class="value" style="color:#0000C9;">75.5K</div><div class="sub"><span class="delta-pos">+17.0%</span> vs STLY</div></div>
-        <div style="background:#EEF5FB;border-radius:12px;padding:14px 16px;text-align:left;border:1px solid rgba(15,23,42,0.05);transition:transform 0.25s cubic-bezier(0.16,1,0.3,1),box-shadow 0.25s cubic-bezier(0.4,0,0.2,1);flex:1;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 6px 16px rgba(15,23,42,0.07),0 2px 4px rgba(15,23,42,0.04)'" onmouseout="this.style.transform='';this.style.boxShadow=''"><div class="label">TRX YTD</div><div class="value" style="color:#0000C9;">1.59M</div><div class="sub"><span class="delta-pos">+15.6%</span> vs STLY</div></div>
+        <div style="background:#EEF5FB;border-radius:12px;padding:14px 16px;text-align:left;border:1px solid rgba(15,23,42,0.05);transition:transform 0.25s cubic-bezier(0.16,1,0.3,1),box-shadow 0.25s cubic-bezier(0.4,0,0.2,1);flex:1;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 6px 16px rgba(15,23,42,0.07),0 2px 4px rgba(15,23,42,0.04)'" onmouseout="this.style.transform='';this.style.boxShadow=''"><div class="label">NRX MTD</div><div class="value" style="color:#0000C9;">XPT_NRX_MTD_VAL</div><div class="sub">XPT_NRX_MTD_STLY vs STLY</div></div>
+        <div style="background:#EEF5FB;border-radius:12px;padding:14px 16px;text-align:left;border:1px solid rgba(15,23,42,0.05);transition:transform 0.25s cubic-bezier(0.16,1,0.3,1),box-shadow 0.25s cubic-bezier(0.4,0,0.2,1);flex:1;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 6px 16px rgba(15,23,42,0.07),0 2px 4px rgba(15,23,42,0.04)'" onmouseout="this.style.transform='';this.style.boxShadow=''"><div class="label">NRX YTD</div><div class="value" style="color:#0000C9;">XPT_NRX_YTD_VAL</div><div class="sub">XPT_NRX_YTD_STLY vs STLY</div></div>
+        <div style="background:#EEF5FB;border-radius:12px;padding:14px 16px;text-align:left;border:1px solid rgba(15,23,42,0.05);transition:transform 0.25s cubic-bezier(0.16,1,0.3,1),box-shadow 0.25s cubic-bezier(0.4,0,0.2,1);flex:1;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 6px 16px rgba(15,23,42,0.07),0 2px 4px rgba(15,23,42,0.04)'" onmouseout="this.style.transform='';this.style.boxShadow=''"><div class="label">TRX MTD</div><div class="value" style="color:#0000C9;">XPT_TRX_MTD_VAL</div><div class="sub">XPT_TRX_MTD_STLY vs STLY</div></div>
+        <div style="background:#EEF5FB;border-radius:12px;padding:14px 16px;text-align:left;border:1px solid rgba(15,23,42,0.05);transition:transform 0.25s cubic-bezier(0.16,1,0.3,1),box-shadow 0.25s cubic-bezier(0.4,0,0.2,1);flex:1;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 6px 16px rgba(15,23,42,0.07),0 2px 4px rgba(15,23,42,0.04)'" onmouseout="this.style.transform='';this.style.boxShadow=''"><div class="label">TRX YTD</div><div class="value" style="color:#0000C9;">XPT_TRX_YTD_VAL</div><div class="sub">XPT_TRX_YTD_STLY vs STLY</div></div>
       </div>
     </div>
 
@@ -2308,8 +2308,28 @@ html_content = html_content.replace('XPT_PAYER_TRX_PLACEHOLDER', xpt_payer_trx_h
 html_content = html_content.replace('XPT_PAYER_NRX_PLACEHOLDER', xpt_payer_nrx_html)
 html_content = html_content.replace('XPT_CH_TRX_PLACEHOLDER', xpt_ch_trx_html)
 html_content = html_content.replace('XPT_CH_NRX_PLACEHOLDER', xpt_ch_nrx_html)
+# Xponent KPI grid injection (dynamic from _xpt_national)
+if _xpt_national is not None:
+    def _xpt_fmt_val(v):
+        if v is None or (v != v): return '\u2014'
+        v = float(v)
+        if v >= 1e6: return f'{v/1e6:.2f}M'
+        if v >= 1e3: return f'{v/1e3:.1f}K'
+        return f'{int(v):,}'
+    def _xpt_fmt_pct(v):
+        if v is None or (v != v): return '\u2014'
+        cls = 'delta-pos' if v >= 0 else 'delta-neg'
+        return f'<span class="{cls}">{v:+.1f}%</span>'
+    html_content = html_content.replace('XPT_NRX_MTD_VAL', _xpt_fmt_val(_xpt_national['NRX_MTD']))
+    html_content = html_content.replace('XPT_NRX_MTD_STLY', _xpt_fmt_pct(_xpt_national['NRX_MTD_VS_STLY_PCT']))
+    html_content = html_content.replace('XPT_NRX_YTD_VAL', _xpt_fmt_val(_xpt_national['NRX_YTD']))
+    html_content = html_content.replace('XPT_NRX_YTD_STLY', _xpt_fmt_pct(_xpt_national['NRX_YTD_VS_STLY_PCT']))
+    html_content = html_content.replace('XPT_TRX_MTD_VAL', _xpt_fmt_val(_xpt_national['TRX_MTD']))
+    html_content = html_content.replace('XPT_TRX_MTD_STLY', _xpt_fmt_pct(_xpt_national['TRX_MTD_VS_STLY_PCT']))
+    html_content = html_content.replace('XPT_TRX_YTD_VAL', _xpt_fmt_val(_xpt_national['TRX_YTD']))
+    html_content = html_content.replace('XPT_TRX_YTD_STLY', _xpt_fmt_pct(_xpt_national['TRX_YTD_VS_STLY_PCT']))
 
-# Finance KPI injection (dynamic from _fin_kpi_df)
+
 def _inject_finance_kpis():
     """Build all finance KPI placeholder values from live stacked data."""
     replacements = {}
