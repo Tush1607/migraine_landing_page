@@ -1419,8 +1419,7 @@ BRAND_CHART_DATA_PLACEHOLDER
 NPA_OVERALL_ROWS_NURTEC_TRx
           </tbody>
           <tbody class="npa-table-nbrx" style="display:none;">
-            <tr><td>Actuals '26</td><td style="text-align:right">9,881</td><td style="text-align:right">115,686</td><td style="text-align:right">236,508</td><td style="text-align:right"><span class="delta-pos">+16.1%</span></td><td style="text-align:right"><span class="delta-pos">+12.7%</span></td><td style="text-align:right"><span class="delta-pos">+11.2%</span></td><td style="text-align:right">43.0%</td><td style="text-align:right">43.4%</td><td style="text-align:right">43.3%</td></tr>
-            <tr><td>Actuals '25</td><td style="text-align:right">8,514</td><td style="text-align:right">111,462</td><td style="text-align:right">446,622</td><td style="text-align:right"><span class="delta-pos">+1.5%</span></td><td style="text-align:right"><span class="delta-pos">+3.9%</span></td><td style="text-align:right"><span class="delta-pos">+4.7%</span></td><td style="text-align:right">42.0%</td><td style="text-align:right">42.7%</td><td style="text-align:right">42.3%</td></tr>
+NPA_OVERALL_ROWS_NURTEC_NBRx
           </tbody>
         </table>
       </div>
@@ -1433,8 +1432,7 @@ NPA_OVERALL_ROWS_NURTEC_TRx
 NPA_OVERALL_ROWS_UBRELVY_TRx
           </tbody>
           <tbody class="npa-table-nbrx" style="display:none;">
-            <tr><td>Actuals '26</td><td style="text-align:right">8,338</td><td style="text-align:right">94,712</td><td style="text-align:right">193,647</td><td style="text-align:right"><span class="delta-pos">+14.0%</span></td><td style="text-align:right"><span class="delta-pos">+9.5%</span></td><td style="text-align:right"><span class="delta-pos">+9.6%</span></td><td style="text-align:right">36.2%</td><td style="text-align:right">35.5%</td><td style="text-align:right">35.5%</td></tr>
-            <tr><td>Actuals '25</td><td style="text-align:right">7,315</td><td style="text-align:right">93,778</td><td style="text-align:right">380,580</td><td style="text-align:right"><span class="delta-pos">+9.2%</span></td><td style="text-align:right"><span class="delta-pos">+7.9%</span></td><td style="text-align:right"><span class="delta-pos">+10.4%</span></td><td style="text-align:right">36.1%</td><td style="text-align:right">35.9%</td><td style="text-align:right">36.0%</td></tr>
+NPA_OVERALL_ROWS_UBRELVY_NBRx
           </tbody>
         </table>
       </div>
@@ -1447,8 +1445,7 @@ NPA_OVERALL_ROWS_UBRELVY_TRx
 NPA_OVERALL_ROWS_QULIPTA_TRx
           </tbody>
           <tbody class="npa-table-nbrx" style="display:none;">
-            <tr><td>Actuals '26</td><td style="text-align:right">4,785</td><td style="text-align:right">56,442</td><td style="text-align:right">115,690</td><td style="text-align:right"><span class="delta-pos">+7.8%</span></td><td style="text-align:right"><span class="delta-pos">+9.3%</span></td><td style="text-align:right"><span class="delta-pos">+8.4%</span></td><td style="text-align:right">20.8%</td><td style="text-align:right">21.2%</td><td style="text-align:right">21.2%</td></tr>
-            <tr><td>Actuals '25</td><td style="text-align:right">4,438</td><td style="text-align:right">56,087</td><td style="text-align:right">229,304</td><td style="text-align:right"><span class="delta-pos">+14.8%</span></td><td style="text-align:right"><span class="delta-pos">+14.1%</span></td><td style="text-align:right"><span class="delta-pos">+14.0%</span></td><td style="text-align:right">21.9%</td><td style="text-align:right">21.5%</td><td style="text-align:right">21.7%</td></tr>
+NPA_OVERALL_ROWS_QULIPTA_NBRx
           </tbody>
         </table>
       </div>
