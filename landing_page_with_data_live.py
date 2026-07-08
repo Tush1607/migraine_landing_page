@@ -1152,34 +1152,34 @@ a { color: inherit; text-decoration: none; }
     <!-- KPI CARDS ROW -->
     <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:16px;margin-bottom:32px;">
       <div style="background:#EEF5FB;border-radius:12px;padding:14px 16px;text-align:left;border:1px solid rgba(15,23,42,0.05);transition:transform 0.25s cubic-bezier(0.16,1,0.3,1),box-shadow 0.25s cubic-bezier(0.4,0,0.2,1);cursor:default;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 6px 16px rgba(15,23,42,0.07),0 2px 4px rgba(15,23,42,0.04)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
-        <div style="font-size:28px;font-weight:800;color:#0000C9;margin-bottom:6px;">48.2K</div>
+        <div style="font-size:28px;font-weight:800;color:#0000C9;margin-bottom:6px;">EXEC_NBRX_WK_VAL</div>
         <div style="font-size:12px;font-weight:600;color:#374151;margin-bottom:2px;">Nurtec NBRx</div>
-        <div style="font-size:11px;color:#16a34a;font-weight:600;">+3.1% WoW</div>
-        <div style="font-size:10px;color:#9ca3af;margin-top:4px;">W/E Jun 19, 2026</div>
+        <div style="font-size:11px;color:#16a34a;font-weight:600;">EXEC_NBRX_WK_GROWTH WoW</div>
+        <div style="font-size:10px;color:#9ca3af;margin-top:4px;">Latest Week</div>
       </div>
       <div style="background:#EEF5FB;border-radius:12px;padding:14px 16px;text-align:left;border:1px solid rgba(15,23,42,0.05);transition:transform 0.25s cubic-bezier(0.16,1,0.3,1),box-shadow 0.25s cubic-bezier(0.4,0,0.2,1);cursor:default;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 6px 16px rgba(15,23,42,0.07),0 2px 4px rgba(15,23,42,0.04)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
-        <div style="font-size:28px;font-weight:800;color:#0000C9;margin-bottom:6px;">612.4K</div>
+        <div style="font-size:28px;font-weight:800;color:#0000C9;margin-bottom:6px;">EXEC_TRX_WK_VAL</div>
         <div style="font-size:12px;font-weight:600;color:#374151;margin-bottom:2px;">Nurtec TRx</div>
-        <div style="font-size:11px;color:#16a34a;font-weight:600;">+2.4% WoW</div>
-        <div style="font-size:10px;color:#9ca3af;margin-top:4px;">W/E Jun 19, 2026</div>
+        <div style="font-size:11px;color:#16a34a;font-weight:600;">EXEC_TRX_WK_GROWTH WoW</div>
+        <div style="font-size:10px;color:#9ca3af;margin-top:4px;">Latest Week</div>
       </div>
       <div style="background:#EEF5FB;border-radius:12px;padding:14px 16px;text-align:left;border:1px solid rgba(15,23,42,0.05);transition:transform 0.25s cubic-bezier(0.16,1,0.3,1),box-shadow 0.25s cubic-bezier(0.4,0,0.2,1);cursor:default;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 6px 16px rgba(15,23,42,0.07),0 2px 4px rgba(15,23,42,0.04)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
-        <div style="font-size:28px;font-weight:800;color:#0000C9;margin-bottom:6px;">38.7%</div>
+        <div style="font-size:28px;font-weight:800;color:#0000C9;margin-bottom:6px;">EXEC_MS_WK_VAL</div>
         <div style="font-size:12px;font-weight:600;color:#374151;margin-bottom:2px;">oCGRP TRx Share</div>
-        <div style="font-size:11px;color:#16a34a;font-weight:600;">+0.2% WoW</div>
+        <div style="font-size:11px;color:#16a34a;font-weight:600;">EXEC_MS_WK_GROWTH WoW</div>
         <div style="font-size:10px;color:#9ca3af;margin-top:4px;">National &middot; All Segments</div>
       </div>
       <div style="background:#EEF5FB;border-radius:12px;padding:14px 16px;text-align:left;border:1px solid rgba(15,23,42,0.05);transition:transform 0.25s cubic-bezier(0.16,1,0.3,1),box-shadow 0.25s cubic-bezier(0.4,0,0.2,1);cursor:default;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 6px 16px rgba(15,23,42,0.07),0 2px 4px rgba(15,23,42,0.04)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
-        <div style="font-size:28px;font-weight:800;color:#0000C9;margin-bottom:6px;">$28.4M</div>
+        <div style="font-size:28px;font-weight:800;color:#0000C9;margin-bottom:6px;">EXEC_GROSS_WK_VAL</div>
         <div style="font-size:12px;font-weight:600;color:#374151;margin-bottom:2px;">Gross Sales W/E</div>
-        <div style="font-size:11px;color:#16a34a;font-weight:600;">+2.8% WoW</div>
-        <div style="font-size:10px;color:#9ca3af;margin-top:4px;">vs. $27.6M prior week</div>
+        <div style="font-size:11px;color:#16a34a;font-weight:600;">EXEC_GROSS_VS_PY vs PY</div>
+        <div style="font-size:10px;color:#9ca3af;margin-top:4px;">Latest Week</div>
       </div>
       <div style="background:#EEF5FB;border-radius:12px;padding:14px 16px;text-align:left;border:1px solid rgba(15,23,42,0.05);transition:transform 0.25s cubic-bezier(0.16,1,0.3,1),box-shadow 0.25s cubic-bezier(0.4,0,0.2,1);cursor:default;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 6px 16px rgba(15,23,42,0.07),0 2px 4px rgba(15,23,42,0.04)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
-        <div style="font-size:28px;font-weight:800;color:#0000C9;margin-bottom:6px;">93.6%</div>
+        <div style="font-size:28px;font-weight:800;color:#0000C9;margin-bottom:6px;">EXEC_GOAL_ATT_VAL</div>
         <div style="font-size:12px;font-weight:600;color:#374151;margin-bottom:2px;">YTD Goal Attainment</div>
-        <div style="font-size:11px;color:#d97706;font-weight:600;">$112K behind pace</div>
-        <div style="font-size:10px;color:#9ca3af;margin-top:4px;">TRx vs OP26</div>
+        <div style="font-size:11px;color:#d97706;font-weight:600;">TRx vs OP26</div>
+        <div style="font-size:10px;color:#9ca3af;margin-top:4px;">Nurtec TRx</div>
       </div>
       <div style="background:#EEF5FB;border-radius:12px;padding:14px 16px;text-align:left;border:1px solid rgba(15,23,42,0.05);transition:transform 0.25s cubic-bezier(0.16,1,0.3,1),box-shadow 0.25s cubic-bezier(0.4,0,0.2,1);cursor:default;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 6px 16px rgba(15,23,42,0.07),0 2px 4px rgba(15,23,42,0.04)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
         <div style="font-size:28px;font-weight:800;color:#0000C9;margin-bottom:6px;">128M</div>
@@ -2389,5 +2389,30 @@ html_content = html_content.replace('HERO_OVERALL_MS_DELTA', f'+{_hero_overall_m
 html_content = html_content.replace('HERO_ACUTE_MS_DELTA', f'+{_hero_acute_ms - _hero_acute_ms_py:.1f}%' if _hero_acute_ms and _hero_acute_ms_py else '—')
 _prev_delta = _hero_prev_ms - _hero_prev_ms_py if _hero_prev_ms and _hero_prev_ms_py else 0
 html_content = html_content.replace('HERO_PREV_MS_DELTA', f'{_prev_delta:+.1f}%' if _hero_prev_ms else '—')
+
+# Executive Summary KPI dynamic injection
+_exec_nbrx_wk = _get_npa_kpi('NURTEC', 'NBRx', 'OVERALL', 'Latest Week', 'CURR_VALUE')
+_exec_trx_wk = _get_npa_kpi('NURTEC', 'TRx', 'OVERALL', 'Latest Week', 'CURR_VALUE')
+_exec_ms_wk = _get_npa_kpi('NURTEC', 'TRx', 'OVERALL', 'Latest Week', 'MARKET_SHARE_PCT')
+_exec_nbrx_growth = _get_npa_kpi('NURTEC', 'NBRx', 'OVERALL', 'Latest Week', 'GROWTH_PCT')
+_exec_trx_growth = _get_npa_kpi('NURTEC', 'TRx', 'OVERALL', 'Latest Week', 'GROWTH_PCT')
+_exec_goal_att = _get_npa_kpi('NURTEC', 'TRx', 'OVERALL', 'YTD', 'GOAL_ATTAINMENT_PCT')
+_exec_ms_py = _npa_stacked_df[(_npa_stacked_df['BRAND']=='NURTEC')&(_npa_stacked_df['PRESCRIPTION']=='TRx')&(_npa_stacked_df['RX_CLASSIFICATION']=='OVERALL')&(_npa_stacked_df['ROW_LABEL']=="Actuals '25")&(_npa_stacked_df['TIME_PERIOD']=='Latest Week')]
+_exec_ms_py_val = _exec_ms_py.iloc[0]['MARKET_SHARE_PCT'] if len(_exec_ms_py) > 0 else 0
+_exec_ms_delta = _exec_ms_wk - _exec_ms_py_val if _exec_ms_wk and _exec_ms_py_val else 0
+_exec_fin = _fin_kpi_df[_fin_kpi_df['SECTION_NAME'] == 'Gross']
+_exec_fin_wk = _exec_fin[_exec_fin['KPI_TITLE'].str.contains('LATEST_WEEK', na=False)]
+_exec_gross_val = _exec_fin_wk.iloc[0]['ACTUAL_VALUE'] if len(_exec_fin_wk) > 0 else None
+_exec_gross_py_pct = _exec_fin_wk.iloc[0]['VARIANCE_TO_PY_PCT'] if len(_exec_fin_wk) > 0 else None
+
+html_content = html_content.replace('EXEC_NBRX_WK_VAL', f'{_exec_nbrx_wk/1000:.1f}K' if _exec_nbrx_wk else '—')
+html_content = html_content.replace('EXEC_TRX_WK_VAL', f'{_exec_trx_wk/1000:.1f}K' if _exec_trx_wk else '—')
+html_content = html_content.replace('EXEC_MS_WK_VAL', f'{_exec_ms_wk:.1f}%' if _exec_ms_wk else '—')
+html_content = html_content.replace('EXEC_NBRX_WK_GROWTH', f'+{_exec_nbrx_growth:.1f}%' if _exec_nbrx_growth and _exec_nbrx_growth > 0 else f'{_exec_nbrx_growth:.1f}%' if _exec_nbrx_growth else '—')
+html_content = html_content.replace('EXEC_TRX_WK_GROWTH', f'+{_exec_trx_growth:.1f}%' if _exec_trx_growth and _exec_trx_growth > 0 else f'{_exec_trx_growth:.1f}%' if _exec_trx_growth else '—')
+html_content = html_content.replace('EXEC_MS_WK_GROWTH', f'{_exec_ms_delta:+.1f}%' if _exec_ms_wk else '—')
+html_content = html_content.replace('EXEC_GROSS_WK_VAL', f'${_exec_gross_val/1e6:.1f}M' if _exec_gross_val else '—')
+html_content = html_content.replace('EXEC_GROSS_VS_PY', f'+{_exec_gross_py_pct:.1f}%' if _exec_gross_py_pct and _exec_gross_py_pct > 0 else f'{_exec_gross_py_pct:.1f}%' if _exec_gross_py_pct else '—')
+html_content = html_content.replace('EXEC_GOAL_ATT_VAL', f'{_exec_goal_att:.1f}%' if _exec_goal_att and not (_exec_goal_att != _exec_goal_att) else '—')
 
 components.html(html_content, height=960, scrolling=False)
