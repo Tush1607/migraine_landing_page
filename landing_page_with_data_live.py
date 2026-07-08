@@ -2408,8 +2408,8 @@ html_content = html_content.replace('EXEC_GROSS_VS_PY', f'+{_exec_gross_py_pct:.
 html_content = html_content.replace('EXEC_GOAL_ATT_VAL', f'{_exec_goal_att:.1f}%' if _exec_goal_att and not (_exec_goal_att != _exec_goal_att) else '—')
 
 # Dynamic week ending date from latest NPA trends data
-_latest_week_id = str(npa_brand_df['WEEK_ID'].max())
-_exec_week_date = f'{_latest_week_id[4:6]}/{_latest_week_id[6:8]}/{_latest_week_id[0:4]}' if len(_latest_week_id) == 8 else '—'
+_latest_week_id = str(int(npa_brand_df['WEEK_ID'].max()))
+_exec_week_date = f'{_latest_week_id[4:6]}/{_latest_week_id[6:8]}/{_latest_week_id[0:4]}' if len(_latest_week_id) == 8 else '\u2014'
 html_content = html_content.replace('EXEC_PERF_WEEK_DATE', _exec_week_date)
 
 
@@ -2419,6 +2419,24 @@ def _calc_r4w_avg(prescription):
     nurtec_wk = src_df[src_df['BRAND'] == 'NURTEC'].sort_values('WEEK_ID', ascending=False)
     last4 = nurtec_wk.head(4)['ACTUALS'].dropna()
     return last4.mean() if len(last4) > 0 else None
+
+def _calc_nrx_share_weekly():
+    """Calculate NRx share as Nurtec NBRx / (Nurtec + Ubrelvy + Qulipta NBRx) for latest week."""
+    latest_wk = nbrx_brand_df['WEEK_ID'].max()
+    wk_df = nbrx_brand_df[nbrx_brand_df['WEEK_ID'] == latest_wk]
+    nurtec_vol = wk_df[wk_df['BRAND'] == 'NURTEC']['ACTUALS'].sum()
+    ubrelvy_vol = wk_df[wk_df['BRAND'] == 'UBRELVY']['ACTUALS'].sum()
+    qulipta_vol = wk_df[wk_df['BRAND'] == 'QULIPTA']['ACTUALS'].sum()
+    total = nurtec_vol + ubrelvy_vol + qulipta_vol
+    return (nurtec_vol / total * 100) if total > 0 else None
+
+def _calc_nrx_share_ytd():
+    """Calculate NRx share YTD as Nurtec NBRx / oCGRP NBRx total across all weeks."""
+    nurtec_ytd = nbrx_brand_df[nbrx_brand_df['BRAND'] == 'NURTEC']['ACTUALS'].sum()
+    ubrelvy_ytd = nbrx_brand_df[nbrx_brand_df['BRAND'] == 'UBRELVY']['ACTUALS'].sum()
+    qulipta_ytd = nbrx_brand_df[nbrx_brand_df['BRAND'] == 'QULIPTA']['ACTUALS'].sum()
+    total = nurtec_ytd + ubrelvy_ytd + qulipta_ytd
+    return (nurtec_ytd / total * 100) if total > 0 else None
 
 def _build_perf_snapshot():
     rows = []
@@ -2445,6 +2463,12 @@ def _build_perf_snapshot():
         ytd_fmt = f'{ytd_ms:.1f}%' if ytd_ms else '\u2014'
         delta_fmt = _fmt_pct(delta) if delta is not None else '\u2014'
         rows.append(f'<tr><td><strong>{label}</strong></td><td style="text-align:right">{wk_fmt}</td><td style="text-align:right">\u2014</td><td style="text-align:right">{ytd_fmt}</td><td style="text-align:right">\u2014</td><td style="text-align:right">{delta_fmt}</td></tr>')
+    # NRx Share row: Nurtec NBRx / (Nurtec + Ubrelvy + Qulipta) NBRx
+    nrx_wk = _calc_nrx_share_weekly()
+    nrx_ytd = _calc_nrx_share_ytd()
+    nrx_wk_fmt = f'{nrx_wk:.1f}%' if nrx_wk else '\u2014'
+    nrx_ytd_fmt = f'{nrx_ytd:.1f}%' if nrx_ytd else '\u2014'
+    rows.append(f'<tr><td><strong>Nurtec NRx Share</strong></td><td style="text-align:right">{nrx_wk_fmt}</td><td style="text-align:right">\u2014</td><td style="text-align:right">{nrx_ytd_fmt}</td><td style="text-align:right">\u2014</td><td style="text-align:right">\u2014</td></tr>')
     return '\n'.join(rows)
 
 html_content = html_content.replace('EXEC_PERF_SNAPSHOT_ROWS', _build_perf_snapshot())
