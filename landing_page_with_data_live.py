@@ -980,7 +980,7 @@ a { color: inherit; text-decoration: none; }
     <div class="sidebar-meta">
         <div class="meta-row"><strong>IIS Migraine Analytics</strong></div>
         <div class="meta-row"><a href="mailto:Team_ZS_US_Migraine_Analytics@zs.com">Team_ZS_US_Migraine_Analytics@zs.com</a></div>
-        <div class="meta-row">Updated Jun 19, 2026</div>
+        <div class="meta-row">Updated APP_LAST_UPDATED_DATE</div>
     </div>
 </aside>
 
@@ -2256,7 +2256,11 @@ NPA_PREV_ROWS_QULIPTA_NBRx
 trx_nbrx_html = '<div id="trx-brand-chart" style="width:100%;overflow:hidden;">' + brand_chart_svg + '</div><div id="nbrx-brand-chart" style="width:100%;overflow:hidden;display:none;">' + nbrx_chart_svg + '</div>'
 html_content = html_content.replace('<div class="chart-container">\n          <svg class="chart" preserveAspectRatio="none" viewBox="0 0 800 250">\nBRAND_CHART_DATA_PLACEHOLDER\n          </svg>\n        </div>', trx_nbrx_html)
 
-# Channel chart injection (6 divs: 3 brands x 2 metrics, only nurtec-trx visible initially)
+# Dynamic "Updated" date (current date when backend starts)
+from datetime import datetime as _dt
+html_content = html_content.replace('APP_LAST_UPDATED_DATE', _dt.now().strftime('%b %d, %Y'))
+
+
 channel_html = '<div id="ch-nurtec-trx" style="width:100%;overflow:hidden;">' + ch_nurtec_trx + '</div>'
 channel_html += '<div id="ch-nurtec-nbrx" style="width:100%;overflow:hidden;display:none;">' + ch_nurtec_nbrx + '</div>'
 channel_html += '<div id="ch-ubrelvy-trx" style="width:100%;overflow:hidden;display:none;">' + ch_ubrelvy_trx + '</div>'
