@@ -1224,18 +1224,13 @@ a { color: inherit; text-decoration: none; }
     <div style="display:flex;gap:20px;margin-bottom:24px;">
       <div style="flex:2;background:#ffffff;border:1px solid #e8ecf0;border-left:4px solid #0000C9;border-radius:8px;padding:24px 28px;">
         <div style="font-size:16px;font-weight:700;margin-bottom:4px;">Performance Snapshot</div>
-        <div style="font-size:11px;color:#6b7280;margin-bottom:16px;">Week ending 06/19/2026 &middot; National</div>
+        <div style="font-size:11px;color:#6b7280;margin-bottom:16px;">Week ending EXEC_PERF_WEEK_DATE &middot; National</div>
         <table>
           <thead>
             <tr><th>METRIC</th><th style="text-align:right">LATEST WK</th><th style="text-align:right">R4W AVG</th><th style="text-align:right">YTD</th><th style="text-align:right">VS. GOAL</th><th style="text-align:right">VS. STLY</th></tr>
           </thead>
           <tbody>
-            <tr><td><strong>Nurtec NBRx</strong></td><td style="text-align:right">48.2K</td><td style="text-align:right">46.8K</td><td style="text-align:right">1.21M</td><td style="text-align:right">97.8%</td><td style="text-align:right"><span class="delta-pos">+11.3%</span></td></tr>
-            <tr><td><strong>Nurtec NRx</strong></td><td style="text-align:right">112.6K</td><td style="text-align:right">110.4K</td><td style="text-align:right">2.85M</td><td style="text-align:right">95.1%</td><td style="text-align:right"><span class="delta-pos">+14.2%</span></td></tr>
-            <tr><td><strong>Nurtec TRx</strong></td><td style="text-align:right">612.4K</td><td style="text-align:right">601.8K</td><td style="text-align:right">15.9M</td><td style="text-align:right">93.6%</td><td style="text-align:right"><span class="delta-pos">+16.1%</span></td></tr>
-            <tr><td><strong>Nurtec NBRx Share</strong></td><td style="text-align:right">21.2%</td><td style="text-align:right">21.0%</td><td style="text-align:right">20.9%</td><td style="text-align:right">—</td><td style="text-align:right"><span class="delta-pos">+1.3%</span></td></tr>
-            <tr><td><strong>Nurtec NRx Share</strong></td><td style="text-align:right">33.4%</td><td style="text-align:right">33.2%</td><td style="text-align:right">33.0%</td><td style="text-align:right">—</td><td style="text-align:right"><span class="delta-pos">+1.1%</span></td></tr>
-            <tr><td><strong>Nurtec TRx Share</strong></td><td style="text-align:right">38.7%</td><td style="text-align:right">38.5%</td><td style="text-align:right">38.1%</td><td style="text-align:right">—</td><td style="text-align:right"><span class="delta-pos">+1.4%</span></td></tr>
+EXEC_PERF_SNAPSHOT_ROWS
           </tbody>
         </table>
       </div>
@@ -2411,5 +2406,47 @@ html_content = html_content.replace('EXEC_MS_WK_GROWTH', f'{_exec_ms_delta:+.1f}
 html_content = html_content.replace('EXEC_GROSS_WK_VAL', f'${_exec_gross_val/1e6:.1f}M' if _exec_gross_val else '—')
 html_content = html_content.replace('EXEC_GROSS_VS_PY', f'+{_exec_gross_py_pct:.1f}%' if _exec_gross_py_pct and _exec_gross_py_pct > 0 else f'{_exec_gross_py_pct:.1f}%' if _exec_gross_py_pct else '—')
 html_content = html_content.replace('EXEC_GOAL_ATT_VAL', f'{_exec_goal_att:.1f}%' if _exec_goal_att and not (_exec_goal_att != _exec_goal_att) else '—')
+
+# Dynamic week ending date from latest NPA trends data
+_latest_week_id = str(npa_brand_df['WEEK_ID'].max())
+_exec_week_date = f'{_latest_week_id[4:6]}/{_latest_week_id[6:8]}/{_latest_week_id[0:4]}' if len(_latest_week_id) == 8 else '—'
+html_content = html_content.replace('EXEC_PERF_WEEK_DATE', _exec_week_date)
+
+
+def _calc_r4w_avg(prescription):
+    """Calculate Rolling 4-Week Average from NPA trends weekly data."""
+    src_df = nbrx_brand_df if prescription == 'NBRx' else npa_brand_df
+    nurtec_wk = src_df[src_df['BRAND'] == 'NURTEC'].sort_values('WEEK_ID', ascending=False)
+    last4 = nurtec_wk.head(4)['ACTUALS'].dropna()
+    return last4.mean() if len(last4) > 0 else None
+
+def _build_perf_snapshot():
+    rows = []
+    for label, prescription in [('Nurtec NBRx', 'NBRx'), ('Nurtec TRx', 'TRx')]:
+        wk_val = _get_npa_kpi('NURTEC', prescription, 'OVERALL', 'Latest Week', 'CURR_VALUE')
+        r4w_val = _calc_r4w_avg(prescription)
+        ytd_val = _get_npa_kpi('NURTEC', prescription, 'OVERALL', 'YTD', 'CURR_VALUE')
+        goal_att = _get_npa_kpi('NURTEC', prescription, 'OVERALL', 'YTD', 'GOAL_ATTAINMENT_PCT')
+        growth = _get_npa_kpi('NURTEC', prescription, 'OVERALL', 'YTD', 'GROWTH_PCT')
+        wk_fmt = f'{wk_val/1000:.1f}K' if wk_val else '\u2014'
+        r4w_fmt = f'{r4w_val/1000:.1f}K' if r4w_val else '\u2014'
+        ytd_fmt = f'{ytd_val/1e6:.2f}M' if ytd_val and ytd_val >= 1e6 else f'{int(ytd_val):,}' if ytd_val else '\u2014'
+        goal_fmt = f'{goal_att:.1f}%' if goal_att and not (goal_att != goal_att) else '\u2014'
+        growth_fmt = _fmt_pct(growth) if growth and not (growth != growth) else '\u2014'
+        rows.append(f'<tr><td><strong>{label}</strong></td><td style="text-align:right">{wk_fmt}</td><td style="text-align:right">{r4w_fmt}</td><td style="text-align:right">{ytd_fmt}</td><td style="text-align:right">{goal_fmt}</td><td style="text-align:right">{growth_fmt}</td></tr>')
+    for label, prescription in [('Nurtec NBRx Share', 'NBRx'), ('Nurtec TRx Share', 'TRx')]:
+        wk_ms = _get_npa_kpi('NURTEC', prescription, 'OVERALL', 'Latest Week', 'MARKET_SHARE_PCT')
+        ytd_ms = _get_npa_kpi('NURTEC', prescription, 'OVERALL', 'YTD', 'MARKET_SHARE_PCT')
+        # Delta vs STLY
+        py_ms = _npa_stacked_df[(_npa_stacked_df['BRAND']=='NURTEC')&(_npa_stacked_df['PRESCRIPTION']==prescription)&(_npa_stacked_df['RX_CLASSIFICATION']=='OVERALL')&(_npa_stacked_df['ROW_LABEL']=="Actuals '25")&(_npa_stacked_df['TIME_PERIOD']=='YTD')]
+        py_ms_val = py_ms.iloc[0]['MARKET_SHARE_PCT'] if len(py_ms) > 0 else 0
+        delta = ytd_ms - py_ms_val if ytd_ms and py_ms_val else None
+        wk_fmt = f'{wk_ms:.1f}%' if wk_ms else '\u2014'
+        ytd_fmt = f'{ytd_ms:.1f}%' if ytd_ms else '\u2014'
+        delta_fmt = _fmt_pct(delta) if delta is not None else '\u2014'
+        rows.append(f'<tr><td><strong>{label}</strong></td><td style="text-align:right">{wk_fmt}</td><td style="text-align:right">\u2014</td><td style="text-align:right">{ytd_fmt}</td><td style="text-align:right">\u2014</td><td style="text-align:right">{delta_fmt}</td></tr>')
+    return '\n'.join(rows)
+
+html_content = html_content.replace('EXEC_PERF_SNAPSHOT_ROWS', _build_perf_snapshot())
 
 components.html(html_content, height=960, scrolling=False)
