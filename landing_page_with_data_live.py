@@ -1807,19 +1807,19 @@ NPA_PREV_ROWS_QULIPTA_NBRx
     <div id="gross-view">
     <div class="row">
       <div style="background:#EEF5FB;border-radius:12px;padding:14px 16px;text-align:left;border:1px solid rgba(15,23,42,0.05);transition:transform 0.25s cubic-bezier(0.16,1,0.3,1),box-shadow 0.25s cubic-bezier(0.4,0,0.2,1);flex:1;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 6px 16px rgba(15,23,42,0.07),0 2px 4px rgba(15,23,42,0.04)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
-        <div class="label">GROSS SALES W/E 10 May'26</div>
-        <div class="value" style="color:#0000C9;">$124.6M</div>
-        <div class="sub"><span class="delta-pos">+14.2%</span>&nbsp;&nbsp;vs Prior Year</div>
+        <div class="label">FIN_GROSS_WK_LABEL</div>
+        <div class="value" style="color:#0000C9;">FIN_GROSS_WK_VAL</div>
+        <div class="sub">FIN_GROSS_WK_PY&nbsp;&nbsp;vs Prior Year</div>
       </div>
       <div style="background:#EEF5FB;border-radius:12px;padding:14px 16px;text-align:left;border:1px solid rgba(15,23,42,0.05);transition:transform 0.25s cubic-bezier(0.16,1,0.3,1),box-shadow 0.25s cubic-bezier(0.4,0,0.2,1);flex:1;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 6px 16px rgba(15,23,42,0.07),0 2px 4px rgba(15,23,42,0.04)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
         <div class="label">MTD ATTAINMENT VS OP'26</div>
-        <div class="value" style="color:#0000C9;">92.3%</div>
-        <div class="sub"><span class="delta-neg">$20.6M</span> behind MTD plan</div>
+        <div class="value" style="color:#0000C9;">FIN_GROSS_MTD_ATT</div>
+        <div class="sub">FIN_GROSS_MTD_DELTA</div>
       </div>
       <div style="background:#EEF5FB;border-radius:12px;padding:14px 16px;text-align:left;border:1px solid rgba(15,23,42,0.05);transition:transform 0.25s cubic-bezier(0.16,1,0.3,1),box-shadow 0.25s cubic-bezier(0.4,0,0.2,1);flex:1;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 6px 16px rgba(15,23,42,0.07),0 2px 4px rgba(15,23,42,0.04)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
         <div class="label">YTD ATTAINMENT VS OP'26</div>
-        <div class="value" style="color:#0000C9;">95.9%</div>
-        <div class="sub"><span class="delta-neg">$100.3M</span> behind YTD plan</div>
+        <div class="value" style="color:#0000C9;">FIN_GROSS_YTD_ATT</div>
+        <div class="sub">FIN_GROSS_YTD_DELTA</div>
       </div>
     </div>
 
@@ -1839,19 +1839,19 @@ NPA_PREV_ROWS_QULIPTA_NBRx
     <div id="net-view" style="display:none;">
     <div class="row">
       <div style="background:#EEF5FB;border-radius:12px;padding:14px 16px;text-align:left;border:1px solid rgba(15,23,42,0.05);transition:transform 0.25s cubic-bezier(0.16,1,0.3,1),box-shadow 0.25s cubic-bezier(0.4,0,0.2,1);flex:1;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 6px 16px rgba(15,23,42,0.07),0 2px 4px rgba(15,23,42,0.04)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
-        <div class="label">NET SALES P04'26</div>
-        <div class="value" style="color:#0000C9;">$106.8M</div>
-        <div class="sub"><span class="delta-pos">+21.4%</span>&nbsp;&nbsp;vs Prior Year</div>
+        <div class="label">FIN_NET_MONTH_LABEL</div>
+        <div class="value" style="color:#0000C9;">FIN_NET_MONTH_VAL</div>
+        <div class="sub">FIN_NET_MONTH_PY&nbsp;&nbsp;vs Prior Year</div>
       </div>
       <div style="background:#EEF5FB;border-radius:12px;padding:14px 16px;text-align:left;border:1px solid rgba(15,23,42,0.05);transition:transform 0.25s cubic-bezier(0.16,1,0.3,1),box-shadow 0.25s cubic-bezier(0.4,0,0.2,1);flex:1;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 6px 16px rgba(15,23,42,0.07),0 2px 4px rgba(15,23,42,0.04)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
         <div class="label">LATEST MONTH ATTAINMENT VS OP'26</div>
-        <div class="value" style="color:#0000C9;">96.6%</div>
-        <div class="sub"><span class="delta-neg">$3.7M</span> behind monthly plan</div>
+        <div class="value" style="color:#0000C9;">FIN_NET_MTD_ATT</div>
+        <div class="sub">FIN_NET_MTD_DELTA</div>
       </div>
       <div style="background:#EEF5FB;border-radius:12px;padding:14px 16px;text-align:left;border:1px solid rgba(15,23,42,0.05);transition:transform 0.25s cubic-bezier(0.16,1,0.3,1),box-shadow 0.25s cubic-bezier(0.4,0,0.2,1);flex:1;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 6px 16px rgba(15,23,42,0.07),0 2px 4px rgba(15,23,42,0.04)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
         <div class="label">YTD ATTAINMENT VS OP'26</div>
-        <div class="value" style="color:#0000C9;">109.4%</div>
-        <div class="sub"><span class="delta-pos">+$35.9M</span> ahead of YTD plan</div>
+        <div class="value" style="color:#0000C9;">FIN_NET_YTD_ATT</div>
+        <div class="sub">FIN_NET_YTD_DELTA</div>
       </div>
     </div>
 
@@ -2309,27 +2309,114 @@ html_content = html_content.replace('XPT_PAYER_NRX_PLACEHOLDER', xpt_payer_nrx_h
 html_content = html_content.replace('XPT_CH_TRX_PLACEHOLDER', xpt_ch_trx_html)
 html_content = html_content.replace('XPT_CH_NRX_PLACEHOLDER', xpt_ch_nrx_html)
 
+# Finance KPI injection (dynamic from _fin_kpi_df)
+def _inject_finance_kpis():
+    """Build all finance KPI placeholder values from live stacked data."""
+    replacements = {}
+    # --- GROSS ---
+    gross_wk = _fin_kpi_df[_fin_kpi_df['KPI_TITLE'].str.contains('LATEST_WEEK', na=False) & (_fin_kpi_df['SECTION_NAME'] == 'Gross')]
+    gross_mtd = _fin_kpi_df[_fin_kpi_df['KPI_TITLE'].str.contains('MTD', na=False) & (_fin_kpi_df['SECTION_NAME'] == 'Gross')]
+    gross_ytd = _fin_kpi_df[_fin_kpi_df['KPI_TITLE'].str.contains('YTD', na=False) & (_fin_kpi_df['SECTION_NAME'] == 'Gross')]
+
+    if len(gross_wk) > 0:
+        r = gross_wk.iloc[0]
+        actual = r['ACTUAL_VALUE']
+        py_pct = r['VARIANCE_TO_PY_PCT']
+        date_str = str(r['DATA_AS_OF_DATE']).replace('"', '').strip()
+        # Parse date for label
+        try:
+            from datetime import datetime
+            dt = datetime.strptime(date_str, '%Y-%m-%d')
+            label = f"GROSS SALES W/E {dt.day} {dt.strftime('%b')}\u2019{dt.strftime('%y')}"
+        except Exception:
+            label = "GROSS SALES W/E"
+        replacements['FIN_GROSS_WK_LABEL'] = label
+        replacements['FIN_GROSS_WK_VAL'] = f'${actual/1e6:.1f}M' if actual else '\u2014'
+        py_cls = 'delta-pos' if py_pct and py_pct > 0 else 'delta-neg'
+        replacements['FIN_GROSS_WK_PY'] = f'<span class="{py_cls}">{py_pct:+.1f}%</span>' if py_pct else '\u2014'
+
+    if len(gross_mtd) > 0:
+        r = gross_mtd.iloc[0]
+        att = r['BUDGET_ATT']
+        actual = r['ACTUAL_VALUE'] or 0
+        budget = r['BUDGET_VALUE'] or 0
+        gap = abs(actual - budget) / 1e6
+        replacements['FIN_GROSS_MTD_ATT'] = f'{att:.1f}%' if att else '\u2014'
+        if actual < budget:
+            replacements['FIN_GROSS_MTD_DELTA'] = f'<span class="delta-neg">${gap:.1f}M</span> behind MTD plan'
+        else:
+            replacements['FIN_GROSS_MTD_DELTA'] = f'<span class="delta-pos">+${gap:.1f}M</span> ahead of MTD plan'
+
+    if len(gross_ytd) > 0:
+        r = gross_ytd.iloc[0]
+        att = r['BUDGET_ATT']
+        actual = r['ACTUAL_VALUE'] or 0
+        budget = r['BUDGET_VALUE'] or 0
+        gap = abs(actual - budget) / 1e6
+        replacements['FIN_GROSS_YTD_ATT'] = f'{att:.1f}%' if att else '\u2014'
+        if actual < budget:
+            replacements['FIN_GROSS_YTD_DELTA'] = f'<span class="delta-neg">${gap:.1f}M</span> behind YTD plan'
+        else:
+            replacements['FIN_GROSS_YTD_DELTA'] = f'<span class="delta-pos">+${gap:.1f}M</span> ahead of YTD plan'
+
+    # --- NET ---
+    net_month = _fin_kpi_df[_fin_kpi_df['KPI_TITLE'].str.contains('LATEST_MONTH', na=False) & (_fin_kpi_df['SECTION_NAME'] == 'Net')]
+    net_ytd = _fin_kpi_df[_fin_kpi_df['KPI_TITLE'].str.contains('YTD', na=False) & (_fin_kpi_df['SECTION_NAME'] == 'Net')]
+
+    if len(net_month) > 0:
+        r = net_month.iloc[0]
+        actual = r['ACTUAL_VALUE']
+        py_pct = r['VARIANCE_TO_PY_PCT']
+        att = r['BUDGET_ATT']
+        budget = r['BUDGET_VALUE'] or 0
+        date_str = str(r['DATA_AS_OF_DATE']).replace('"', '').strip()
+        try:
+            from datetime import datetime
+            dt = datetime.strptime(date_str, '%Y-%m-%d')
+            month_num = dt.month
+            label = f"NET SALES P{month_num:02d}\u2019{dt.strftime('%y')}"
+        except Exception:
+            label = "NET SALES LATEST MONTH"
+        replacements['FIN_NET_MONTH_LABEL'] = label
+        replacements['FIN_NET_MONTH_VAL'] = f'${actual/1e6:.1f}M' if actual else '\u2014'
+        py_cls = 'delta-pos' if py_pct and py_pct > 0 else 'delta-neg'
+        replacements['FIN_NET_MONTH_PY'] = f'<span class="{py_cls}">{py_pct:+.1f}%</span>' if py_pct else '\u2014'
+        replacements['FIN_NET_MTD_ATT'] = f'{att:.1f}%' if att else '\u2014'
+        gap = abs((actual or 0) - budget) / 1e6
+        if (actual or 0) < budget:
+            replacements['FIN_NET_MTD_DELTA'] = f'<span class="delta-neg">${gap:.1f}M</span> behind monthly plan'
+        else:
+            replacements['FIN_NET_MTD_DELTA'] = f'<span class="delta-pos">+${gap:.1f}M</span> ahead of monthly plan'
+
+    if len(net_ytd) > 0:
+        r = net_ytd.iloc[0]
+        att = r['BUDGET_ATT']
+        actual = r['ACTUAL_VALUE'] or 0
+        budget = r['BUDGET_VALUE'] or 0
+        gap = abs(actual - budget) / 1e6
+        replacements['FIN_NET_YTD_ATT'] = f'{att:.1f}%' if att else '\u2014'
+        if actual < budget:
+            replacements['FIN_NET_YTD_DELTA'] = f'<span class="delta-neg">${gap:.1f}M</span> behind YTD plan'
+        else:
+            replacements['FIN_NET_YTD_DELTA'] = f'<span class="delta-pos">+${gap:.1f}M</span> ahead of YTD plan'
+
+    return replacements
+
 # Finance chart injection
+_fin_replacements = _inject_finance_kpis()
 if FINANCE_RESTRICTED:
-    _fin_restricted_msg = '<div style="display:flex;align-items:center;justify-content:center;height:300px;color:#9ca3af;font-size:24px;font-weight:700;">—</div>'
+    _fin_restricted_msg = '<div style="display:flex;align-items:center;justify-content:center;height:300px;color:#9ca3af;font-size:24px;font-weight:700;">\u2014</div>'
     html_content = html_content.replace('FIN_GROSS_CHART_PLACEHOLDER', _fin_restricted_msg)
     html_content = html_content.replace('FIN_NET_CHART_PLACEHOLDER', _fin_restricted_msg)
-    # Blank out KPI values
-    html_content = html_content.replace('$124.6M', '—')
-    html_content = html_content.replace('+14.2%', '—')
-    html_content = html_content.replace('92.3%', '—')
-    html_content = html_content.replace('$20.6M', '—')
-    html_content = html_content.replace('95.9%', '—')
-    html_content = html_content.replace('$100.3M', '—')
-    html_content = html_content.replace('$106.8M', '—')
-    html_content = html_content.replace('+21.4%', '—')
-    html_content = html_content.replace('96.6%', '—')
-    html_content = html_content.replace('$3.7M', '—')
-    html_content = html_content.replace('109.4%', '—')
-    html_content = html_content.replace('+$35.9M', '—')
+    # Blank out KPI values for restricted users
+    for _k in _fin_replacements:
+        html_content = html_content.replace(_k, '\u2014')
 else:
     html_content = html_content.replace('FIN_GROSS_CHART_PLACEHOLDER', fin_gross_html)
     html_content = html_content.replace('FIN_NET_CHART_PLACEHOLDER', fin_net_html)
+    # Inject live KPI values
+    for _k, _v in _fin_replacements.items():
+        html_content = html_content.replace(_k, _v)
 
 
 # NPA Table dynamic injection
