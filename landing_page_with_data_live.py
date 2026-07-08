@@ -252,7 +252,10 @@ def _build_npa_table_rows(brand, prescription, rx_class, compact=False):
             wk_a = wk_att.iloc[0]['GOAL_ATTAINMENT_PCT'] if len(wk_att) > 0 else None
             qtd_a = qtd_att.iloc[0]['GOAL_ATTAINMENT_PCT'] if len(qtd_att) > 0 else None
             ytd_a = ytd_att.iloc[0]['GOAL_ATTAINMENT_PCT'] if len(ytd_att) > 0 else None
-            if wk_a is not None or qtd_a is not None or ytd_a is not None:
+            # Only show row if at least one value is a real number (not None/NaN)
+            def _is_valid(v):
+                return v is not None and not (isinstance(v, float) and v != v)
+            if _is_valid(wk_a) or _is_valid(qtd_a) or _is_valid(ytd_a):
                 row_html = f"<tr><td>Goal Attainment '26</td>"
                 row_html += f'<td style="text-align:right">{_fmt_att(wk_a)}</td>'
                 row_html += f'<td style="text-align:right">{_fmt_att(qtd_a)}</td>'
