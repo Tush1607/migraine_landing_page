@@ -46,7 +46,7 @@ _current_user_email = _get_current_user_email()
 
 def _resolve_finance_restriction():
     """Dynamically build restricted email list from data + hardcoded additions."""
-    restricted = ['tushar@pfizer.com']  # Additional test emails
+    restricted = ['Harshit.Gupta@pfizer.com', 'Dhruv.Bajpai@pfizer.com']
     try:
         fin_df = load_finance_stacked()
         if 'USER_EMAIL_RESTRICT' in fin_df.columns:
