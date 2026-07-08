@@ -559,9 +559,9 @@ xpt_ch_nrx_html = xpt_ch_nrx_html.replace('class="plotly-graph-div" style="', 'c
 
 # --- Finance Trend Charts (from live data) ---
 fig_fin_gross = go.Figure()
-fig_fin_gross.add_trace(go.Bar(x=_fin_gross_labels, y=_fin_gross_actuals, name='Actual', marker_color='#7C6CFC'))
-fig_fin_gross.add_trace(go.Scatter(x=_fin_gross_labels, y=_fin_gross_stly, mode='lines', name='Actual (STLY)', line=dict(color='#0000C9', width=2.5)))
-fig_fin_gross.add_trace(go.Scatter(x=_fin_gross_labels, y=_fin_gross_budget, mode='lines', name='Budget', line=dict(color='#9ca3af', width=2, dash='dash')))
+fig_fin_gross.add_trace(go.Bar(x=_fin_gross_labels, y=_fin_gross_actuals, name='Actual', marker_color='#7C6CFC', hovertemplate='Actual : $%{y:.1f}M<extra></extra>'))
+fig_fin_gross.add_trace(go.Scatter(x=_fin_gross_labels, y=_fin_gross_stly, mode='lines', name='Actual (STLY)', line=dict(color='#0000C9', width=2.5), hovertemplate='Actual (STLY) : $%{y:.1f}M<extra></extra>'))
+fig_fin_gross.add_trace(go.Scatter(x=_fin_gross_labels, y=_fin_gross_budget, mode='lines', name='Budget', line=dict(color='#9ca3af', width=2, dash='dash'), hovertemplate='Budget : $%{y:.1f}M<extra></extra>'))
 fig_fin_gross.update_layout(height=340, margin=dict(l=60, r=20, t=10, b=100), plot_bgcolor='white', paper_bgcolor='white',
     xaxis=dict(tickfont=dict(size=8, color='#374151', family='Inter, sans-serif'), tickangle=-90, showgrid=False, hoverformat='', showline=True, linewidth=1, linecolor='#1a2332'),
     yaxis=dict(title=dict(text='Gross Sales ($M)', font=dict(size=10, color='#4b5563')), tickfont=dict(size=9, color='#374151', family='Inter, sans-serif'), showgrid=False, tickprefix='$', ticksuffix='M'),
@@ -572,9 +572,9 @@ fin_gross_html = fin_gross_html.replace('class="plotly-graph-div" style="', 'cla
 
 # Net Sales chart (monthly - uses live data from lines 163-166)
 fig_fin_net = go.Figure()
-fig_fin_net.add_trace(go.Bar(x=_fin_net_labels, y=_fin_net_actuals, name='Actual', marker_color='#7C6CFC'))
-fig_fin_net.add_trace(go.Scatter(x=_fin_net_labels, y=_fin_net_stly, mode='lines', name='Actual (STLY)', line=dict(color='#0000C9', width=2.5)))
-fig_fin_net.add_trace(go.Scatter(x=_fin_net_labels, y=_fin_net_budget, mode='lines', name='Budget', line=dict(color='#9ca3af', width=2, dash='dash')))
+fig_fin_net.add_trace(go.Bar(x=_fin_net_labels, y=_fin_net_actuals, name='Actual', marker_color='#7C6CFC', hovertemplate='Actual : $%{y:.1f}M<extra></extra>'))
+fig_fin_net.add_trace(go.Scatter(x=_fin_net_labels, y=_fin_net_stly, mode='lines', name='Actual (STLY)', line=dict(color='#0000C9', width=2.5), hovertemplate='Actual (STLY) : $%{y:.1f}M<extra></extra>'))
+fig_fin_net.add_trace(go.Scatter(x=_fin_net_labels, y=_fin_net_budget, mode='lines', name='Budget', line=dict(color='#9ca3af', width=2, dash='dash'), hovertemplate='Budget : $%{y:.1f}M<extra></extra>'))
 fig_fin_net.update_layout(height=340, margin=dict(l=60, r=10, t=10, b=80), plot_bgcolor='white', paper_bgcolor='white', autosize=True,
     xaxis=dict(type='category', categoryorder='array', categoryarray=_fin_net_labels, tickfont=dict(size=9, color='#374151', family='Inter, sans-serif'), tickangle=0, showgrid=False, hoverformat='', showline=True, linewidth=1, linecolor='#1a2332', range=[-0.5, 11.5], constrain='domain'),
     yaxis=dict(title=dict(text='Net Sales ($M)', font=dict(size=10, color='#4b5563')), tickfont=dict(size=9, color='#374151', family='Inter, sans-serif'), showgrid=False, tickprefix='$', ticksuffix='M'),
