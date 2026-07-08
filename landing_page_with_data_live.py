@@ -1315,18 +1315,10 @@ EXEC_PERF_SNAPSHOT_ROWS
           <tr><th>CUT</th><th style="text-align:right" data-xp-metric="WoW Mkt Share ({XM})">WoW Mkt Share (TRx)</th><th style="text-align:right" data-xp-metric="WoW Growth ({XM})">WoW Growth (TRx)</th><th style="text-align:right" data-xp-metric="MTD Mkt Share ({XM})">MTD Mkt Share (TRx)</th><th style="text-align:right" data-xp-metric="MTD Growth vs STLY ({XM})">MTD Growth vs STLY (TRx)</th></tr>
         </thead>
         <tbody class="xpt-trx-body">
-          <tr><td><strong>National</strong></td><td style="text-align:right">43.5%</td><td style="text-align:right"><span class="delta-neg">-0.2%</span></td><td style="text-align:right">43.5%</td><td style="text-align:right"><span class="delta-pos">+0.3%</span></td></tr>
-          <tr><td><strong>Commercial</strong></td><td style="text-align:right">44.1%</td><td style="text-align:right"><span class="delta-neg">-0.3%</span></td><td style="text-align:right">44.1%</td><td style="text-align:right"><span class="delta-pos">+0.8%</span></td></tr>
-          <tr><td><strong>Medicare</strong></td><td style="text-align:right">40.9%</td><td style="text-align:right"><span class="delta-neg">-0.2%</span></td><td style="text-align:right">40.9%</td><td style="text-align:right"><span class="delta-neg">-0.6%</span></td></tr>
-          <tr><td><strong>Medicaid</strong></td><td style="text-align:right">48.0%</td><td style="text-align:right"><span class="delta-neg">-0.1%</span></td><td style="text-align:right">48.0%</td><td style="text-align:right"><span class="delta-neg">-1.0%</span></td></tr>
-          <tr><td><strong>Other</strong></td><td style="text-align:right">32.2%</td><td style="text-align:right"><span class="delta-pos">+0.3%</span></td><td style="text-align:right">32.2%</td><td style="text-align:right"><span class="delta-neg">-0.9%</span></td></tr>
+XPT_PAYER_TRX_TABLE_ROWS
         </tbody>
         <tbody class="xpt-nrx-body" style="display:none;">
-          <tr><td><strong>National</strong></td><td style="text-align:right">43.4%</td><td style="text-align:right"><span class="delta-neg">-0.6%</span></td><td style="text-align:right">43.4%</td><td style="text-align:right">0.0%</td></tr>
-          <tr><td><strong>Commercial</strong></td><td style="text-align:right">43.8%</td><td style="text-align:right"><span class="delta-neg">-1.0%</span></td><td style="text-align:right">43.8%</td><td style="text-align:right"><span class="delta-pos">+0.3%</span></td></tr>
-          <tr><td><strong>Medicare</strong></td><td style="text-align:right">41.8%</td><td style="text-align:right"><span class="delta-pos">+0.9%</span></td><td style="text-align:right">41.8%</td><td style="text-align:right"><span class="delta-neg">-0.7%</span></td></tr>
-          <tr><td><strong>Medicaid</strong></td><td style="text-align:right">48.2%</td><td style="text-align:right"><span class="delta-neg">-1.2%</span></td><td style="text-align:right">48.2%</td><td style="text-align:right"><span class="delta-neg">-2.0%</span></td></tr>
-          <tr><td><strong>Other</strong></td><td style="text-align:right">32.4%</td><td style="text-align:right"><span class="delta-pos">+1.1%</span></td><td style="text-align:right">32.4%</td><td style="text-align:right"><span class="delta-pos">+1.0%</span></td></tr>
+XPT_PAYER_NRX_TABLE_ROWS
         </tbody>
       </table>
     </div>
@@ -1338,16 +1330,10 @@ EXEC_PERF_SNAPSHOT_ROWS
           <tr><th>CUT</th><th style="text-align:right" data-xp-metric="WoW Mkt Share ({XM})">WoW Mkt Share (TRx)</th><th style="text-align:right" data-xp-metric="WoW Growth ({XM})">WoW Growth (TRx)</th><th style="text-align:right" data-xp-metric="MTD Mkt Share ({XM})">MTD Mkt Share (TRx)</th><th style="text-align:right" data-xp-metric="MTD Growth vs STLY ({XM})">MTD Growth vs STLY (TRx)</th></tr>
         </thead>
         <tbody class="xpt-trx-body">
-          <tr><td><strong>National</strong></td><td style="text-align:right">43.5%</td><td style="text-align:right"><span class="delta-neg">-0.2%</span></td><td style="text-align:right">43.5%</td><td style="text-align:right"><span class="delta-pos">+0.3%</span></td></tr>
-          <tr><td><strong>Retail</strong></td><td style="text-align:right">43.6%</td><td style="text-align:right"><span class="delta-neg">-0.3%</span></td><td style="text-align:right">43.6%</td><td style="text-align:right"><span class="delta-pos">+0.4%</span></td></tr>
-          <tr><td><strong>Mail-Order</strong></td><td style="text-align:right">38.5%</td><td style="text-align:right"><span class="delta-pos">+1.2%</span></td><td style="text-align:right">38.5%</td><td style="text-align:right"><span class="delta-neg">-1.2%</span></td></tr>
-          <tr><td><strong>LTC</strong></td><td style="text-align:right">43.5%</td><td style="text-align:right"><span class="delta-pos">+0.6%</span></td><td style="text-align:right">43.5%</td><td style="text-align:right"><span class="delta-neg">-0.9%</span></td></tr>
+XPT_CHANNEL_TRX_TABLE_ROWS
         </tbody>
         <tbody class="xpt-nrx-body" style="display:none;">
-          <tr><td><strong>National</strong></td><td style="text-align:right">43.4%</td><td style="text-align:right"><span class="delta-neg">-0.6%</span></td><td style="text-align:right">43.4%</td><td style="text-align:right">0.0%</td></tr>
-          <tr><td><strong>Retail</strong></td><td style="text-align:right">43.5%</td><td style="text-align:right"><span class="delta-neg">-0.7%</span></td><td style="text-align:right">43.5%</td><td style="text-align:right">0.0%</td></tr>
-          <tr><td><strong>Mail-Order</strong></td><td style="text-align:right">35.5%</td><td style="text-align:right"><span class="delta-neg">-1.7%</span></td><td style="text-align:right">35.5%</td><td style="text-align:right"><span class="delta-neg">-0.2%</span></td></tr>
-          <tr><td><strong>LTC</strong></td><td style="text-align:right">45.1%</td><td style="text-align:right"><span class="delta-pos">+0.8%</span></td><td style="text-align:right">45.1%</td><td style="text-align:right"><span class="delta-neg">-1.5%</span></td></tr>
+XPT_CHANNEL_NRX_TABLE_ROWS
         </tbody>
       </table>
     </div>
@@ -2329,7 +2315,52 @@ if _xpt_national is not None:
     html_content = html_content.replace('XPT_TRX_YTD_VAL', _xpt_fmt_val(_xpt_national['TRX_YTD']))
     html_content = html_content.replace('XPT_TRX_YTD_STLY', _xpt_fmt_pct(_xpt_national['TRX_YTD_VS_STLY_PCT']))
 
+# Xponent Payer & Channel table injection (dynamic from _xpt_kpi_df)
+def _xpt_table_row(row, metric_prefix):
+    """Build a single <tr> for the XPT table. metric_prefix is 'TRX' or 'NRX'."""
+    label = row['CUT_VALUE']
+    # Display name mapping
+    display_names = {'MAIL_ORDER': 'Mail-Order', 'RETAIL': 'Retail', 'LTC': 'LTC',
+                     'Commercial': 'Commercial', 'Medicare': 'Medicare', 'Medicaid': 'Medicaid',
+                     'Other': 'Other', 'National': 'National'}
+    display = display_names.get(label, label)
+    wk_share = row[f'WK_{metric_prefix}_SHARE']
+    wow_pp = row[f'WOW_{metric_prefix}_PP']
+    mtd_share = row[f'MTD_{metric_prefix}_SHARE']
+    mtd_stly = row[f'MTD_VS_STLY_{metric_prefix}_PP']
+    def fmt_share(v):
+        if v is None or (v != v): return '\u2014'
+        return f'{v:.1f}%'
+    def fmt_delta(v):
+        if v is None or (v != v): return '\u2014'
+        v = float(v)
+        if v == 0: return '0.0%'
+        cls = 'delta-pos' if v > 0 else 'delta-neg'
+        return f'<span class="{cls}">{v:+.1f}%</span>'
+    return f'<tr><td><strong>{display}</strong></td><td style="text-align:right">{fmt_share(wk_share)}</td><td style="text-align:right">{fmt_delta(wow_pp)}</td><td style="text-align:right">{fmt_share(mtd_share)}</td><td style="text-align:right">{fmt_delta(mtd_stly)}</td></tr>'
 
+def _build_xpt_table(cut_type, metric_prefix):
+    """Build table rows for a given cut_type (Payer/Channel) and metric (TRX/NRX)."""
+    rows = []
+    # National row first
+    nat = _xpt_kpi_df[_xpt_kpi_df['CUT_TYPE'] == 'National']
+    for _, r in nat.iterrows():
+        rows.append(_xpt_table_row(r, metric_prefix))
+    # Then specific cuts
+    cut_df = _xpt_kpi_df[_xpt_kpi_df['CUT_TYPE'] == cut_type]
+    order = ['Commercial', 'Medicare', 'Medicaid', 'Other'] if cut_type == 'Payer' else ['RETAIL', 'MAIL_ORDER', 'LTC']
+    for cv in order:
+        match = cut_df[cut_df['CUT_VALUE'] == cv]
+        for _, r in match.iterrows():
+            rows.append(_xpt_table_row(r, metric_prefix))
+    return '\n'.join(rows)
+
+html_content = html_content.replace('XPT_PAYER_TRX_TABLE_ROWS', _build_xpt_table('Payer', 'TRX'))
+html_content = html_content.replace('XPT_PAYER_NRX_TABLE_ROWS', _build_xpt_table('Payer', 'NRX'))
+html_content = html_content.replace('XPT_CHANNEL_TRX_TABLE_ROWS', _build_xpt_table('Channel', 'TRX'))
+html_content = html_content.replace('XPT_CHANNEL_NRX_TABLE_ROWS', _build_xpt_table('Channel', 'NRX'))
+
+# Finance KPI injection (dynamic from _fin_kpi_df)
 def _inject_finance_kpis():
     """Build all finance KPI placeholder values from live stacked data."""
     replacements = {}
