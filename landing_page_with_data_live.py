@@ -1447,7 +1447,7 @@ NPA_OVERALL_ROWS_QULIPTA_NBRx
         <div class="card">
           <div class="card-header-row">
             <div>
-              <div class="card-title" id="acute-ch-title">Nurtec Acute &#8212; Channel Performance View</div>
+              <div class="card-title" id="acute-ch-title">Nurtec Acute — Channel Performance View</div>
               <div class="card-subtitle">National &middot; IQVIA NPA &middot; Retail / Mail-Order / LTC &middot; Actuals 2026 vs STLY</div>
             </div>
             <div class="pill-group" style="margin-bottom:0;">
@@ -1521,7 +1521,7 @@ NPA_ACUTE_ROWS_UBRELVY_NBRx
         <div class="card">
           <div class="card-header-row">
             <div>
-              <div class="card-title" id="prev-ch-title">Nurtec Preventive &#8212; Channel Performance View</div>
+              <div class="card-title" id="prev-ch-title">Nurtec Preventive — Channel Performance View</div>
               <div class="card-subtitle">National &middot; IQVIA NPA &middot; Retail / Mail-Order / LTC &middot; Actuals 2026 vs STLY</div>
             </div>
             <div class="pill-group" style="margin-bottom:0;">
@@ -2131,7 +2131,7 @@ NPA_PREV_ROWS_QULIPTA_NBRx
         document.getElementById('acute-ch-nurtec').classList.toggle('active', brand === 'nurtec');
         document.getElementById('acute-ch-ubrelvy').classList.toggle('active', brand === 'ubrelvy');
         var label = brand === 'nurtec' ? 'Nurtec' : 'Ubrelvy';
-        document.getElementById('acute-ch-title').innerHTML = label + ' Acute &#8212; Channel Performance View';
+        document.getElementById('acute-ch-title').innerHTML = label + ' Acute \u2014 Channel Performance View';
         document.getElementById('ap-ch-nurtec-acute').style.display = brand === 'nurtec' ? 'block' : 'none';
         document.getElementById('ap-ch-ubrelvy-acute').style.display = brand === 'ubrelvy' ? 'block' : 'none';
         window.dispatchEvent(new Event('resize'));
@@ -2140,7 +2140,7 @@ NPA_PREV_ROWS_QULIPTA_NBRx
         document.getElementById('prev-ch-nurtec').classList.toggle('active', brand === 'nurtec');
         document.getElementById('prev-ch-qulipta').classList.toggle('active', brand === 'qulipta');
         var label = brand === 'nurtec' ? 'Nurtec' : 'Qulipta';
-        document.getElementById('prev-ch-title').innerHTML = label + ' Preventive &#8212; Channel Performance View';
+        document.getElementById('prev-ch-title').innerHTML = label + ' Preventive \u2014 Channel Performance View';
         document.getElementById('ap-ch-nurtec-prev').style.display = brand === 'nurtec' ? 'block' : 'none';
         document.getElementById('ap-ch-qulipta-prev').style.display = brand === 'qulipta' ? 'block' : 'none';
         window.dispatchEvent(new Event('resize'));
@@ -2153,8 +2153,8 @@ NPA_PREV_ROWS_QULIPTA_NBRx
         var el = document.getElementById('overall-ch-title');
         var metric = document.getElementById('npa-trx-pill').classList.contains('active') ? 'TRx' : 'NBRx';
         if (el) {
-            el.innerHTML = labels[brand] + ' NPA &#8212; Channel Performance View (' + metric + ')';
-            el.setAttribute('data-metric-toggle', labels[brand] + ' NPA &#8212; Channel Performance View ({M})');
+            el.innerHTML = labels[brand] + ' NPA \u2014 Channel Performance View (' + metric + ')';
+            el.setAttribute('data-metric-toggle', labels[brand] + ' NPA \u2014 Channel Performance View ({M})');
         }
         // Switch channel chart based on brand + current metric
         var metric = document.getElementById('npa-trx-pill').classList.contains('active') ? 'trx' : 'nbrx';
