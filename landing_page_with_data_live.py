@@ -2742,12 +2742,20 @@ def _build_ytd_insights():
 
     # Bullet 7: Budget attainment
     n_goal = _ytd('NURTEC', 'TRx', 'GOAL_ATTAINMENT_PCT') or 0
+    # oCGRP attainment: only use brands that have non-null goal attainment
     ocgrp_rows = _npa_stacked_df[(_npa_stacked_df['PRESCRIPTION']=='TRx')&(_npa_stacked_df['RX_CLASSIFICATION']=='OVERALL')&(_npa_stacked_df['ROW_LABEL']=="Actuals '26")&(_npa_stacked_df['TIME_PERIOD']=='YTD')&(_npa_stacked_df['GOAL_ATTAINMENT_PCT'].notna())]
-    ocgrp_att = ocgrp_rows['GOAL_ATTAINMENT_PCT'].mean() if len(ocgrp_rows) > 0 else 0
-    bullets.append(_li(
-        f'vs Budget: Nurtec TRx attainment is {_b(f"{n_goal:.1f}% YTD")}; '
-        f'oCGRP TRx attainment is {_b(f"{ocgrp_att:.1f}% YTD")}.'
-    ))
+    # If only Nurtec has goal data, don't show oCGRP (it would be same number)
+    ocgrp_brands_with_goal = ocgrp_rows['BRAND'].nunique() if len(ocgrp_rows) > 0 else 0
+    if ocgrp_brands_with_goal > 1:
+        ocgrp_att = ocgrp_rows['GOAL_ATTAINMENT_PCT'].mean()
+        bullets.append(_li(
+            f'vs Budget: Nurtec TRx attainment is {_b(f"{n_goal:.1f}% YTD")}; '
+            f'oCGRP TRx attainment is {_b(f"{ocgrp_att:.1f}% YTD")}.'
+        ))
+    else:
+        bullets.append(_li(
+            f'vs Budget: Nurtec TRx attainment is {_b(f"{n_goal:.1f}% YTD")}.'
+        ))
 
     return '\n'.join(bullets)
 
