@@ -55,7 +55,15 @@ def _resolve_finance_restriction():
                 restricted += [e.strip() for e in str(raw).split(';') if e.strip()]
     except:
         pass
-    return _current_user_email.lower() in [e.lower() for e in restricted]
+    # Normalize: compare lowercase, and also match just the prefix before @ 
+    user_email = _current_user_email.lower().strip()
+    user_prefix = user_email.split('@')[0] if '@' in user_email else user_email
+    for r in restricted:
+        r_lower = r.lower().strip()
+        r_prefix = r_lower.split('@')[0] if '@' in r_lower else r_lower
+        if user_email == r_lower or user_prefix == r_prefix:
+            return True
+    return False
 
 def week_to_date(wid):
     return datetime.strptime(str(int(wid)), '%Y%m%d')
