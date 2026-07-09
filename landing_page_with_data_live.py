@@ -14,35 +14,56 @@ from datetime import datetime
 # --- User Access Restriction (resolved after finance data loads) ---
 def _get_current_user_email():
     """Get current user email - tries multiple methods for DSS compatibility."""
+    _debug_info = []
     # Method 1: Dataiku API (DSS webapps)
     try:
         import dataiku
         client = dataiku.api_client()
         user = client.get_own_user()
         settings = user.get_settings().get_raw()
-        email = settings.get('email', '') or settings.get('login', '') or ''
+        m1_email = settings.get('email', '')
+        m1_login = settings.get('login', '')
+        _debug_info.append(f"Method 1 - email: '{m1_email}', login: '{m1_login}'")
+        email = m1_email or m1_login or ''
         if email:
-            return email
-    except:
-        pass
+            _debug_info.append(f"USED Method 1 -> '{email}'")
+            return email, _debug_info
+    except Exception as ex:
+        _debug_info.append(f"Method 1 FAILED: {ex}")
     # Method 2: Dataiku webapp config / environ
     try:
         import os
-        email = os.environ.get('DKU_CURRENT_USER', '') or os.environ.get('DATAIKU_USER', '')
+        m2_dku = os.environ.get('DKU_CURRENT_USER', '')
+        m2_dataiku = os.environ.get('DATAIKU_USER', '')
+        _debug_info.append(f"Method 2 - DKU_CURRENT_USER: '{m2_dku}', DATAIKU_USER: '{m2_dataiku}'")
+        email = m2_dku or m2_dataiku
         if email:
-            return email
-    except:
-        pass
+            _debug_info.append(f"USED Method 2 -> '{email}'")
+            return email, _debug_info
+    except Exception as ex:
+        _debug_info.append(f"Method 2 FAILED: {ex}")
     # Method 3: Streamlit experimental_user (Streamlit Cloud / SiS)
     try:
         email = st.experimental_user.email or ''
+        _debug_info.append(f"Method 3 - st.experimental_user.email: '{email}'")
         if email:
-            return email
-    except:
-        pass
-    return ''
+            _debug_info.append(f"USED Method 3 -> '{email}'")
+            return email, _debug_info
+    except Exception as ex:
+        _debug_info.append(f"Method 3 FAILED: {ex}")
+    _debug_info.append("ALL METHODS FAILED - returning empty string")
+    return '', _debug_info
 
-_current_user_email = _get_current_user_email()
+_current_user_email, _user_debug_info = _get_current_user_email()
+
+# DEBUG: Show user detection info at top of page
+st.markdown("---")
+st.markdown("**DEBUG: User Detection Info**")
+for _d in _user_debug_info:
+    st.markdown(f"- `{_d}`")
+st.markdown(f"**Final resolved email:** `{_current_user_email}`")
+st.markdown(f"**Lowercase:** `{_current_user_email.lower()}`")
+st.markdown("---")
 
 def _resolve_finance_restriction():
     """Dynamically build restricted email list from data + hardcoded additions."""
