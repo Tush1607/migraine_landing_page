@@ -13,70 +13,71 @@ from datetime import datetime
 
 # --- User Access Restriction (resolved after finance data loads) ---
 def _get_current_user_email():
-    """Get current VIEWER email - tries multiple methods for DSS compatibility."""
+    """Get current VIEWER email - tries ALL methods and reports results."""
     _debug_info = []
+    _candidates = {}
 
-    # Method 1: Dataiku get_auth_info (returns the actual authenticated viewer)
+    # Method 1: Dataiku get_auth_info
     try:
         import dataiku
         client = dataiku.api_client()
         auth_info = client.get_auth_info()
         m1_user = auth_info.get('authIdentifier', '')
-        _debug_info.append(f"Method 1 (get_auth_info) - authIdentifier: '{m1_user}', raw keys: {list(auth_info.keys())}")
-        if m1_user:
-            _debug_info.append(f"USED Method 1 -> '{m1_user}'")
-            return m1_user, _debug_info
+        m1_assoc = auth_info.get('associatedDSSUser', '')
+        m1_imperson = auth_info.get('userForImpersonation', '')
+        _debug_info.append(f"Method 1 (get_auth_info) - authIdentifier: '{m1_user}', associatedDSSUser: '{m1_assoc}', userForImpersonation: '{m1_imperson}'")
+        _debug_info.append(f"  Full auth_info: {auth_info}")
+        _candidates['get_auth_info'] = m1_user
     except Exception as ex:
         _debug_info.append(f"Method 1 (get_auth_info) FAILED: {ex}")
 
-    # Method 2: Dataiku default_project_key + webapp get_auth_info_from_browser_headers
+    # Method 2: Dataiku webapp get_webapp_config
     try:
         import dataiku
         from dataiku.webapp import get_webapp_config
         webapp_config = get_webapp_config()
-        _debug_info.append(f"Method 2 (webapp_config) - keys: {list(webapp_config.keys()) if webapp_config else 'None'}")
+        _debug_info.append(f"Method 2 (webapp_config) - config: {webapp_config}")
     except Exception as ex:
         _debug_info.append(f"Method 2 (webapp_config) FAILED: {ex}")
 
-    # Method 3: Streamlit headers (DSS may inject X-DKU-User or similar)
+    # Method 3: Streamlit headers
     try:
         headers = st.context.headers
         all_headers = dict(headers)
         dku_user = headers.get('X-DKU-User', '') or headers.get('x-dku-user', '')
         remote_user = headers.get('X-Remote-User', '') or headers.get('x-remote-user', '')
         _debug_info.append(f"Method 3 (st.context.headers) - X-DKU-User: '{dku_user}', X-Remote-User: '{remote_user}'")
-        _debug_info.append(f"  All header keys: {list(all_headers.keys())}")
-        email = dku_user or remote_user
-        if email:
-            _debug_info.append(f"USED Method 3 -> '{email}'")
-            return email, _debug_info
+        _debug_info.append(f"  All headers: {all_headers}")
+        if dku_user:
+            _candidates['headers_dku'] = dku_user
+        if remote_user:
+            _candidates['headers_remote'] = remote_user
     except Exception as ex:
         _debug_info.append(f"Method 3 (st.context.headers) FAILED: {ex}")
 
-    # Method 4: Streamlit experimental_user (Streamlit Cloud / SiS)
+    # Method 4: Streamlit experimental_user
     try:
-        email = st.experimental_user.email or ''
-        _debug_info.append(f"Method 4 (st.experimental_user) - email: '{email}'")
-        if email:
-            _debug_info.append(f"USED Method 4 -> '{email}'")
-            return email, _debug_info
+        exp_email = st.experimental_user.email or ''
+        _debug_info.append(f"Method 4 (st.experimental_user) - email: '{exp_email}'")
+        if exp_email:
+            _candidates['experimental_user'] = exp_email
     except Exception as ex:
         _debug_info.append(f"Method 4 (st.experimental_user) FAILED: {ex}")
 
-    # Method 5: Env vars (fallback)
+    # Method 5: Env vars
     try:
         import os
         m5_dku = os.environ.get('DKU_CURRENT_USER', '')
         m5_dataiku = os.environ.get('DATAIKU_USER', '')
         _debug_info.append(f"Method 5 (env vars) - DKU_CURRENT_USER: '{m5_dku}', DATAIKU_USER: '{m5_dataiku}'")
-        email = m5_dku or m5_dataiku
-        if email:
-            _debug_info.append(f"USED Method 5 -> '{email}'")
-            return email, _debug_info
+        if m5_dku:
+            _candidates['env_dku'] = m5_dku
+        if m5_dataiku:
+            _candidates['env_dataiku'] = m5_dataiku
     except Exception as ex:
         _debug_info.append(f"Method 5 (env vars) FAILED: {ex}")
 
-    # Method 6: Dataiku get_own_user (CAUTION: returns app OWNER, not viewer)
+    # Method 6: Dataiku get_own_user
     try:
         import dataiku
         client = dataiku.api_client()
@@ -84,14 +85,22 @@ def _get_current_user_email():
         settings = user.get_settings().get_raw()
         m6_email = settings.get('email', '')
         m6_login = settings.get('login', '')
-        _debug_info.append(f"Method 6 (get_own_user - APP OWNER) - email: '{m6_email}', login: '{m6_login}'")
-        # NOT using this as final result - it's the owner, not viewer
-        _debug_info.append(f"  WARNING: This is the app owner, not the viewer!")
+        _debug_info.append(f"Method 6 (get_own_user) - email: '{m6_email}', login: '{m6_login}'")
+        _candidates['get_own_user_email'] = m6_email
+        _candidates['get_own_user_login'] = m6_login
     except Exception as ex:
         _debug_info.append(f"Method 6 (get_own_user) FAILED: {ex}")
 
-    _debug_info.append("ALL METHODS FAILED - returning empty string")
-    return '', _debug_info
+    _debug_info.append(f"ALL CANDIDATES: {_candidates}")
+
+    # Pick best: prefer headers > experimental_user > env > auth_info > get_own_user
+    chosen = (_candidates.get('headers_dku') or _candidates.get('headers_remote')
+              or _candidates.get('experimental_user')
+              or _candidates.get('env_dku') or _candidates.get('env_dataiku')
+              or _candidates.get('get_auth_info')
+              or _candidates.get('get_own_user_email') or _candidates.get('get_own_user_login') or '')
+    _debug_info.append(f"CHOSEN: '{chosen}'")
+    return chosen, _debug_info
 
 _current_user_email, _user_debug_info = _get_current_user_email()
 
