@@ -104,15 +104,6 @@ def _get_current_user_email():
 
 _current_user_email, _user_debug_info = _get_current_user_email()
 
-# DEBUG: Show user detection info at top of page
-st.markdown("---")
-st.markdown("**DEBUG: User Detection Info**")
-for _d in _user_debug_info:
-    st.markdown(f"- `{_d}`")
-st.markdown(f"**Final resolved email:** `{_current_user_email}`")
-st.markdown(f"**Lowercase:** `{_current_user_email.lower()}`")
-st.markdown("---")
-
 def _resolve_finance_restriction():
     """Dynamically build restricted email list from data + hardcoded additions."""
     restricted = ['Harshit.Gupta@pfizer.com', 'Dhruv.Bajpai@pfizer.com']
