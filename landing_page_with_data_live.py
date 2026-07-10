@@ -13,44 +13,83 @@ from datetime import datetime
 
 # --- User Access Restriction (resolved after finance data loads) ---
 def _get_current_user_email():
-    """Get current user email - tries multiple methods for DSS compatibility."""
+    """Get current VIEWER email - tries multiple methods for DSS compatibility."""
     _debug_info = []
-    # Method 1: Dataiku API (DSS webapps)
+
+    # Method 1: Dataiku get_auth_info (returns the actual authenticated viewer)
+    try:
+        import dataiku
+        client = dataiku.api_client()
+        auth_info = client.get_auth_info()
+        m1_user = auth_info.get('authIdentifier', '')
+        _debug_info.append(f"Method 1 (get_auth_info) - authIdentifier: '{m1_user}', raw keys: {list(auth_info.keys())}")
+        if m1_user:
+            _debug_info.append(f"USED Method 1 -> '{m1_user}'")
+            return m1_user, _debug_info
+    except Exception as ex:
+        _debug_info.append(f"Method 1 (get_auth_info) FAILED: {ex}")
+
+    # Method 2: Dataiku default_project_key + webapp get_auth_info_from_browser_headers
+    try:
+        import dataiku
+        from dataiku.webapp import get_webapp_config
+        webapp_config = get_webapp_config()
+        _debug_info.append(f"Method 2 (webapp_config) - keys: {list(webapp_config.keys()) if webapp_config else 'None'}")
+    except Exception as ex:
+        _debug_info.append(f"Method 2 (webapp_config) FAILED: {ex}")
+
+    # Method 3: Streamlit headers (DSS may inject X-DKU-User or similar)
+    try:
+        headers = st.context.headers
+        all_headers = dict(headers)
+        dku_user = headers.get('X-DKU-User', '') or headers.get('x-dku-user', '')
+        remote_user = headers.get('X-Remote-User', '') or headers.get('x-remote-user', '')
+        _debug_info.append(f"Method 3 (st.context.headers) - X-DKU-User: '{dku_user}', X-Remote-User: '{remote_user}'")
+        _debug_info.append(f"  All header keys: {list(all_headers.keys())}")
+        email = dku_user or remote_user
+        if email:
+            _debug_info.append(f"USED Method 3 -> '{email}'")
+            return email, _debug_info
+    except Exception as ex:
+        _debug_info.append(f"Method 3 (st.context.headers) FAILED: {ex}")
+
+    # Method 4: Streamlit experimental_user (Streamlit Cloud / SiS)
+    try:
+        email = st.experimental_user.email or ''
+        _debug_info.append(f"Method 4 (st.experimental_user) - email: '{email}'")
+        if email:
+            _debug_info.append(f"USED Method 4 -> '{email}'")
+            return email, _debug_info
+    except Exception as ex:
+        _debug_info.append(f"Method 4 (st.experimental_user) FAILED: {ex}")
+
+    # Method 5: Env vars (fallback)
+    try:
+        import os
+        m5_dku = os.environ.get('DKU_CURRENT_USER', '')
+        m5_dataiku = os.environ.get('DATAIKU_USER', '')
+        _debug_info.append(f"Method 5 (env vars) - DKU_CURRENT_USER: '{m5_dku}', DATAIKU_USER: '{m5_dataiku}'")
+        email = m5_dku or m5_dataiku
+        if email:
+            _debug_info.append(f"USED Method 5 -> '{email}'")
+            return email, _debug_info
+    except Exception as ex:
+        _debug_info.append(f"Method 5 (env vars) FAILED: {ex}")
+
+    # Method 6: Dataiku get_own_user (CAUTION: returns app OWNER, not viewer)
     try:
         import dataiku
         client = dataiku.api_client()
         user = client.get_own_user()
         settings = user.get_settings().get_raw()
-        m1_email = settings.get('email', '')
-        m1_login = settings.get('login', '')
-        _debug_info.append(f"Method 1 - email: '{m1_email}', login: '{m1_login}'")
-        email = m1_email or m1_login or ''
-        if email:
-            _debug_info.append(f"USED Method 1 -> '{email}'")
-            return email, _debug_info
+        m6_email = settings.get('email', '')
+        m6_login = settings.get('login', '')
+        _debug_info.append(f"Method 6 (get_own_user - APP OWNER) - email: '{m6_email}', login: '{m6_login}'")
+        # NOT using this as final result - it's the owner, not viewer
+        _debug_info.append(f"  WARNING: This is the app owner, not the viewer!")
     except Exception as ex:
-        _debug_info.append(f"Method 1 FAILED: {ex}")
-    # Method 2: Dataiku webapp config / environ
-    try:
-        import os
-        m2_dku = os.environ.get('DKU_CURRENT_USER', '')
-        m2_dataiku = os.environ.get('DATAIKU_USER', '')
-        _debug_info.append(f"Method 2 - DKU_CURRENT_USER: '{m2_dku}', DATAIKU_USER: '{m2_dataiku}'")
-        email = m2_dku or m2_dataiku
-        if email:
-            _debug_info.append(f"USED Method 2 -> '{email}'")
-            return email, _debug_info
-    except Exception as ex:
-        _debug_info.append(f"Method 2 FAILED: {ex}")
-    # Method 3: Streamlit experimental_user (Streamlit Cloud / SiS)
-    try:
-        email = st.experimental_user.email or ''
-        _debug_info.append(f"Method 3 - st.experimental_user.email: '{email}'")
-        if email:
-            _debug_info.append(f"USED Method 3 -> '{email}'")
-            return email, _debug_info
-    except Exception as ex:
-        _debug_info.append(f"Method 3 FAILED: {ex}")
+        _debug_info.append(f"Method 6 (get_own_user) FAILED: {ex}")
+
     _debug_info.append("ALL METHODS FAILED - returning empty string")
     return '', _debug_info
 
