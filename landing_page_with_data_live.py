@@ -223,6 +223,23 @@ _xpt_payer_nrx = {k: _get_xpt_series(_xpt_df, 'Payer', k, 'NRx') for k in ['Comm
 _xpt_ch_trx = {'Retail': _get_xpt_series(_xpt_df, 'Channel', 'RETAIL', 'TRx'), 'Mail-Order': _get_xpt_series(_xpt_df, 'Channel', 'MAIL_ORDER', 'TRx'), 'LTC': _get_xpt_series(_xpt_df, 'Channel', 'LTC', 'TRx')}
 _xpt_ch_nrx = {'Retail': _get_xpt_series(_xpt_df, 'Channel', 'RETAIL', 'NRx'), 'Mail-Order': _get_xpt_series(_xpt_df, 'Channel', 'MAIL_ORDER', 'NRx'), 'LTC': _get_xpt_series(_xpt_df, 'Channel', 'LTC', 'NRx')}
 
+# --- Xponent Trends Excel downloads (base64-encoded) ---
+import io, base64
+
+def _build_xpt_excel(dates, data_dict, sheet_name):
+    buf = io.BytesIO()
+    df = pd.DataFrame({'Week': [d.strftime('%Y-%m-%d') for d in dates]})
+    for k, v in data_dict.items():
+        df[k] = v
+    df.to_excel(buf, index=False, sheet_name=sheet_name)
+    buf.seek(0)
+    return base64.b64encode(buf.read()).decode()
+
+_xpt_dl_payer_trx_b64 = _build_xpt_excel(_xpt_dates, _xpt_payer_trx, 'TRx Share by Payer')
+_xpt_dl_payer_nrx_b64 = _build_xpt_excel(_xpt_dates, _xpt_payer_nrx, 'NRx Share by Payer')
+_xpt_dl_ch_trx_b64 = _build_xpt_excel(_xpt_dates, _xpt_ch_trx, 'TRx Share by Channel')
+_xpt_dl_ch_nrx_b64 = _build_xpt_excel(_xpt_dates, _xpt_ch_nrx, 'NRx Share by Channel')
+
 # --- Finance Trends Data (Live) ---
 _fin_df = load_finance_trends()
 _fin_gross_df = _fin_df[_fin_df['SECTION_NAME'] == 'Gross'].sort_values('DATE_PARSED')
@@ -1329,7 +1346,19 @@ EXEC_PERF_SNAPSHOT_ROWS
         <div class="pill pill-sm active" id="xp-trx-pill" onclick="switchXponentMetric('trx')">TRx</div>
         <div class="pill pill-sm" id="xp-nrx-pill" onclick="switchXponentMetric('nrx')">NRx</div>
       </div>
-      <div style="display:flex;justify-content:flex-end;margin-bottom:6px;margin-top:-10px;">
+      <div style="display:flex;justify-content:flex-end;margin-bottom:6px;margin-top:-10px;align-items:center;gap:10px;">
+        <div class="dropdown-wrap" style="position:relative;">
+          <button class="icon-btn" style="font-size:11px;padding:5px 12px;border-radius:6px;background:#0000C9;color:#fff;border:none;cursor:pointer;display:flex;align-items:center;gap:5px;" onclick="toggleDropdown('xptDownloadDD', event)">
+            <svg viewBox="0 0 24 24" style="width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            <span>Extract Data</span>
+            <svg viewBox="0 0 24 24" style="width:10px;height:10px;fill:none;stroke:currentColor;stroke-width:2;"><path d="M6 9l6 6 6-6"/></svg>
+          </button>
+          <div class="dropdown" id="xptDownloadDD" style="min-width:200px;">
+            <div class="dropdown-header">Download Trend Data</div>
+            <a class="dropdown-item" id="xpt-dl-payer" href="data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,XPT_DL_PAYER_TRX_B64" download="Xponent_TRx_Share_by_Payer.xlsx" style="text-decoration:none;color:inherit;display:flex;justify-content:space-between;" data-xpt-dl-label="{XM} Share by Payer" data-trx-href="data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,XPT_DL_PAYER_TRX_B64" data-nrx-href="data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,XPT_DL_PAYER_NRX_B64" data-trx-fname="Xponent_TRx_Share_by_Payer.xlsx" data-nrx-fname="Xponent_NRx_Share_by_Payer.xlsx"><span>TRx Share by Payer</span><svg viewBox="0 0 24 24" style="width:12px;height:12px;fill:none;stroke:#6b7280;stroke-width:2;"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
+            <a class="dropdown-item" id="xpt-dl-channel" href="data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,XPT_DL_CH_TRX_B64" download="Xponent_TRx_Share_by_Channel.xlsx" style="text-decoration:none;color:inherit;display:flex;justify-content:space-between;" data-xpt-dl-label="{XM} Share by Channel" data-trx-href="data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,XPT_DL_CH_TRX_B64" data-nrx-href="data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,XPT_DL_CH_NRX_B64" data-trx-fname="Xponent_TRx_Share_by_Channel.xlsx" data-nrx-fname="Xponent_NRx_Share_by_Channel.xlsx"><span>TRx Share by Channel</span><svg viewBox="0 0 24 24" style="width:12px;height:12px;fill:none;stroke:#6b7280;stroke-width:2;"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
+          </div>
+        </div>
         <div style="position:relative;display:inline-block;">
           <div style="width:28px;height:28px;border-radius:50%;background:#ffffff;color:#0000C9;font-size:16px;font-weight:800;display:flex;align-items:center;justify-content:center;cursor:pointer;border:1px solid #c7d2fe;" onmouseover="this.nextElementSibling.style.display='block'" onmouseout="this.nextElementSibling.style.display='none'">i</div>
           <div style="display:none;position:absolute;right:0;top:32px;background:#1a2332;color:#fff;padding:10px 14px;border-radius:6px;font-size:11px;line-height:1.5;width:240px;z-index:10;box-shadow:0 4px 12px rgba(0,0,0,0.15);">The Shares in this view are the Nurtec oCGRP shares across Payer's or Channel's</div>
@@ -2178,6 +2207,13 @@ NPA_PREV_ROWS_QULIPTA_NBRx
         document.querySelectorAll('.xpt-nrx-body').forEach(function(el) {
             el.style.display = metric === 'nrx' ? '' : 'none';
         });
+        // Toggle download dropdown labels and hrefs
+        document.querySelectorAll('[data-xpt-dl-label]').forEach(function(el) {
+            var template = el.getAttribute('data-xpt-dl-label');
+            el.querySelector('span').textContent = template.replace('{XM}', label);
+            el.href = el.getAttribute('data-' + metric + '-href');
+            el.download = el.getAttribute('data-' + metric + '-fname');
+        });
     };
     
     window.filterPayerTable = function(payer) {
@@ -2369,6 +2405,11 @@ html_content = html_content.replace('XPT_PAYER_TRX_PLACEHOLDER', xpt_payer_trx_h
 html_content = html_content.replace('XPT_PAYER_NRX_PLACEHOLDER', xpt_payer_nrx_html)
 html_content = html_content.replace('XPT_CH_TRX_PLACEHOLDER', xpt_ch_trx_html)
 html_content = html_content.replace('XPT_CH_NRX_PLACEHOLDER', xpt_ch_nrx_html)
+# Xponent download Excel base64 injection
+html_content = html_content.replace('XPT_DL_PAYER_TRX_B64', _xpt_dl_payer_trx_b64)
+html_content = html_content.replace('XPT_DL_PAYER_NRX_B64', _xpt_dl_payer_nrx_b64)
+html_content = html_content.replace('XPT_DL_CH_TRX_B64', _xpt_dl_ch_trx_b64)
+html_content = html_content.replace('XPT_DL_CH_NRX_B64', _xpt_dl_ch_nrx_b64)
 # Xponent KPI grid injection (dynamic from _xpt_national)
 if _xpt_national is not None:
     def _xpt_fmt_val(v):
