@@ -225,15 +225,38 @@ _xpt_ch_nrx = {'Retail': _get_xpt_series(_xpt_df, 'Channel', 'RETAIL', 'NRx'), '
 
 # --- Xponent Trends Excel downloads (base64-encoded) ---
 import io, base64
+from openpyxl.styles import Font, PatternFill, Border, Side, Alignment
 
 def _build_xpt_excel(dates, data_dict, sheet_name):
     buf = io.BytesIO()
     df = pd.DataFrame({'Week': [d.strftime('%Y-%m-%d') for d in dates]})
     for k, v in data_dict.items():
         df[k] = v
-    df.to_excel(buf, index=False, sheet_name=sheet_name)
+    df.to_excel(buf, index=False, sheet_name=sheet_name, engine='openpyxl')
     buf.seek(0)
-    return base64.b64encode(buf.read()).decode()
+    from openpyxl import load_workbook
+    wb = load_workbook(buf)
+    ws = wb.active
+    header_fill = PatternFill(start_color='0000C9', end_color='0000C9', fill_type='solid')
+    header_font = Font(bold=True, color='FFFFFF', size=11)
+    thin_border = Border(
+        left=Side(style='thin'), right=Side(style='thin'),
+        top=Side(style='thin'), bottom=Side(style='thin')
+    )
+    for cell in ws[1]:
+        cell.fill = header_fill
+        cell.font = header_font
+        cell.alignment = Alignment(horizontal='center')
+    for row in ws.iter_rows(min_row=1, max_row=ws.max_row, max_col=ws.max_column):
+        for cell in row:
+            cell.border = thin_border
+    for col in ws.columns:
+        max_len = max(len(str(cell.value or '')) for cell in col)
+        ws.column_dimensions[col[0].column_letter].width = max_len + 3
+    out = io.BytesIO()
+    wb.save(out)
+    out.seek(0)
+    return base64.b64encode(out.read()).decode()
 
 _xpt_dl_payer_trx_b64 = _build_xpt_excel(_xpt_dates, _xpt_payer_trx, 'TRx Share by Payer')
 _xpt_dl_payer_nrx_b64 = _build_xpt_excel(_xpt_dates, _xpt_payer_nrx, 'NRx Share by Payer')
