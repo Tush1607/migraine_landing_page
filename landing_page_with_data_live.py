@@ -232,6 +232,7 @@ def _build_xpt_excel(dates, data_dict, sheet_name):
     df = pd.DataFrame({'Week': [d.strftime('%Y-%m-%d') for d in dates]})
     for k, v in data_dict.items():
         df[k] = v
+    df = df.sort_values('Week', ascending=False).reset_index(drop=True)
     df.to_excel(buf, index=False, sheet_name=sheet_name, engine='openpyxl')
     buf.seek(0)
     from openpyxl import load_workbook
@@ -1445,7 +1446,6 @@ EXEC_PERF_SNAPSHOT_ROWS
         <div class="dropdown-wrap" style="position:relative;">
           <button class="icon-btn" style="font-size:11px;padding:5px 12px;border-radius:6px;background:#0000C9;color:#fff;border:none;cursor:pointer;display:flex;align-items:center;gap:5px;font-weight:700;" onclick="toggleDropdown('xptDownloadDD', event)">
             <svg viewBox="0 0 24 24" style="width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            <span>Extract Data</span>
             <svg viewBox="0 0 24 24" style="width:10px;height:10px;fill:none;stroke:currentColor;stroke-width:2;"><path d="M6 9l6 6 6-6"/></svg>
           </button>
           <div class="dropdown" id="xptDownloadDD" style="min-width:200px;">
@@ -1534,7 +1534,6 @@ XPT_CHANNEL_NRX_TABLE_ROWS
         <div class="dropdown-wrap" style="position:relative;">
           <button class="icon-btn" style="font-size:11px;padding:5px 12px;border-radius:6px;background:#0000C9;color:#fff;border:none;cursor:pointer;display:flex;align-items:center;gap:5px;font-weight:700;" onclick="toggleDropdown('npaDownloadDD', event)">
             <svg viewBox="0 0 24 24" style="width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            <span>Extract Data</span>
             <svg viewBox="0 0 24 24" style="width:10px;height:10px;fill:none;stroke:currentColor;stroke-width:2;"><path d="M6 9l6 6 6-6"/></svg>
           </button>
           <div class="dropdown" id="npaDownloadDD" style="min-width:220px;">
