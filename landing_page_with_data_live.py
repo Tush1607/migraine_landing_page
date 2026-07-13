@@ -2050,16 +2050,10 @@ NPA_PREV_ROWS_QULIPTA_NBRx
     </div>
 
     <div style="display:flex;justify-content:flex-end;margin-bottom:8px;margin-top:8px;">
-      <div class="dropdown-wrap" style="position:relative;">
-        <button class="icon-btn" style="font-size:11px;padding:5px 12px;border-radius:6px;background:#0000C9;color:#fff;border:none;cursor:pointer;display:flex;align-items:center;gap:5px;font-weight:700;" onclick="toggleDropdown('finDownloadDD', event)">
-          <svg viewBox="0 0 24 24" style="width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          <svg viewBox="0 0 24 24" style="width:10px;height:10px;fill:none;stroke:currentColor;stroke-width:2;"><path d="M6 9l6 6 6-6"/></svg>
-        </button>
-        <div class="dropdown" id="finDownloadDD" style="min-width:180px;">
-          <a class="dropdown-item" id="fin-dl-gross" href="data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,FIN_GROSS_DL_B64" download="Finance_Gross_Sales.xlsx" style="text-decoration:none;color:inherit;display:flex;justify-content:space-between;"><span>Gross Sales</span><svg viewBox="0 0 24 24" style="width:12px;height:12px;fill:none;stroke:#6b7280;stroke-width:2;"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
-          <a class="dropdown-item" id="fin-dl-net" href="data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,FIN_NET_DL_B64" download="Finance_Net_Sales.xlsx" style="text-decoration:none;color:inherit;display:flex;justify-content:space-between;"><span>Net Sales</span><svg viewBox="0 0 24 24" style="width:12px;height:12px;fill:none;stroke:#6b7280;stroke-width:2;"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
-        </div>
-      </div>
+      <a href="data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,FIN_GROSS_DL_B64" download="Finance_Gross_Sales.xlsx" style="font-size:11px;padding:5px 12px;border-radius:6px;background:#0000C9;color:#fff;border:none;cursor:pointer;display:flex;align-items:center;gap:5px;font-weight:700;text-decoration:none;">
+        <svg viewBox="0 0 24 24" style="width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        <span>Gross Sales</span>
+      </a>
     </div>
 
         <div class="card">
@@ -2095,16 +2089,10 @@ NPA_PREV_ROWS_QULIPTA_NBRx
     </div>
 
     <div style="display:flex;justify-content:flex-end;margin-bottom:8px;margin-top:8px;">
-      <div class="dropdown-wrap" style="position:relative;">
-        <button class="icon-btn" style="font-size:11px;padding:5px 12px;border-radius:6px;background:#0000C9;color:#fff;border:none;cursor:pointer;display:flex;align-items:center;gap:5px;font-weight:700;" onclick="toggleDropdown('finDownloadDD2', event)">
-          <svg viewBox="0 0 24 24" style="width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          <svg viewBox="0 0 24 24" style="width:10px;height:10px;fill:none;stroke:currentColor;stroke-width:2;"><path d="M6 9l6 6 6-6"/></svg>
-        </button>
-        <div class="dropdown" id="finDownloadDD2" style="min-width:180px;">
-          <a class="dropdown-item" href="data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,FIN_GROSS_DL_B64" download="Finance_Gross_Sales.xlsx" style="text-decoration:none;color:inherit;display:flex;justify-content:space-between;"><span>Gross Sales</span><svg viewBox="0 0 24 24" style="width:12px;height:12px;fill:none;stroke:#6b7280;stroke-width:2;"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
-          <a class="dropdown-item" href="data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,FIN_NET_DL_B64" download="Finance_Net_Sales.xlsx" style="text-decoration:none;color:inherit;display:flex;justify-content:space-between;"><span>Net Sales</span><svg viewBox="0 0 24 24" style="width:12px;height:12px;fill:none;stroke:#6b7280;stroke-width:2;"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
-        </div>
-      </div>
+      <a href="data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,FIN_NET_DL_B64" download="Finance_Net_Sales.xlsx" style="font-size:11px;padding:5px 12px;border-radius:6px;background:#0000C9;color:#fff;border:none;cursor:pointer;display:flex;align-items:center;gap:5px;font-weight:700;text-decoration:none;">
+        <svg viewBox="0 0 24 24" style="width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        <span>Net Sales</span>
+      </a>
     </div>
 
         <div class="card">
