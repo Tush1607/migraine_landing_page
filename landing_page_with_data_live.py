@@ -1347,8 +1347,12 @@ EXEC_PERF_SNAPSHOT_ROWS
         <div class="pill pill-sm" id="xp-nrx-pill" onclick="switchXponentMetric('nrx')">NRx</div>
       </div>
       <div style="display:flex;justify-content:flex-end;margin-bottom:6px;margin-top:-10px;align-items:center;gap:10px;">
+        <div style="position:relative;display:inline-block;">
+          <div style="width:28px;height:28px;border-radius:50%;background:#ffffff;color:#0000C9;font-size:16px;font-weight:800;display:flex;align-items:center;justify-content:center;cursor:pointer;border:1px solid #c7d2fe;" onmouseover="this.nextElementSibling.style.display='block'" onmouseout="this.nextElementSibling.style.display='none'">i</div>
+          <div style="display:none;position:absolute;right:0;top:32px;background:#1a2332;color:#fff;padding:10px 14px;border-radius:6px;font-size:11px;line-height:1.5;width:240px;z-index:10;box-shadow:0 4px 12px rgba(0,0,0,0.15);">The Shares in this view are the Nurtec oCGRP shares across Payer's or Channel's</div>
+        </div>
         <div class="dropdown-wrap" style="position:relative;">
-          <button class="icon-btn" style="font-size:11px;padding:5px 12px;border-radius:6px;background:#0000C9;color:#fff;border:none;cursor:pointer;display:flex;align-items:center;gap:5px;" onclick="toggleDropdown('xptDownloadDD', event)">
+          <button class="icon-btn" style="font-size:11px;padding:5px 12px;border-radius:6px;background:#0000C9;color:#fff;border:none;cursor:pointer;display:flex;align-items:center;gap:5px;font-weight:700;" onclick="toggleDropdown('xptDownloadDD', event)">
             <svg viewBox="0 0 24 24" style="width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
             <span>Extract Data</span>
             <svg viewBox="0 0 24 24" style="width:10px;height:10px;fill:none;stroke:currentColor;stroke-width:2;"><path d="M6 9l6 6 6-6"/></svg>
@@ -1358,10 +1362,6 @@ EXEC_PERF_SNAPSHOT_ROWS
             <a class="dropdown-item" id="xpt-dl-payer" href="data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,XPT_DL_PAYER_TRX_B64" download="Xponent_TRx_Share_by_Payer.xlsx" style="text-decoration:none;color:inherit;display:flex;justify-content:space-between;" data-xpt-dl-label="{XM} Share by Payer" data-trx-href="data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,XPT_DL_PAYER_TRX_B64" data-nrx-href="data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,XPT_DL_PAYER_NRX_B64" data-trx-fname="Xponent_TRx_Share_by_Payer.xlsx" data-nrx-fname="Xponent_NRx_Share_by_Payer.xlsx"><span>TRx Share by Payer</span><svg viewBox="0 0 24 24" style="width:12px;height:12px;fill:none;stroke:#6b7280;stroke-width:2;"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
             <a class="dropdown-item" id="xpt-dl-channel" href="data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,XPT_DL_CH_TRX_B64" download="Xponent_TRx_Share_by_Channel.xlsx" style="text-decoration:none;color:inherit;display:flex;justify-content:space-between;" data-xpt-dl-label="{XM} Share by Channel" data-trx-href="data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,XPT_DL_CH_TRX_B64" data-nrx-href="data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,XPT_DL_CH_NRX_B64" data-trx-fname="Xponent_TRx_Share_by_Channel.xlsx" data-nrx-fname="Xponent_NRx_Share_by_Channel.xlsx"><span>TRx Share by Channel</span><svg viewBox="0 0 24 24" style="width:12px;height:12px;fill:none;stroke:#6b7280;stroke-width:2;"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
           </div>
-        </div>
-        <div style="position:relative;display:inline-block;">
-          <div style="width:28px;height:28px;border-radius:50%;background:#ffffff;color:#0000C9;font-size:16px;font-weight:800;display:flex;align-items:center;justify-content:center;cursor:pointer;border:1px solid #c7d2fe;" onmouseover="this.nextElementSibling.style.display='block'" onmouseout="this.nextElementSibling.style.display='none'">i</div>
-          <div style="display:none;position:absolute;right:0;top:32px;background:#1a2332;color:#fff;padding:10px 14px;border-radius:6px;font-size:11px;line-height:1.5;width:240px;z-index:10;box-shadow:0 4px 12px rgba(0,0,0,0.15);">The Shares in this view are the Nurtec oCGRP shares across Payer's or Channel's</div>
         </div>
       </div>
       <div class="row" style="margin-bottom:0;">
