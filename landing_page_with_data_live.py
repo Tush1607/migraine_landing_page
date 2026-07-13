@@ -1626,9 +1626,21 @@ NPA_OVERALL_ROWS_QULIPTA_NBRx
 
     <!-- NPA Acute / Preventive Split Sub-tab -->
     <div id="npa-acute-prev" style="display:none;">
-      <div class="pill-group" id="acute-prev-toggle">
-        <div class="pill active" onclick="switchAcutePrev('acute')">Acute</div>
-        <div class="pill" onclick="switchAcutePrev('preventive')">Preventive</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+        <div class="pill-group" id="acute-prev-toggle" style="margin-bottom:0;">
+          <div class="pill active" onclick="switchAcutePrev('acute')">Acute</div>
+          <div class="pill" onclick="switchAcutePrev('preventive')">Preventive</div>
+        </div>
+        <div class="dropdown-wrap" style="position:relative;">
+          <button class="icon-btn" style="font-size:11px;padding:5px 12px;border-radius:6px;background:#0000C9;color:#fff;border:none;cursor:pointer;display:flex;align-items:center;gap:5px;font-weight:700;" onclick="toggleDropdown('apDownloadDD', event)">
+            <svg viewBox="0 0 24 24" style="width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            <svg viewBox="0 0 24 24" style="width:10px;height:10px;fill:none;stroke:currentColor;stroke-width:2;"><path d="M6 9l6 6 6-6"/></svg>
+          </button>
+          <div class="dropdown" id="apDownloadDD" style="min-width:220px;">
+            <a class="dropdown-item" id="ap-dl-brand" href="data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,AP_ACUTE_BRAND_B64" download="NPA_Acute_Brand.xlsx" style="text-decoration:none;color:inherit;display:flex;justify-content:space-between;" data-acute-href="data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,AP_ACUTE_BRAND_B64" data-prev-href="data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,AP_PREV_BRAND_B64" data-acute-fname="NPA_Acute_Brand.xlsx" data-prev-fname="NPA_Preventive_Brand.xlsx"><span>Acute - Brand Competitive</span><svg viewBox="0 0 24 24" style="width:12px;height:12px;fill:none;stroke:#6b7280;stroke-width:2;"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
+            <a class="dropdown-item" id="ap-dl-channel" href="data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,AP_ACUTE_CH_NURTEC_B64" download="NPA_Acute_Channel_Nurtec.xlsx" style="text-decoration:none;color:inherit;display:flex;justify-content:space-between;" data-acute-nurtec-href="data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,AP_ACUTE_CH_NURTEC_B64" data-acute-ubrelvy-href="data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,AP_ACUTE_CH_UBRELVY_B64" data-prev-nurtec-href="data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,AP_PREV_CH_NURTEC_B64" data-prev-qulipta-href="data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,AP_PREV_CH_QULIPTA_B64"><span>Acute - Channel Nurtec</span><svg viewBox="0 0 24 24" style="width:12px;height:12px;fill:none;stroke:#6b7280;stroke-width:2;"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
+          </div>
+        </div>
       </div>
 
       <!-- ACUTE VIEW -->
@@ -2265,6 +2277,32 @@ NPA_PREV_ROWS_QULIPTA_NBRx
         chEl.href = chEl.getAttribute('data-' + brand + '-' + m + '-href');
         chEl.download = 'NPA_Channel_' + brandNames[brand] + '_' + metricLabel + '.xlsx';
     }
+    function updateApDownload() {
+        var isAcute = document.getElementById('acute-view').style.display !== 'none';
+        var view = isAcute ? 'acute' : 'prev';
+        var viewLabel = isAcute ? 'Acute' : 'Preventive';
+        var brandEl = document.getElementById('ap-dl-brand');
+        if (brandEl) {
+            brandEl.href = brandEl.getAttribute('data-' + view + '-href');
+            brandEl.download = brandEl.getAttribute('data-' + view + '-fname');
+            brandEl.querySelector('span').textContent = viewLabel + ' - Brand Competitive';
+        }
+        var chEl = document.getElementById('ap-dl-channel');
+        if (chEl) {
+            var activeBrand = 'nurtec';
+            if (isAcute) {
+                var acUb = document.getElementById('acute-ch-ubrelvy');
+                if (acUb && acUb.classList.contains('active')) activeBrand = 'ubrelvy';
+            } else {
+                var prQu = document.getElementById('prev-ch-qulipta');
+                if (prQu && prQu.classList.contains('active')) activeBrand = 'qulipta';
+            }
+            var brandNames = {nurtec:'Nurtec',ubrelvy:'Ubrelvy',qulipta:'Qulipta'};
+            chEl.href = chEl.getAttribute('data-' + view + '-' + activeBrand + '-href');
+            chEl.download = 'NPA_' + viewLabel + '_Channel_' + brandNames[activeBrand] + '.xlsx';
+            chEl.querySelector('span').textContent = viewLabel + ' - Channel ' + brandNames[activeBrand];
+        }
+    }
 
     // Newsletter sub-tab functions
     window.switchNpaSubtab = function(subtab) {
@@ -2296,6 +2334,7 @@ NPA_PREV_ROWS_QULIPTA_NBRx
         }
         window.dispatchEvent(new Event('resize'));
         setTimeout(function(){ window.dispatchEvent(new Event('resize')); }, 300);
+        updateApDownload();
     };
     
     window.switchFinancial = function(view) {
@@ -2380,6 +2419,7 @@ NPA_PREV_ROWS_QULIPTA_NBRx
         document.getElementById('ap-ch-nurtec-acute').style.display = brand === 'nurtec' ? 'block' : 'none';
         document.getElementById('ap-ch-ubrelvy-acute').style.display = brand === 'ubrelvy' ? 'block' : 'none';
         window.dispatchEvent(new Event('resize'));
+        updateApDownload();
     };
     window.switchPrevChannel = function(brand) {
         document.getElementById('prev-ch-nurtec').classList.toggle('active', brand === 'nurtec');
@@ -2389,6 +2429,7 @@ NPA_PREV_ROWS_QULIPTA_NBRx
         document.getElementById('ap-ch-nurtec-prev').style.display = brand === 'nurtec' ? 'block' : 'none';
         document.getElementById('ap-ch-qulipta-prev').style.display = brand === 'qulipta' ? 'block' : 'none';
         window.dispatchEvent(new Event('resize'));
+        updateApDownload();
     };
     window.switchChannelBrand = function(brand) {
         document.getElementById('channel-nurtec').classList.toggle('active', brand === 'nurtec');
@@ -2563,6 +2604,13 @@ html_content = html_content.replace('NPA_CH_UBRELVY_TRX_B64', _npa_ch_ubrelvy_tr
 html_content = html_content.replace('NPA_CH_UBRELVY_NBRX_B64', _npa_ch_ubrelvy_nbrx_b64)
 html_content = html_content.replace('NPA_CH_QULIPTA_TRX_B64', _npa_ch_qulipta_trx_b64)
 html_content = html_content.replace('NPA_CH_QULIPTA_NBRX_B64', _npa_ch_qulipta_nbrx_b64)
+# Acute/Preventive download Excel base64 injection
+html_content = html_content.replace('AP_ACUTE_BRAND_B64', _acute_brand_b64)
+html_content = html_content.replace('AP_PREV_BRAND_B64', _prev_brand_b64)
+html_content = html_content.replace('AP_ACUTE_CH_NURTEC_B64', _acute_ch_nurtec_b64)
+html_content = html_content.replace('AP_ACUTE_CH_UBRELVY_B64', _acute_ch_ubrelvy_b64)
+html_content = html_content.replace('AP_PREV_CH_NURTEC_B64', _prev_ch_nurtec_b64)
+html_content = html_content.replace('AP_PREV_CH_QULIPTA_B64', _prev_ch_qulipta_b64)
 # Xponent KPI grid injection (dynamic from _xpt_national)
 if _xpt_national is not None:
     def _xpt_fmt_val(v):
