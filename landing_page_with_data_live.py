@@ -263,6 +263,74 @@ _xpt_dl_payer_nrx_b64 = _build_xpt_excel(_xpt_dates, _xpt_payer_nrx, 'NRx Share 
 _xpt_dl_ch_trx_b64 = _build_xpt_excel(_xpt_dates, _xpt_ch_trx, 'TRx Share by Channel')
 _xpt_dl_ch_nrx_b64 = _build_xpt_excel(_xpt_dates, _xpt_ch_nrx, 'NRx Share by Channel')
 
+# --- NPA Market Insights Excel downloads ---
+_npa_dates = [week_to_date(w) for w in weeks]
+
+def _build_npa_brand_excel(brand_df, metric, sheet_name):
+    dates_col = [week_to_date(w).strftime('%Y-%m-%d') for w in sorted(brand_df['WEEK_ID'].unique())]
+    data = {'Week': dates_col}
+    for brand in ['NURTEC', 'UBRELVY', 'QULIPTA']:
+        bdf = brand_df[brand_df['BRAND'] == brand].sort_values('WEEK_ID')
+        data[f'{brand} Actuals'] = list(bdf['ACTUALS'])
+        data[f'{brand} STLY'] = list(bdf['STLY'])
+    return _build_xpt_excel(_npa_dates, {k: v for k, v in data.items() if k != 'Week'}, sheet_name)
+
+def _build_npa_channel_excel(channel_dict, brand, metric, sheet_name):
+    ch = channel_dict[brand]
+    data = {
+        'Retail Actuals': ch['Retail']['actuals'], 'Retail STLY': ch['Retail']['stly'],
+        'Mail-Order Actuals': ch['Mail']['actuals'], 'Mail-Order STLY': ch['Mail']['stly'],
+        'LTC Actuals': ch['LTC']['actuals'], 'LTC STLY': ch['LTC']['stly'],
+    }
+    return _build_xpt_excel(_npa_dates, data, sheet_name)
+
+def _build_acute_prev_brand_excel(trx_df, nbrx_df, rx_class, brands):
+    wks = sorted(trx_df['WEEK_ID'].unique())
+    data = {}
+    for brand in brands:
+        t = trx_df[trx_df['BRAND'] == brand].sort_values('WEEK_ID')
+        n = nbrx_df[nbrx_df['BRAND'] == brand].sort_values('WEEK_ID')
+        data[f'{brand} TRx Actuals'] = list(t['ACTUALS'])
+        data[f'{brand} TRx STLY'] = list(t['STLY'])
+        data[f'{brand} NBRx Actuals'] = list(n['ACTUALS'])
+        data[f'{brand} NBRx STLY'] = list(n['STLY'])
+    dates = [week_to_date(w) for w in wks]
+    return _build_xpt_excel(dates, data, f'{rx_class} Brand')
+
+def _build_ap_channel_excel(segment, rx_class, brand, dates_list, sheet_name):
+    ch_df = load_acute_prev_channel_data(segment, rx_class, brand)
+    retail_df = ch_df[ch_df['CHANNEL_TYPE'] == 'Retail'].sort_values('WEEK_ID')
+    mail_df = ch_df[ch_df['CHANNEL_TYPE'] == 'MAIL'].sort_values('WEEK_ID')
+    ltc_df = ch_df[ch_df['CHANNEL_TYPE'] == 'Long term'].sort_values('WEEK_ID')
+    data = {
+        'Retail Actuals': list(retail_df['ACTUALS']), 'Retail STLY': list(retail_df['STLY']),
+        'Mail-Order Actuals': list(mail_df['ACTUALS']), 'Mail-Order STLY': list(mail_df['STLY']),
+        'LTC Actuals': list(ltc_df['ACTUALS']) if len(ltc_df) > 0 else [0]*len(dates_list),
+        'LTC STLY': list(ltc_df['STLY']) if len(ltc_df) > 0 else [0]*len(dates_list),
+    }
+    return _build_xpt_excel(dates_list, data, sheet_name)
+
+# NPA Overall Brand (2)
+_npa_brand_trx_b64 = _build_npa_brand_excel(npa_brand_df, 'TRx', 'NPA Overall Brand TRx')
+_npa_brand_nbrx_b64 = _build_npa_brand_excel(nbrx_brand_df, 'NBRx', 'NPA Overall Brand NBRx')
+# NPA Overall Channel (6)
+_npa_ch_nurtec_trx_b64 = _build_npa_channel_excel(_channel_trx_data, 'NURTEC', 'TRx', 'Channel Nurtec TRx')
+_npa_ch_nurtec_nbrx_b64 = _build_npa_channel_excel(_channel_nbrx_data, 'NURTEC', 'NBRx', 'Channel Nurtec NBRx')
+_npa_ch_ubrelvy_trx_b64 = _build_npa_channel_excel(_channel_trx_data, 'UBRELVY', 'TRx', 'Channel Ubrelvy TRx')
+_npa_ch_ubrelvy_nbrx_b64 = _build_npa_channel_excel(_channel_nbrx_data, 'UBRELVY', 'NBRx', 'Channel Ubrelvy NBRx')
+_npa_ch_qulipta_trx_b64 = _build_npa_channel_excel(_channel_trx_data, 'QULIPTA', 'TRx', 'Channel Qulipta TRx')
+_npa_ch_qulipta_nbrx_b64 = _build_npa_channel_excel(_channel_nbrx_data, 'QULIPTA', 'NBRx', 'Channel Qulipta NBRx')
+# Acute/Prev Brand (2)
+_ap_dates = [week_to_date(w) for w in sorted(_acute_trx_df['WEEK_ID'].unique())]
+_acute_brand_b64 = _build_acute_prev_brand_excel(_acute_trx_df, _acute_nbrx_df, 'Acute', ['NURTEC', 'UBRELVY'])
+_prev_brand_b64 = _build_acute_prev_brand_excel(_prev_trx_df, _prev_nbrx_df, 'Preventive', ['NURTEC', 'QULIPTA'])
+# Acute Channel (2)
+_acute_ch_nurtec_b64 = _build_ap_channel_excel("TRx", "Acute", "NURTEC", _ap_dates, 'Acute Channel Nurtec')
+_acute_ch_ubrelvy_b64 = _build_ap_channel_excel("TRx", "Acute", "UBRELVY", _ap_dates, 'Acute Channel Ubrelvy')
+# Prev Channel (2)
+_prev_ch_nurtec_b64 = _build_ap_channel_excel("TRx", "Preventive", "NURTEC", _ap_dates, 'Prev Channel Nurtec')
+_prev_ch_qulipta_b64 = _build_ap_channel_excel("TRx", "Preventive", "QULIPTA", _ap_dates, 'Prev Channel Qulipta')
+
 # --- Finance Trends Data (Live) ---
 _fin_df = load_finance_trends()
 _fin_gross_df = _fin_df[_fin_df['SECTION_NAME'] == 'Gross'].sort_values('DATE_PARSED')
@@ -1458,9 +1526,22 @@ XPT_CHANNEL_NRX_TABLE_ROWS
 
     <!-- NPA Retail Sub-tab -->
     <div id="npa-retail">
-      <div class="pill-group" style="margin-bottom:16px;">
-        <div class="pill pill-sm active" id="npa-trx-pill" onclick="toggleNpaMetric('trx')">TRx</div>
-        <div class="pill pill-sm" id="npa-nbrx-pill" onclick="toggleNpaMetric('nbrx')">NBRx</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+        <div class="pill-group" style="margin-bottom:0;">
+          <div class="pill pill-sm active" id="npa-trx-pill" onclick="toggleNpaMetric('trx')">TRx</div>
+          <div class="pill pill-sm" id="npa-nbrx-pill" onclick="toggleNpaMetric('nbrx')">NBRx</div>
+        </div>
+        <div class="dropdown-wrap" style="position:relative;">
+          <button class="icon-btn" style="font-size:11px;padding:5px 12px;border-radius:6px;background:#0000C9;color:#fff;border:none;cursor:pointer;display:flex;align-items:center;gap:5px;font-weight:700;" onclick="toggleDropdown('npaDownloadDD', event)">
+            <svg viewBox="0 0 24 24" style="width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            <span>Extract Data</span>
+            <svg viewBox="0 0 24 24" style="width:10px;height:10px;fill:none;stroke:currentColor;stroke-width:2;"><path d="M6 9l6 6 6-6"/></svg>
+          </button>
+          <div class="dropdown" id="npaDownloadDD" style="min-width:220px;">
+            <a class="dropdown-item npa-dl-item" id="npa-dl-brand" href="data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,NPA_BRAND_TRX_B64" download="NPA_Brand_Competitive_TRx.xlsx" style="text-decoration:none;color:inherit;display:flex;justify-content:space-between;" data-npa-dl-label="Brand Competitive ({M})" data-trx-href="data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,NPA_BRAND_TRX_B64" data-nbrx-href="data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,NPA_BRAND_NBRX_B64" data-trx-fname="NPA_Brand_Competitive_TRx.xlsx" data-nbrx-fname="NPA_Brand_Competitive_NBRx.xlsx"><span>Brand Competitive (TRx)</span><svg viewBox="0 0 24 24" style="width:12px;height:12px;fill:none;stroke:#6b7280;stroke-width:2;"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
+            <a class="dropdown-item npa-dl-item" id="npa-dl-channel" href="data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,NPA_CH_NURTEC_TRX_B64" download="NPA_Channel_Nurtec_TRx.xlsx" style="text-decoration:none;color:inherit;display:flex;justify-content:space-between;" data-npa-dl-label="Channel - {B} ({M})" data-nurtec-trx-href="data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,NPA_CH_NURTEC_TRX_B64" data-nurtec-nbrx-href="data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,NPA_CH_NURTEC_NBRX_B64" data-ubrelvy-trx-href="data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,NPA_CH_UBRELVY_TRX_B64" data-ubrelvy-nbrx-href="data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,NPA_CH_UBRELVY_NBRX_B64" data-qulipta-trx-href="data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,NPA_CH_QULIPTA_TRX_B64" data-qulipta-nbrx-href="data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,NPA_CH_QULIPTA_NBRX_B64"><span>Channel - Nurtec (TRx)</span><svg viewBox="0 0 24 24" style="width:12px;height:12px;fill:none;stroke:#6b7280;stroke-width:2;"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
+          </div>
+        </div>
       </div>
       <div class="card">
         <div class="card-header-row">
@@ -2147,6 +2228,45 @@ NPA_PREV_ROWS_QULIPTA_NBRx
         });
     });
 
+    // NPA Download dropdown helpers
+    function updateNpaDownload(metricLabel) {
+        var m = metricLabel.toLowerCase() === 'trx' ? 'trx' : 'nbrx';
+        var brandEl = document.getElementById('npa-dl-brand');
+        if (brandEl) {
+            var tmpl = brandEl.getAttribute('data-npa-dl-label');
+            brandEl.querySelector('span').textContent = tmpl.replace('{M}', metricLabel);
+            brandEl.href = brandEl.getAttribute('data-' + m + '-href');
+            brandEl.download = brandEl.getAttribute('data-' + m + '-fname');
+        }
+        // Also update channel link metric
+        var chEl = document.getElementById('npa-dl-channel');
+        if (chEl) {
+            var activeBrand = 'nurtec';
+            var chNurtec = document.getElementById('channel-nurtec');
+            var chUbrelvy = document.getElementById('channel-ubrelvy');
+            var chQulipta = document.getElementById('channel-qulipta');
+            if (chNurtec && chNurtec.classList.contains('active')) activeBrand = 'nurtec';
+            if (chUbrelvy && chUbrelvy.classList.contains('active')) activeBrand = 'ubrelvy';
+            if (chQulipta && chQulipta.classList.contains('active')) activeBrand = 'qulipta';
+            var brandNames = {nurtec:'Nurtec',ubrelvy:'Ubrelvy',qulipta:'Qulipta'};
+            var tmpl2 = chEl.getAttribute('data-npa-dl-label');
+            chEl.querySelector('span').textContent = tmpl2.replace('{B}', brandNames[activeBrand]).replace('{M}', metricLabel);
+            chEl.href = chEl.getAttribute('data-' + activeBrand + '-' + m + '-href');
+            chEl.download = 'NPA_Channel_' + brandNames[activeBrand] + '_' + metricLabel + '.xlsx';
+        }
+    }
+    function updateNpaChannelDownload(brand) {
+        var chEl = document.getElementById('npa-dl-channel');
+        if (!chEl) return;
+        var m = document.getElementById('npa-trx-pill').classList.contains('active') ? 'trx' : 'nbrx';
+        var metricLabel = m === 'trx' ? 'TRx' : 'NBRx';
+        var brandNames = {nurtec:'Nurtec',ubrelvy:'Ubrelvy',qulipta:'Qulipta'};
+        var tmpl = chEl.getAttribute('data-npa-dl-label');
+        chEl.querySelector('span').textContent = tmpl.replace('{B}', brandNames[brand]).replace('{M}', metricLabel);
+        chEl.href = chEl.getAttribute('data-' + brand + '-' + m + '-href');
+        chEl.download = 'NPA_Channel_' + brandNames[brand] + '_' + metricLabel + '.xlsx';
+    }
+
     // Newsletter sub-tab functions
     window.switchNpaSubtab = function(subtab) {
         var pills = document.querySelectorAll('#npa-subtabs .pill');
@@ -2291,6 +2411,7 @@ NPA_PREV_ROWS_QULIPTA_NBRx
             if (trxEl) trxEl.style.display = (b === brand && metric === 'trx') ? 'block' : 'none';
             if (nbrxEl) nbrxEl.style.display = (b === brand && metric === 'nbrx') ? 'block' : 'none';
         });
+        updateNpaChannelDownload(brand);
         window.dispatchEvent(new Event('resize'));
     };
     window.toggleNpaMetric = function(metric) {
@@ -2331,6 +2452,8 @@ NPA_PREV_ROWS_QULIPTA_NBRx
         document.querySelectorAll('.npa-table-nbrx').forEach(function(el) {
             el.style.display = metric === 'nbrx' ? '' : 'none';
         });
+        // Update NPA download dropdown
+        updateNpaDownload(metric === 'trx' ? 'TRx' : 'NBRx');
         window.dispatchEvent(new Event('resize'));
     };
     // Definitive fix: MutationObserver watches for any element becoming visible,
@@ -2432,6 +2555,15 @@ html_content = html_content.replace('XPT_DL_PAYER_TRX_B64', _xpt_dl_payer_trx_b6
 html_content = html_content.replace('XPT_DL_PAYER_NRX_B64', _xpt_dl_payer_nrx_b64)
 html_content = html_content.replace('XPT_DL_CH_TRX_B64', _xpt_dl_ch_trx_b64)
 html_content = html_content.replace('XPT_DL_CH_NRX_B64', _xpt_dl_ch_nrx_b64)
+# NPA Market Insights download Excel base64 injection
+html_content = html_content.replace('NPA_BRAND_TRX_B64', _npa_brand_trx_b64)
+html_content = html_content.replace('NPA_BRAND_NBRX_B64', _npa_brand_nbrx_b64)
+html_content = html_content.replace('NPA_CH_NURTEC_TRX_B64', _npa_ch_nurtec_trx_b64)
+html_content = html_content.replace('NPA_CH_NURTEC_NBRX_B64', _npa_ch_nurtec_nbrx_b64)
+html_content = html_content.replace('NPA_CH_UBRELVY_TRX_B64', _npa_ch_ubrelvy_trx_b64)
+html_content = html_content.replace('NPA_CH_UBRELVY_NBRX_B64', _npa_ch_ubrelvy_nbrx_b64)
+html_content = html_content.replace('NPA_CH_QULIPTA_TRX_B64', _npa_ch_qulipta_trx_b64)
+html_content = html_content.replace('NPA_CH_QULIPTA_NBRX_B64', _npa_ch_qulipta_nbrx_b64)
 # Xponent KPI grid injection (dynamic from _xpt_national)
 if _xpt_national is not None:
     def _xpt_fmt_val(v):
