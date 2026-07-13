@@ -133,7 +133,8 @@ import pandas as pd
 from data_queries_live import (
     fetch_brand_data, fetch_channel_data, fetch_npa_stacked,
     fetch_xponent_trends, fetch_xponent_stacked,
-    fetch_finance_trends, fetch_finance_stacked
+    fetch_finance_trends, fetch_finance_stacked,
+    fetch_data_refresh
 )
 
 @st.cache_data(ttl=3600)
@@ -167,6 +168,10 @@ def load_finance_trends():
 @st.cache_data(ttl=3600)
 def load_finance_stacked():
     return fetch_finance_stacked()
+
+@st.cache_data(ttl=3600)
+def load_data_refresh():
+    return fetch_data_refresh()
 
 # --- NPA Overall Brand Data ---
 npa_brand_df = load_brand_data("TRx")
@@ -1099,12 +1104,7 @@ a { color: inherit; text-decoration: none; }
                         <button class="icon-btn" onclick="toggleDropdown('dataDropdown', event)"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v6c0 1.7 3.6 3 8 3s8-1.3 8-3V6"/><path d="M4 12v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/></svg>Data Availability<svg viewBox="0 0 24 24" style="width:11px;height:11px;"><path d="M6 9l6 6 6-6"/></svg></button>
                         <div class="dropdown" id="dataDropdown">
                             <div class="dropdown-header">Last refresh by source</div>
-                            <div class="dropdown-item"><span class="src">NPA</span><span class="date">Jun 13, 2026</span></div>
-                            <div class="dropdown-item"><span class="src">Weekly LAAD</span><span class="date">Jun 11, 2026</span></div>
-                            <div class="dropdown-item"><span class="src">Monthly LAAD</span><span class="date">May 31, 2026</span></div>
-                            <div class="dropdown-item"><span class="src">Xponent</span><span class="date">Jun 6, 2026</span></div>
-                            <div class="dropdown-item"><span class="src">Forsyth</span><span class="date">Jun 10, 2026</span></div>
-                            <div class="dropdown-item"><span class="src">Optum</span><span class="date">Mar 31, 2026</span></div>
+                            DATA_REFRESH_ITEMS_PLACEHOLDER
                         </div>
                     </div>
                 </div>
@@ -2316,6 +2316,20 @@ html_content = html_content.replace('<div class="chart-container">\n          <s
 # Dynamic "Updated" date (current date when backend starts)
 from datetime import datetime as _dt
 html_content = html_content.replace('APP_LAST_UPDATED_DATE', _dt.now().strftime('%b %d, %Y'))
+
+# Dynamic Data Availability refresh dates
+_refresh_df = load_data_refresh()
+_refresh_html = ''
+for _, row in _refresh_df.iterrows():
+    src = row['DATA_SOURCE']
+    raw_date = str(row['REFRESH_DATE']).strip('"')
+    try:
+        dt_obj = _dt.strptime(raw_date, '%Y-%m-%d')
+        formatted = dt_obj.strftime('%b %d, %Y')
+    except Exception:
+        formatted = raw_date
+    _refresh_html += f'<div class="dropdown-item"><span class="src">{src}</span><span class="date">{formatted}</span></div>\n'
+html_content = html_content.replace('DATA_REFRESH_ITEMS_PLACEHOLDER', _refresh_html)
 
 
 channel_html = '<div id="ch-nurtec-trx" style="width:100%;overflow:hidden;">' + ch_nurtec_trx + '</div>'

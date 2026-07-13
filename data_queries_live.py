@@ -99,3 +99,16 @@ def fetch_finance_stacked():
     df = _get_full_dataset()
     df = df[df['STACK_KEY'] == 'FINANCE_STACKED_METRICES']
     return df
+
+
+def fetch_data_refresh():
+    """
+    Fetch Data Availability refresh dates by source.
+    Returns DataFrame with: DATA_SOURCE, REFRESH_DATE
+    """
+    import dataiku
+    df = dataiku.Dataset("USMIGRAINEIISANALYTICSETL_LANDING_PAGE_DATA_REFRESH_SF").get_dataframe()
+    df.columns = [col.upper() for col in df.columns]
+    # Clean quoted date strings
+    df['REFRESH_DATE'] = df['REFRESH_DATE'].astype(str).str.strip('"')
+    return df[['DATA_SOURCE', 'REFRESH_DATE']].reset_index(drop=True)
