@@ -1794,6 +1794,13 @@ NPA_PREV_ROWS_QULIPTA_NBRx
   </div>
 </div>
 <div class="nl-tab" id="nl-access-tab">
+<div style="position:relative;">
+<div style="position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(255,255,255,0.75);z-index:50;display:flex;align-items:center;justify-content:center;border-radius:12px;">
+  <div style="background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:28px 40px;box-shadow:0 4px 20px rgba(0,0,0,0.08);text-align:center;max-width:420px;">
+    <div style="font-size:14px;font-weight:600;color:#1a2332;margin-bottom:6px;">Coming Soon</div>
+    <div style="font-size:12px;color:#64748b;line-height:1.6;">This section is not yet live and views are just for illustrative purpose.</div>
+  </div>
+</div>
 <div style="padding:8px 32px 24px;">
 <div class="section-head"><h2>Access Summary</h2><p>Payer access changes, formulary tracking, and covered lives analysis.</p></div>
     <div class="card">
@@ -1975,6 +1982,7 @@ NPA_PREV_ROWS_QULIPTA_NBRx
       </div>
     </div>
   </div>
+</div>
 </div>
 <div class="nl-tab" id="nl-financial-tab">
 <div style="padding:8px 32px 24px;">
