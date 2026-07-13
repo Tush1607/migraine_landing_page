@@ -2049,7 +2049,7 @@ NPA_PREV_ROWS_QULIPTA_NBRx
       </div>
     </div>
 
-    <div style="display:flex;justify-content:flex-start;margin-bottom:8px;margin-top:8px;">
+    <div style="display:flex;justify-content:flex-end;margin-bottom:8px;margin-top:8px;">
       <div class="dropdown-wrap" style="position:relative;">
         <button class="icon-btn" style="font-size:11px;padding:5px 12px;border-radius:6px;background:#0000C9;color:#fff;border:none;cursor:pointer;display:flex;align-items:center;gap:5px;font-weight:700;" onclick="toggleDropdown('finDownloadDD', event)">
           <svg viewBox="0 0 24 24" style="width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
