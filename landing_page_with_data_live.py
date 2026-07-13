@@ -347,6 +347,38 @@ _fin_net_actuals = [v/1e6 if v and v > 0 else None for v in _fin_net_df['ACTUAL_
 _fin_net_stly = [v/1e6 if v and v > 0 else None for v in _fin_net_df['PRIOR_YEAR_VALUE']]
 _fin_net_budget = [v/1e6 if v and v > 0 else None for v in _fin_net_df['BUDGET_VALUE']]
 
+# --- Finance Excel downloads ---
+def _build_fin_excel(labels, actuals, stly, budget, sheet_name):
+    data = {'Actual ($M)': actuals, 'STLY ($M)': stly, 'Budget ($M)': budget}
+    dates = [datetime.strptime('2026-01-01', '%Y-%m-%d')] * len(labels)  # placeholder
+    buf = io.BytesIO()
+    df = pd.DataFrame({'Period': labels, 'Actual ($M)': actuals, 'STLY ($M)': stly, 'Budget ($M)': budget})
+    df.to_excel(buf, index=False, sheet_name=sheet_name, engine='openpyxl')
+    buf.seek(0)
+    from openpyxl import load_workbook
+    wb = load_workbook(buf)
+    ws = wb.active
+    header_fill = PatternFill(start_color='0000C9', end_color='0000C9', fill_type='solid')
+    header_font = Font(bold=True, color='FFFFFF', size=11)
+    thin_border = Border(left=Side(style='thin'), right=Side(style='thin'), top=Side(style='thin'), bottom=Side(style='thin'))
+    for cell in ws[1]:
+        cell.fill = header_fill
+        cell.font = header_font
+        cell.alignment = Alignment(horizontal='center')
+    for row in ws.iter_rows(min_row=1, max_row=ws.max_row, max_col=ws.max_column):
+        for cell in row:
+            cell.border = thin_border
+    for col in ws.columns:
+        max_len = max(len(str(cell.value or '')) for cell in col)
+        ws.column_dimensions[col[0].column_letter].width = max_len + 3
+    out = io.BytesIO()
+    wb.save(out)
+    out.seek(0)
+    return base64.b64encode(out.read()).decode()
+
+_fin_gross_b64 = _build_fin_excel(_fin_gross_labels, _fin_gross_actuals, _fin_gross_stly, _fin_gross_budget, 'Gross Sales')
+_fin_net_b64 = _build_fin_excel(_fin_net_labels, _fin_net_actuals, _fin_net_stly, _fin_net_budget, 'Net Sales')
+
 # --- Xponent KPI values (Live) ---
 _xpt_kpi_df = load_xponent_stacked()
 _xpt_national = _xpt_kpi_df[_xpt_kpi_df['CUT_TYPE'] == 'National'].iloc[0] if len(_xpt_kpi_df[_xpt_kpi_df['CUT_TYPE'] == 'National']) > 0 else None
@@ -2017,6 +2049,19 @@ NPA_PREV_ROWS_QULIPTA_NBRx
       </div>
     </div>
 
+    <div style="display:flex;justify-content:flex-start;margin-bottom:8px;margin-top:8px;">
+      <div class="dropdown-wrap" style="position:relative;">
+        <button class="icon-btn" style="font-size:11px;padding:5px 12px;border-radius:6px;background:#0000C9;color:#fff;border:none;cursor:pointer;display:flex;align-items:center;gap:5px;font-weight:700;" onclick="toggleDropdown('finDownloadDD', event)">
+          <svg viewBox="0 0 24 24" style="width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          <svg viewBox="0 0 24 24" style="width:10px;height:10px;fill:none;stroke:currentColor;stroke-width:2;"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="dropdown" id="finDownloadDD" style="min-width:180px;">
+          <a class="dropdown-item" id="fin-dl-gross" href="data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,FIN_GROSS_DL_B64" download="Finance_Gross_Sales.xlsx" style="text-decoration:none;color:inherit;display:flex;justify-content:space-between;"><span>Gross Sales</span><svg viewBox="0 0 24 24" style="width:12px;height:12px;fill:none;stroke:#6b7280;stroke-width:2;"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
+          <a class="dropdown-item" id="fin-dl-net" href="data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,FIN_NET_DL_B64" download="Finance_Net_Sales.xlsx" style="text-decoration:none;color:inherit;display:flex;justify-content:space-between;"><span>Net Sales</span><svg viewBox="0 0 24 24" style="width:12px;height:12px;fill:none;stroke:#6b7280;stroke-width:2;"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
+        </div>
+      </div>
+    </div>
+
         <div class="card">
       <div class="card-title">Weekly Gross Revenue vs Budget (2026)</div>
       <div class="card-subtitle">Actuals · STLY · Budget OP'26 · $M</div>
@@ -2619,6 +2664,9 @@ html_content = html_content.replace('AP_ACUTE_CH_NURTEC_B64', _acute_ch_nurtec_b
 html_content = html_content.replace('AP_ACUTE_CH_UBRELVY_B64', _acute_ch_ubrelvy_b64)
 html_content = html_content.replace('AP_PREV_CH_NURTEC_B64', _prev_ch_nurtec_b64)
 html_content = html_content.replace('AP_PREV_CH_QULIPTA_B64', _prev_ch_qulipta_b64)
+# Finance download Excel base64 injection
+html_content = html_content.replace('FIN_GROSS_DL_B64', _fin_gross_b64)
+html_content = html_content.replace('FIN_NET_DL_B64', _fin_net_b64)
 # Xponent KPI grid injection (dynamic from _xpt_national)
 if _xpt_national is not None:
     def _xpt_fmt_val(v):
