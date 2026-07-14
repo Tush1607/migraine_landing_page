@@ -1589,10 +1589,6 @@ XPT_CHANNEL_NRX_TABLE_ROWS
 BRAND_CHART_DATA_PLACEHOLDER
           </svg>
         </div>
-        
-        
-        
-        <div class="footnote">Time period reference: Actuals 2026 w.e. 06/05/2026 · Same Time Last Year w.e. 06/06/2025</div>
       </div>
 
       <div class="card">
@@ -1609,9 +1605,6 @@ BRAND_CHART_DATA_PLACEHOLDER
         
         </div>
         CHANNEL_CHART_PLACEHOLDER
-        
-        
-        <div class="footnote">Time period reference: Actuals 2026 w.e. 06/05/2026 · Same Time Last Year w.e. 06/06/2025</div>
       </div>
 
       <div class="brand-header brand-a"><span>NURTEC</span><span style="font-weight:400;margin-left:12px;" data-metric-toggle="{M} Volume · Growth (vs STLY) · oCGRP Market Share %">TRx Volume · Growth (vs STLY) · oCGRP Market Share %</span></div>
