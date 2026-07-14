@@ -1360,19 +1360,19 @@ a { color: inherit; text-decoration: none; }
       <div style="background:#EEF5FB;border-radius:12px;padding:14px 16px;text-align:left;border:1px solid rgba(15,23,42,0.05);transition:transform 0.25s cubic-bezier(0.16,1,0.3,1),box-shadow 0.25s cubic-bezier(0.4,0,0.2,1);cursor:default;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 6px 16px rgba(15,23,42,0.07),0 2px 4px rgba(15,23,42,0.04)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
         <div style="font-size:28px;font-weight:800;color:#0000C9;margin-bottom:6px;">EXEC_NBRX_WK_VAL</div>
         <div style="font-size:12px;font-weight:600;color:#374151;margin-bottom:2px;">Nurtec NBRx</div>
-        <div style="font-size:11px;color:#16a34a;font-weight:600;">EXEC_NBRX_WK_GROWTH WoW</div>
+        <div style="font-size:11px;color:#16a34a;font-weight:600;">EXEC_NBRX_WK_GROWTH vs STLY</div>
         <div style="font-size:10px;color:#9ca3af;margin-top:4px;">Latest Week</div>
       </div>
       <div style="background:#EEF5FB;border-radius:12px;padding:14px 16px;text-align:left;border:1px solid rgba(15,23,42,0.05);transition:transform 0.25s cubic-bezier(0.16,1,0.3,1),box-shadow 0.25s cubic-bezier(0.4,0,0.2,1);cursor:default;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 6px 16px rgba(15,23,42,0.07),0 2px 4px rgba(15,23,42,0.04)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
         <div style="font-size:28px;font-weight:800;color:#0000C9;margin-bottom:6px;">EXEC_TRX_WK_VAL</div>
         <div style="font-size:12px;font-weight:600;color:#374151;margin-bottom:2px;">Nurtec TRx</div>
-        <div style="font-size:11px;color:#16a34a;font-weight:600;">EXEC_TRX_WK_GROWTH WoW</div>
+        <div style="font-size:11px;color:#16a34a;font-weight:600;">EXEC_TRX_WK_GROWTH vs STLY</div>
         <div style="font-size:10px;color:#9ca3af;margin-top:4px;">Latest Week</div>
       </div>
       <div style="background:#EEF5FB;border-radius:12px;padding:14px 16px;text-align:left;border:1px solid rgba(15,23,42,0.05);transition:transform 0.25s cubic-bezier(0.16,1,0.3,1),box-shadow 0.25s cubic-bezier(0.4,0,0.2,1);cursor:default;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 6px 16px rgba(15,23,42,0.07),0 2px 4px rgba(15,23,42,0.04)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
         <div style="font-size:28px;font-weight:800;color:#0000C9;margin-bottom:6px;">EXEC_MS_WK_VAL</div>
         <div style="font-size:12px;font-weight:600;color:#374151;margin-bottom:2px;">oCGRP TRx Share</div>
-        <div style="font-size:11px;color:#16a34a;font-weight:600;">EXEC_MS_WK_GROWTH WoW</div>
+        <div style="font-size:11px;color:#16a34a;font-weight:600;">EXEC_MS_WK_GROWTH vs STLY</div>
         <div style="font-size:10px;color:#9ca3af;margin-top:4px;">National &middot; All Segments</div>
       </div>
       <div style="background:#EEF5FB;border-radius:12px;padding:14px 16px;text-align:left;border:1px solid rgba(15,23,42,0.05);transition:transform 0.25s cubic-bezier(0.16,1,0.3,1),box-shadow 0.25s cubic-bezier(0.4,0,0.2,1);cursor:default;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 6px 16px rgba(15,23,42,0.07),0 2px 4px rgba(15,23,42,0.04)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
