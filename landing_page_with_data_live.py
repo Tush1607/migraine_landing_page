@@ -1205,10 +1205,6 @@ a { color: inherit; text-decoration: none; }
     <div class="toolbar">
         <div class="toolbar-title">Workspace &middot; <strong id="toolbarSection">Deep-Dive Dashboards</strong></div>
         <div class="toolbar-actions">
-            <button class="icon-btn" title="Help">
-                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 015 0c0 1.5-2.5 2-2.5 4M12 17v.01"/></svg>
-                Help
-            </button>
         </div>
     </div>
 
