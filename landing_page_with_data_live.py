@@ -1390,7 +1390,8 @@ a { color: inherit; text-decoration: none; }
         <div style="font-size:11px;color:#d97706;font-weight:600;">TRx vs OP26</div>
         <div style="font-size:10px;color:#9ca3af;margin-top:4px;">Nurtec TRx</div>
       </div>
-      <div style="background:#EEF5FB;border-radius:12px;padding:14px 16px;text-align:left;border:1px solid rgba(15,23,42,0.05);transition:transform 0.25s cubic-bezier(0.16,1,0.3,1),box-shadow 0.25s cubic-bezier(0.4,0,0.2,1);cursor:default;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 6px 16px rgba(15,23,42,0.07),0 2px 4px rgba(15,23,42,0.04)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+      <div style="background:#EEF5FB;border-radius:12px;padding:14px 16px;text-align:left;border:1px solid rgba(15,23,42,0.05);transition:transform 0.25s cubic-bezier(0.16,1,0.3,1),box-shadow 0.25s cubic-bezier(0.4,0,0.2,1);cursor:default;position:relative;overflow:hidden;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 6px 16px rgba(15,23,42,0.07),0 2px 4px rgba(15,23,42,0.04)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+        <div style="position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(255,255,255,0.58);z-index:5;display:flex;align-items:center;justify-content:center;border-radius:12px;"><span style="font-size:9px;font-weight:600;color:#64748b;background:#fff;padding:3px 8px;border-radius:4px;border:1px solid #e2e8f0;">WIP</span></div>
         <div style="font-size:28px;font-weight:800;color:#0000C9;margin-bottom:6px;">128M</div>
         <div style="font-size:12px;font-weight:600;color:#374151;margin-bottom:2px;">Covered Lives w/ Access</div>
         <div style="font-size:11px;color:#16a34a;font-weight:600;">+1.2M vs prior month</div>
@@ -1433,7 +1434,8 @@ EXEC_PERF_SNAPSHOT_ROWS
         </table>
       </div>
 
-      <div style="flex:1;background:#ffffff;border:1px solid #e8ecf0;border-left:4px solid #0000C9;border-radius:8px;padding:20px 24px;">
+      <div style="flex:1;background:#ffffff;border:1px solid #e8ecf0;border-left:4px solid #0000C9;border-radius:8px;padding:20px 24px;position:relative;overflow:hidden;">
+        <div style="position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(255,255,255,0.58);z-index:5;display:flex;align-items:center;justify-content:center;border-radius:8px;"><span style="font-size:9px;font-weight:600;color:#64748b;background:#fff;padding:3px 8px;border-radius:4px;border:1px solid #e2e8f0;">WIP</span></div>
         <div style="font-size:16px;font-weight:700;margin-bottom:4px;">Access Change Lines</div>
         <div style="font-size:11px;color:#6b7280;margin-bottom:16px;">Only appears with material weekly access changes</div>
         <div style="margin-bottom:14px;">
