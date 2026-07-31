@@ -2183,6 +2183,60 @@ NPA_PREV_ROWS_QULIPTA_NBRx
                         <button class="br-carousel-btn br-next"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></button>
                     </div>
                 </div>
+                <!-- Migraine SDL -->
+                <div class="br-section-card">
+                    <div class="br-section-header">
+                        <span class="icon-chip chip-s2"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg></span>
+                        <span class="br-section-title">Migraine SDL</span>
+                    </div>
+                    <div class="br-section-divider"></div>
+                    <div class="br-carousel-wrap">
+                        <button class="br-carousel-btn br-prev" disabled><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
+                        <div class="br-docs-track">
+                            <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:w:/s/MigraineAnalytics/IQBrXYMFq6EZQLHHGrJNI2kdAX9GikX2sr8Cre4-wNy41i8?e=LenYIw" target="_blank" rel="noopener">
+                                <span class="br-doc-name">Blaze Forecasting</span>
+                                <span class="br-doc-desc">SDL documentation for Blaze forecasting flow.</span>
+                                <span class="br-doc-date">Updated 2026</span>
+                            </a>
+                            <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:w:/s/MigraineAnalytics/IQDDclIUfRCbS568ELGNyo6WATa1Stjy9HVnhNb-IF79bNs?e=Es7JeA" target="_blank" rel="noopener">
+                                <span class="br-doc-name">ELAAD Flow</span>
+                                <span class="br-doc-desc">SDL documentation for ELAAD data flow.</span>
+                                <span class="br-doc-date">Updated 2026</span>
+                            </a>
+                            <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:w:/s/MigraineAnalytics/IQCxW3pPz56cRovjeDADfXQ8AX0RBgBjumPePN6RLg6MJps?e=OdPqBq" target="_blank" rel="noopener">
+                                <span class="br-doc-name">Finance Flow</span>
+                                <span class="br-doc-desc">SDL documentation for Finance data flow.</span>
+                                <span class="br-doc-date">Updated 2026</span>
+                            </a>
+                            <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:w:/s/MigraineAnalytics/IQAIoRRbOYovTbBORRTx5KKBAUWJZL4fyrzBtK9K9AwNyds?e=keDfgB" target="_blank" rel="noopener">
+                                <span class="br-doc-name">Forsyth Flow</span>
+                                <span class="br-doc-desc">SDL documentation for Forsyth data flow.</span>
+                                <span class="br-doc-date">Updated 2026</span>
+                            </a>
+                            <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:w:/s/MigraineAnalytics/IQDbjA3d9ScmR7i6UeEmkQd3ATQQ7Nx4JR4hsZ_A9aaFLm4?e=DzpQMR" target="_blank" rel="noopener">
+                                <span class="br-doc-name">LAAD Flow</span>
+                                <span class="br-doc-desc">SDL documentation for LAAD data flow.</span>
+                                <span class="br-doc-date">Updated 2026</span>
+                            </a>
+                            <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:w:/s/MigraineAnalytics/IQDyAUgy2kZ3SqBxbq0rLuWEAfjHRX8lCXjcSEv7kMJ40dA?e=8gobHY" target="_blank" rel="noopener">
+                                <span class="br-doc-name">NPA Flow</span>
+                                <span class="br-doc-desc">SDL documentation for NPA data flow.</span>
+                                <span class="br-doc-date">Updated 2026</span>
+                            </a>
+                            <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:w:/s/MigraineAnalytics/IQC4iqCLZZJtSJQNjW3wUv1vAckkbWa6JePLGxTAXOSgYqg?e=42AzZ6" target="_blank" rel="noopener">
+                                <span class="br-doc-name">Optum Flow</span>
+                                <span class="br-doc-desc">SDL documentation for Optum data flow.</span>
+                                <span class="br-doc-date">Updated 2026</span>
+                            </a>
+                            <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:w:/s/MigraineAnalytics/IQCdfPixrb_SQa8PoVSyy3J8Ad_9toCsoIMOHZH-SjCD1r8?e=Dwnd1U" target="_blank" rel="noopener">
+                                <span class="br-doc-name">Xponent Flow</span>
+                                <span class="br-doc-desc">SDL documentation for Xponent data flow.</span>
+                                <span class="br-doc-date">Updated 2026</span>
+                            </a>
+                        </div>
+                        <button class="br-carousel-btn br-next"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></button>
+                    </div>
+                </div>
                 <!-- Migraine Dashboard -->
                 <div class="br-section-card">
                     <div class="br-section-header">
