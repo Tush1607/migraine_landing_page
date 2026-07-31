@@ -1012,16 +1012,17 @@ a { color: inherit; text-decoration: none; }
 
 /* ───── BR SECTIONS ───── */
 .br-grid { display: flex; flex-direction: column; gap: 1rem; }
-.br-section-card { background: var(--surface); border-radius: 14px; box-shadow: var(--shadow-sm); padding: 1rem 1.4rem; display: flex; align-items: center; gap: 1.2rem; flex-wrap: wrap; }
-.br-section-header { display: flex; align-items: center; gap: 0.75rem; flex-shrink: 0; }
-.br-section-title { font-family: 'Pfizer Diatype Office', Arial, Helvetica, sans-serif; font-size: 0.95rem; font-weight: 700; color: var(--navy-900); }
-.br-section-count { font-size: 0.7rem; color: var(--text-muted); margin-left: auto; flex-shrink: 0; }
-.br-docs-row { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.br-section-card { background: var(--surface); border-radius: 14px; box-shadow: var(--shadow-sm); padding: 1rem 1.4rem; display: flex; align-items: stretch; gap: 0; }
+.br-section-header { display: flex; align-items: center; gap: 0.75rem; flex-shrink: 0; min-width: 200px; padding-right: 1.2rem; }
+.br-section-title { font-family: 'Pfizer Diatype Office', Arial, Helvetica, sans-serif; font-size: 0.95rem; font-weight: 700; color: var(--navy-900); white-space: nowrap; }
+.br-section-divider { width: 1px; align-self: stretch; margin: 0.5rem 0; border: none; border-left: 1.5px dashed var(--hairline-2); flex-shrink: 0; }
+.br-docs-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; flex: 1; padding: 0 1.2rem; align-items: center; }
 .br-doc-chip { display: flex; flex-direction: column; gap: 0.2rem; padding: 0.5rem 0.9rem; border-radius: 10px; background: rgba(28,79,192,0.04); border: 1px solid var(--hairline-2); text-decoration: none; color: inherit; transition: background 0.18s var(--ease), border-color 0.18s var(--ease), transform 0.2s var(--ease-out); }
 .br-doc-chip:hover { background: rgba(28,79,192,0.08); border-color: rgba(28,79,192,0.2); transform: translateY(-1px); }
 .br-doc-name { font-size: 0.82rem; font-weight: 600; color: var(--navy-700); }
 .br-doc-chip:hover .br-doc-name { color: var(--navy-900); }
 .br-doc-date { font-size: 0.65rem; color: var(--text-muted); }
+.br-section-count { font-size: 0.7rem; color: var(--text-muted); flex-shrink: 0; padding-left: 1rem; align-self: center; }
 
 /* ───── HERO BANNER ───── */
 .hero { position: relative; background: radial-gradient(ellipse 90% 80% at 20% 20%, rgba(28,79,192,0.06) 0%, transparent 50%), radial-gradient(ellipse 60% 70% at 80% 80%, rgba(65,182,230,0.05) 0%, transparent 50%), linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(248,250,253,0.95) 100%); border-radius: 16px; padding: 2rem 2rem 1.6rem; border: 1px solid var(--hairline-2); box-shadow: var(--shadow-sm); overflow: hidden; }
@@ -2148,6 +2149,7 @@ NPA_PREV_ROWS_QULIPTA_NBRx
                         <span class="icon-chip chip-s1"><svg viewBox="0 0 24 24"><path d="M3 19a9 9 0 019-9 9 9 0 019 9"/><path d="M3 19h18M12 10V3"/><path d="M7.8 4.8L12 3l4.2 1.8"/></svg></span>
                         <span class="br-section-title">Migraine Market</span>
                     </div>
+                    <div class="br-section-divider"></div>
                     <div class="br-docs-row">
                         <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:p:/s/MigraineAnalytics/IQBdBFg1vxdFR6HZvdxtKVPZAUdmK-vTwF4Trvm4JdEBru4?e=TG0guS" target="_blank" rel="noopener">
                             <span class="br-doc-name">Migraine Market Overview</span>
@@ -2166,7 +2168,6 @@ NPA_PREV_ROWS_QULIPTA_NBRx
                             <span class="br-doc-date">Updated Jan 1, 2026</span>
                         </a>
                     </div>
-                    <span class="br-section-count">4 documents</span>
                 </div>
                 <!-- Migraine Dashboard -->
                 <div class="br-section-card">
@@ -2174,13 +2175,13 @@ NPA_PREV_ROWS_QULIPTA_NBRx
                         <span class="icon-chip chip-s4"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 5V3M12 21v-2M16.95 7.05l1.41-1.41M5.64 18.36l1.41-1.41M19 12h2M3 12h2M16.95 16.95l1.41 1.41M5.64 5.64l1.41 1.41"/></svg></span>
                         <span class="br-section-title">Migraine Dashboard</span>
                     </div>
+                    <div class="br-section-divider"></div>
                     <div class="br-docs-row">
                         <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:p:/s/MigraineAnalytics/IQADCiim_iD7QbxZE7Fm3F89Ab8O10p4xzPmog3z4X7KQ2g?e=jA6LCi" target="_blank" rel="noopener">
                             <span class="br-doc-name">Migraine Dashboard BR</span>
                             <span class="br-doc-date">Updated Feb 1, 2026</span>
                         </a>
                     </div>
-                    <span class="br-section-count">1 document</span>
                 </div>
             </div>
         </section>
