@@ -2149,40 +2149,6 @@ NPA_PREV_ROWS_QULIPTA_NBRx
         <section class="section" id="docs" data-label="Business Rule Docs">
             <div class="section-head"><h2>Business Rule Documentation</h2><p>Data definitions, metric calculations, business logic, and reporting standards.</p></div>
             <div class="br-grid">
-                <!-- Migraine Market -->
-                <div class="br-section-card">
-                    <div class="br-section-header">
-                        <span class="icon-chip chip-s1"><svg viewBox="0 0 24 24"><path d="M3 19a9 9 0 019-9 9 9 0 019 9"/><path d="M3 19h18M12 10V3"/><path d="M7.8 4.8L12 3l4.2 1.8"/></svg></span>
-                        <span class="br-section-title">Migraine Market</span>
-                    </div>
-                    <div class="br-section-divider"></div>
-                    <div class="br-carousel-wrap">
-                        <button class="br-carousel-btn br-prev" disabled><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
-                        <div class="br-docs-track">
-                            <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:p:/s/MigraineAnalytics/IQBdBFg1vxdFR6HZvdxtKVPZAUdmK-vTwF4Trvm4JdEBru4?e=TG0guS" target="_blank" rel="noopener">
-                                <span class="br-doc-name">Migraine Market Overview</span>
-                                <span class="br-doc-desc">Market landscape and key therapeutic area definitions.</span>
-                                <span class="br-doc-date">Updated Dec 23, 2025</span>
-                            </a>
-                            <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:p:/s/MigraineAnalytics/IQBCUjn2CtrYSpUJ-IXcMFBeAUzgT_soSZpsz8EyDbc3b_I?e=XD5od1" target="_blank" rel="noopener">
-                                <span class="br-doc-name">Migraine Market Basket BR</span>
-                                <span class="br-doc-desc">Cross-functional business rule alignment documentation.</span>
-                                <span class="br-doc-date">Updated Jan 1, 2025</span>
-                            </a>
-                            <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:p:/s/MigraineAnalytics/IQA9ft3L-N9VT4YQzW36UFsXAQU2ZNBXbO3UjFvDwa6NV5E?e=8ytpZI" target="_blank" rel="noopener">
-                                <span class="br-doc-name">IIS BR Master Deck</span>
-                                <span class="br-doc-desc">Master business rules deck for IIS analytics.</span>
-                                <span class="br-doc-date">Updated Jan 1, 2026</span>
-                            </a>
-                            <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:p:/s/MigraineAnalytics/IQBOAt2MOv_OTqhwLardlsHPAZdTa2hsvBq5pUuZfNbVWTM?e=tDWmaa" target="_blank" rel="noopener">
-                                <span class="br-doc-name">IIS Migraine Data Ecosystem</span>
-                                <span class="br-doc-desc">Data sources, flows, and ecosystem mapping.</span>
-                                <span class="br-doc-date">Updated Jan 1, 2026</span>
-                            </a>
-                        </div>
-                        <button class="br-carousel-btn br-next"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></button>
-                    </div>
-                </div>
                 <!-- Migraine SDL -->
                 <div class="br-section-card">
                     <div class="br-section-header">
@@ -2232,6 +2198,40 @@ NPA_PREV_ROWS_QULIPTA_NBRx
                                 <span class="br-doc-name">Xponent Flow</span>
                                 <span class="br-doc-desc">SDL documentation for Xponent data flow.</span>
                                 <span class="br-doc-date">Updated 2026</span>
+                            </a>
+                        </div>
+                        <button class="br-carousel-btn br-next"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></button>
+                    </div>
+                </div>
+                <!-- Migraine Market -->
+                <div class="br-section-card">
+                    <div class="br-section-header">
+                        <span class="icon-chip chip-s1"><svg viewBox="0 0 24 24"><path d="M3 19a9 9 0 019-9 9 9 0 019 9"/><path d="M3 19h18M12 10V3"/><path d="M7.8 4.8L12 3l4.2 1.8"/></svg></span>
+                        <span class="br-section-title">Migraine Market</span>
+                    </div>
+                    <div class="br-section-divider"></div>
+                    <div class="br-carousel-wrap">
+                        <button class="br-carousel-btn br-prev" disabled><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
+                        <div class="br-docs-track">
+                            <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:p:/s/MigraineAnalytics/IQBdBFg1vxdFR6HZvdxtKVPZAUdmK-vTwF4Trvm4JdEBru4?e=TG0guS" target="_blank" rel="noopener">
+                                <span class="br-doc-name">Migraine Market Overview</span>
+                                <span class="br-doc-desc">Market landscape and key therapeutic area definitions.</span>
+                                <span class="br-doc-date">Updated Dec 23, 2025</span>
+                            </a>
+                            <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:p:/s/MigraineAnalytics/IQBCUjn2CtrYSpUJ-IXcMFBeAUzgT_soSZpsz8EyDbc3b_I?e=XD5od1" target="_blank" rel="noopener">
+                                <span class="br-doc-name">Migraine Market Basket BR</span>
+                                <span class="br-doc-desc">Cross-functional business rule alignment documentation.</span>
+                                <span class="br-doc-date">Updated Jan 1, 2025</span>
+                            </a>
+                            <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:p:/s/MigraineAnalytics/IQA9ft3L-N9VT4YQzW36UFsXAQU2ZNBXbO3UjFvDwa6NV5E?e=8ytpZI" target="_blank" rel="noopener">
+                                <span class="br-doc-name">IIS BR Master Deck</span>
+                                <span class="br-doc-desc">Master business rules deck for IIS analytics.</span>
+                                <span class="br-doc-date">Updated Jan 1, 2026</span>
+                            </a>
+                            <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:p:/s/MigraineAnalytics/IQBOAt2MOv_OTqhwLardlsHPAZdTa2hsvBq5pUuZfNbVWTM?e=tDWmaa" target="_blank" rel="noopener">
+                                <span class="br-doc-name">IIS Migraine Data Ecosystem</span>
+                                <span class="br-doc-desc">Data sources, flows, and ecosystem mapping.</span>
+                                <span class="br-doc-date">Updated Jan 1, 2026</span>
                             </a>
                         </div>
                         <button class="br-carousel-btn br-next"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></button>
