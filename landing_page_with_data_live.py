@@ -1013,16 +1013,15 @@ a { color: inherit; text-decoration: none; }
 /* ───── BR SECTIONS ───── */
 .br-grid { display: flex; flex-direction: column; gap: 1rem; }
 .br-section-card { background: var(--surface); border-radius: 14px; box-shadow: var(--shadow-sm); padding: 1rem 1.4rem; display: flex; align-items: stretch; gap: 0; }
-.br-section-header { display: flex; align-items: center; gap: 0.75rem; flex-shrink: 0; min-width: 200px; padding-right: 1.2rem; }
+.br-section-header { display: flex; align-items: center; gap: 0.75rem; flex-shrink: 0; width: 220px; padding-right: 1.2rem; }
 .br-section-title { font-family: 'Pfizer Diatype Office', Arial, Helvetica, sans-serif; font-size: 0.95rem; font-weight: 700; color: var(--navy-900); white-space: nowrap; }
-.br-section-divider { width: 1px; align-self: stretch; margin: 0.5rem 0; border: none; border-left: 1.5px dashed var(--hairline-2); flex-shrink: 0; }
+.br-section-divider { width: 0; flex-shrink: 0; margin: 0.4rem 0; border: none; border-left: 2px dashed #CBD5E1; }
 .br-docs-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; flex: 1; padding: 0 1.2rem; align-items: center; }
 .br-doc-chip { display: flex; flex-direction: column; gap: 0.2rem; padding: 0.5rem 0.9rem; border-radius: 10px; background: rgba(28,79,192,0.04); border: 1px solid var(--hairline-2); text-decoration: none; color: inherit; transition: background 0.18s var(--ease), border-color 0.18s var(--ease), transform 0.2s var(--ease-out); }
 .br-doc-chip:hover { background: rgba(28,79,192,0.08); border-color: rgba(28,79,192,0.2); transform: translateY(-1px); }
 .br-doc-name { font-size: 0.82rem; font-weight: 600; color: var(--navy-700); }
 .br-doc-chip:hover .br-doc-name { color: var(--navy-900); }
 .br-doc-date { font-size: 0.65rem; color: var(--text-muted); }
-.br-section-count { font-size: 0.7rem; color: var(--text-muted); flex-shrink: 0; padding-left: 1rem; align-self: center; }
 
 /* ───── HERO BANNER ───── */
 .hero { position: relative; background: radial-gradient(ellipse 90% 80% at 20% 20%, rgba(28,79,192,0.06) 0%, transparent 50%), radial-gradient(ellipse 60% 70% at 80% 80%, rgba(65,182,230,0.05) 0%, transparent 50%), linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(248,250,253,0.95) 100%); border-radius: 16px; padding: 2rem 2rem 1.6rem; border: 1px solid var(--hairline-2); box-shadow: var(--shadow-sm); overflow: hidden; }
