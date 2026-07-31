@@ -1016,15 +1016,15 @@ a { color: inherit; text-decoration: none; }
 .br-section-header { display: flex; align-items: center; gap: 0.75rem; flex-shrink: 0; width: 220px; padding-right: 1.2rem; }
 .br-section-title { font-family: 'Pfizer Diatype Office', Arial, Helvetica, sans-serif; font-size: 0.95rem; font-weight: 700; color: var(--navy-900); white-space: nowrap; }
 .br-section-divider { width: 0; flex-shrink: 0; margin: 0.4rem 0; border: none; border-left: 2px dashed #CBD5E1; }
-.br-carousel-wrap { flex: 1; display: flex; align-items: center; gap: 0.4rem; padding: 0 0.6rem; min-width: 0; position: relative; overflow: hidden; }
+.br-carousel-wrap { flex: 1; display: flex; align-items: center; gap: 0.4rem; padding: 0 0.6rem; min-width: 0; position: relative; }
 .br-carousel-btn { width: 26px; height: 26px; border-radius: 50%; border: 1px solid var(--hairline-2); background: var(--surface); display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; transition: background 0.18s var(--ease), border-color 0.18s var(--ease); position: relative; z-index: 2; }
 .br-carousel-btn:hover { background: rgba(28,79,192,0.06); border-color: rgba(28,79,192,0.2); }
 .br-carousel-btn.br-hidden { display: none; }
 .br-carousel-btn svg { width: 14px; height: 14px; stroke: var(--navy-700); fill: none; stroke-width: 2; }
-.br-docs-viewport { flex: 1; overflow: hidden; min-width: 0; }
-.br-docs-track { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; transition: transform 0.35s cubic-bezier(0.4,0,0.2,1); }
-.br-doc-chip { display: flex; flex-direction: column; gap: 0.2rem; padding: 0.5rem 0.9rem; border-radius: 10px; background: rgba(28,79,192,0.04); border: 1px solid var(--hairline-2); text-decoration: none; color: inherit; transition: background 0.18s var(--ease), border-color 0.18s var(--ease); min-height: 60px; justify-content: center; flex-shrink: 0; }
-.br-doc-chip:hover { background: rgba(28,79,192,0.08); border-color: rgba(28,79,192,0.2); transform: translateY(-1px); }
+.br-docs-track { flex: 1; display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; min-width: 0; }
+.br-docs-track .br-doc-chip:nth-child(n+5) { display: none; }
+.br-doc-chip { display: flex; flex-direction: column; gap: 0.2rem; padding: 0.5rem 0.9rem; border-radius: 10px; background: rgba(28,79,192,0.04); border: 1px solid var(--hairline-2); text-decoration: none; color: inherit; transition: background 0.18s var(--ease), border-color 0.18s var(--ease); min-height: 60px; justify-content: center; }
+.br-doc-chip:hover { background: rgba(28,79,192,0.08); border-color: rgba(28,79,192,0.2); }
 .br-doc-name { font-size: 0.82rem; font-weight: 600; color: var(--navy-700); }
 .br-doc-chip:hover .br-doc-name { color: var(--navy-900); }
 .br-doc-desc { font-size: 0.7rem; color: var(--text-muted); line-height: 1.4; }
