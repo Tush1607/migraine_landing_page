@@ -2153,22 +2153,22 @@ NPA_PREV_ROWS_QULIPTA_NBRx
                     <div class="br-docs-row">
                         <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:p:/s/MigraineAnalytics/IQBdBFg1vxdFR6HZvdxtKVPZAUdmK-vTwF4Trvm4JdEBru4?e=TG0guS" target="_blank" rel="noopener">
                             <span class="br-doc-name">Migraine Market Overview</span>
-                            <span class="br-doc-desc">Market landscape, competitive positioning, and key therapeutic area definitions. Covers branded and generic segmentation across migraine treatment classes.</span>
+                            <span class="br-doc-desc">Market landscape and key therapeutic area definitions.</span>
                             <span class="br-doc-date">Updated Dec 23, 2025</span>
                         </a>
                         <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:p:/s/MigraineAnalytics/IQBCUjn2CtrYSpUJ-IXcMFBeAUzgT_soSZpsz8EyDbc3b_I?e=XD5od1" target="_blank" rel="noopener">
                             <span class="br-doc-name">Migraine Market Basket BR</span>
-                            <span class="br-doc-desc">Cross-functional business rules for market basket alignment and reporting. Defines product inclusions, exclusions, and hierarchy logic for share calculations.</span>
+                            <span class="br-doc-desc">Cross-functional business rule alignment documentation.</span>
                             <span class="br-doc-date">Updated Jan 1, 2025</span>
                         </a>
                         <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:p:/s/MigraineAnalytics/IQA9ft3L-N9VT4YQzW36UFsXAQU2ZNBXbO3UjFvDwa6NV5E?e=8ytpZI" target="_blank" rel="noopener">
                             <span class="br-doc-name">IIS BR Master Deck</span>
-                            <span class="br-doc-desc">Master reference for IIS analytics business rules and metric definitions. Includes calculation methodologies, data source mappings, and approval standards.</span>
+                            <span class="br-doc-desc">Master business rules deck for IIS analytics.</span>
                             <span class="br-doc-date">Updated Jan 1, 2026</span>
                         </a>
                         <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:p:/s/MigraineAnalytics/IQBOAt2MOv_OTqhwLardlsHPAZdTa2hsvBq5pUuZfNbVWTM?e=tDWmaa" target="_blank" rel="noopener">
                             <span class="br-doc-name">IIS Migraine Data Ecosystem</span>
-                            <span class="br-doc-desc">Data sources, flows, and ecosystem mapping for IIS Migraine analytics. Documents upstream feeds, transformation layers, and downstream consumption points.</span>
+                            <span class="br-doc-desc">Data sources, flows, and ecosystem mapping.</span>
                             <span class="br-doc-date">Updated Jan 1, 2026</span>
                         </a>
                     </div>
@@ -2183,7 +2183,7 @@ NPA_PREV_ROWS_QULIPTA_NBRx
                     <div class="br-docs-row">
                         <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:p:/s/MigraineAnalytics/IQADCiim_iD7QbxZE7Fm3F89Ab8O10p4xzPmog3z4X7KQ2g?e=jA6LCi" target="_blank" rel="noopener">
                             <span class="br-doc-name">Migraine Dashboard BR</span>
-                            <span class="br-doc-desc">Dashboard-specific metric logic, KPI standards, and visualization rules. Covers threshold definitions, color coding logic, and refresh cadence for all panels.</span>
+                            <span class="br-doc-desc">Dashboard-specific metric logic and standards.</span>
                             <span class="br-doc-date">Updated Feb 1, 2026</span>
                         </a>
                     </div>
