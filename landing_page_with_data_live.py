@@ -2292,6 +2292,9 @@ NPA_PREV_ROWS_QULIPTA_NBRx
             track.parentNode.insertBefore(viewport, track);
             viewport.appendChild(track);
 
+            // Hide track until properly sized
+            track.style.visibility = 'hidden';
+
             // Size chips to exactly fit 4 in viewport
             function sizeChips() {
                 var vpW = viewport.offsetWidth;
@@ -2346,6 +2349,13 @@ NPA_PREV_ROWS_QULIPTA_NBRx
 
             reorder();
             prev.disabled = false;
+            // Initial sizing after DOM settles
+            requestAnimationFrame(function() {
+                chipW = sizeChips();
+                track.style.width = (total * (chipW + GAP) - GAP) + 'px';
+                track.style.transform = 'translateX(0)';
+                track.style.visibility = 'visible';
+            });
             next.addEventListener('click', function(e) { e.stopPropagation(); e.preventDefault(); slideNext(); });
             prev.addEventListener('click', function(e) { e.stopPropagation(); e.preventDefault(); slidePrev(); });
         });
