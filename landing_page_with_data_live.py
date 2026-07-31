@@ -2267,7 +2267,7 @@ NPA_PREV_ROWS_QULIPTA_NBRx
 (function() {
     'use strict';
 
-    // BR Carousel - cyclic, always shows 4 tiles
+    // BR Carousel - fixed 4-tile window, cyclic
     (function() {
         var VISIBLE = 4;
         document.querySelectorAll('.br-carousel-wrap').forEach(function(wrap) {
@@ -2278,7 +2278,6 @@ NPA_PREV_ROWS_QULIPTA_NBRx
             var total = chips.length;
 
             if (total <= VISIBLE) {
-                // 4 or fewer: no carousel
                 prev.classList.add('br-hidden');
                 next.classList.add('br-hidden');
                 track.style.display = 'grid';
@@ -2287,45 +2286,32 @@ NPA_PREV_ROWS_QULIPTA_NBRx
                 return;
             }
 
-            // Wrap track in a viewport div for proper clipping
-            var viewport = document.createElement('div');
-            viewport.className = 'br-docs-viewport';
-            track.parentNode.insertBefore(viewport, track);
-            viewport.appendChild(track);
-
-            // Set each chip width based on viewport
-            var gapPx = 8;
-            track.style.display = 'flex';
-            track.style.gap = gapPx + 'px';
-            track.style.width = 'max-content';
-            function setChipWidths() {
-                var vpWidth = viewport.offsetWidth;
-                var chipW = (vpWidth - (VISIBLE - 1) * gapPx) / VISIBLE;
-                chips.forEach(function(c) { c.style.flex = 'none'; c.style.width = chipW + 'px'; });
-            }
-            setChipWidths();
-
+            // Hide all chips, only show current window of 4
             var pos = 0;
-            function getChipWidth() {
-                return chips[0].offsetWidth + gapPx;
+            function render() {
+                chips.forEach(function(c) { c.style.display = 'none'; });
+                for (var i = 0; i < VISIBLE; i++) {
+                    var idx = (pos + i) % total;
+                    chips[idx].style.display = 'flex';
+                }
             }
-            function update() {
-                var offset = pos * getChipWidth();
-                track.style.transform = 'translateX(-' + offset + 'px)';
-            }
+            track.style.display = 'grid';
+            track.style.gridTemplateColumns = 'repeat(4, 1fr)';
+            track.style.gap = '0.5rem';
+            track.style.width = '100%';
+            track.style.transform = 'none';
+
             prev.addEventListener('click', function(e) {
                 e.stopPropagation(); e.preventDefault();
-                pos--;
-                if (pos < 0) pos = total - VISIBLE;
-                update();
+                pos = (pos - 1 + total) % total;
+                render();
             });
             next.addEventListener('click', function(e) {
                 e.stopPropagation(); e.preventDefault();
-                pos++;
-                if (pos > total - VISIBLE) pos = 0;
-                update();
+                pos = (pos + 1) % total;
+                render();
             });
-            update();
+            render();
         });
     })();
 
