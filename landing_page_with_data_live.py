@@ -1010,6 +1010,25 @@ a { color: inherit; text-decoration: none; }
 .badge.weekly { background: rgba(16,185,129,0.12); color: #047857; }
 .badge.monthly { background: rgba(59,130,246,0.12); color: #1E40AF; }
 
+/* ───── BR ACCORDION ───── */
+.br-grid { grid-template-columns: repeat(3, 1fr); }
+.br-accordion-card { background: var(--surface); border-radius: 14px; box-shadow: var(--shadow-sm); overflow: hidden; transition: box-shadow 0.25s var(--ease); }
+.br-accordion-card:hover { box-shadow: var(--shadow-md); }
+.br-accordion-header { display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.2rem; cursor: pointer; user-select: none; }
+.br-accordion-left { display: flex; align-items: center; gap: 0.75rem; }
+.br-accordion-info { display: flex; flex-direction: column; }
+.br-accordion-title { font-family: 'Pfizer Diatype Office', Arial, Helvetica, sans-serif; font-size: 0.95rem; font-weight: 700; color: var(--navy-900); }
+.br-accordion-count { font-size: 0.72rem; color: var(--text-muted); margin-top: 0.15rem; }
+.br-chevron { color: var(--text-muted); transition: transform 0.25s var(--ease); flex-shrink: 0; }
+.br-accordion-card.is-open .br-chevron { transform: rotate(180deg); }
+.br-accordion-body { max-height: 0; overflow: hidden; transition: max-height 0.3s var(--ease), padding 0.3s var(--ease); padding: 0 1.2rem; }
+.br-accordion-card.is-open .br-accordion-body { max-height: 500px; padding: 0 1.2rem 1rem; }
+.br-doc-row { display: flex; align-items: center; justify-content: space-between; padding: 0.55rem 0.6rem; border-radius: 8px; text-decoration: none; color: inherit; transition: background 0.18s var(--ease); }
+.br-doc-row:hover { background: rgba(28,79,192,0.05); }
+.br-doc-name { font-size: 0.84rem; font-weight: 600; color: var(--navy-700); }
+.br-doc-row:hover .br-doc-name { color: var(--navy-900); }
+.br-doc-date { font-size: 0.7rem; color: var(--text-muted); white-space: nowrap; }
+
 /* ───── HERO BANNER ───── */
 .hero { position: relative; background: radial-gradient(ellipse 90% 80% at 20% 20%, rgba(28,79,192,0.06) 0%, transparent 50%), radial-gradient(ellipse 60% 70% at 80% 80%, rgba(65,182,230,0.05) 0%, transparent 50%), linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(248,250,253,0.95) 100%); border-radius: 16px; padding: 2rem 2rem 1.6rem; border: 1px solid var(--hairline-2); box-shadow: var(--shadow-sm); overflow: hidden; }
 .hero::before { content: ''; position: absolute; top: -1px; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--navy-600), var(--accent), var(--navy-500)); border-radius: 16px 16px 0 0; opacity: 0.7; }
@@ -2128,12 +2147,57 @@ NPA_PREV_ROWS_QULIPTA_NBRx
         <!-- 5. DOCS -->
         <section class="section" id="docs" data-label="Business Rule Docs">
             <div class="section-head"><h2>Business Rule Documentation</h2><p>Data definitions, metric calculations, business logic, and reporting standards.</p></div>
-            <div class="grid">
-                <a class="card" href="https://pfizer.sharepoint.com/:p:/s/MigraineAnalytics/IQBdBFg1vxdFR6HZvdxtKVPZAUdmK-vTwF4Trvm4JdEBru4?e=TG0guS" target="_blank" rel="noopener"><div class="card-top"><span class="icon-chip chip-s5"><svg viewBox="0 0 24 24"><path d="M3 19a9 9 0 019-9 9 9 0 019 9"/><path d="M3 19h18M12 10V3"/><path d="M7.8 4.8L12 3l4.2 1.8"/></svg></span></div><div class="card-title">Migraine Market Overview</div><div class="card-desc">Market landscape and key therapeutic area definitions.</div><div class="card-updated">Updated Dec 23, 2025</div><span class="dest-pill dest-ppt"><span class="swatch">&#9632;</span>PowerPoint</span></a>
-                <a class="card" href="https://pfizer.sharepoint.com/:p:/s/MigraineAnalytics/IQBCUjn2CtrYSpUJ-IXcMFBeAUzgT_soSZpsz8EyDbc3b_I?e=XD5od1" target="_blank" rel="noopener"><div class="card-top"><span class="icon-chip chip-s5"><svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12l2 2 4-4"/></svg></span></div><div class="card-title">Migraine Market Basket BR</div><div class="card-desc">Cross-functional business rule alignment documentation.</div><div class="card-updated">Updated Jan 1, 2025</div><span class="dest-pill dest-ppt"><span class="swatch">&#9632;</span>PowerPoint</span></a>
-                <a class="card" href="https://pfizer.sharepoint.com/:p:/s/MigraineAnalytics/IQA9ft3L-N9VT4YQzW36UFsXAQU2ZNBXbO3UjFvDwa6NV5E?e=8ytpZI" target="_blank" rel="noopener"><div class="card-top"><span class="icon-chip chip-s5"><svg viewBox="0 0 24 24"><path d="M12 4L4 8l8 4 8-4-8-4zM4 12l8 4 8-4M4 16l8 4 8-4"/></svg></span></div><div class="card-title">IIS BR Master Deck</div><div class="card-desc">Master business rules deck for IIS analytics.</div><div class="card-updated">Updated Jan 1, 2026</div><span class="dest-pill dest-ppt"><span class="swatch">&#9632;</span>PowerPoint</span></a>
-                <a class="card" href="https://pfizer.sharepoint.com/:p:/s/MigraineAnalytics/IQBOAt2MOv_OTqhwLardlsHPAZdTa2hsvBq5pUuZfNbVWTM?e=tDWmaa" target="_blank" rel="noopener"><div class="card-top"><span class="icon-chip chip-s5"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="4" r="1.5"/><circle cx="12" cy="20" r="1.5"/><circle cx="4" cy="12" r="1.5"/><circle cx="20" cy="12" r="1.5"/><path d="M12 7v2M12 15v2M7 12h2M15 12h2"/></svg></span></div><div class="card-title">IIS Migraine Data Ecosystem</div><div class="card-desc">Data sources, flows, and ecosystem mapping.</div><div class="card-updated">Updated Jan 1, 2026</div><span class="dest-pill dest-ppt"><span class="swatch">&#9632;</span>PowerPoint</span></a>
-                <a class="card" href="https://pfizer.sharepoint.com/:p:/s/MigraineAnalytics/IQADCiim_iD7QbxZE7Fm3F89Ab8O10p4xzPmog3z4X7KQ2g?e=jA6LCi" target="_blank" rel="noopener"><div class="card-top"><span class="icon-chip chip-s5"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 5V3M12 21v-2M16.95 7.05l1.41-1.41M5.64 18.36l1.41-1.41M19 12h2M3 12h2M16.95 16.95l1.41 1.41M5.64 5.64l1.41 1.41"/></svg></span></div><div class="card-title">Migraine Dashboard BR</div><div class="card-desc">Dashboard-specific metric logic and standards.</div><div class="card-updated">Updated Feb 1, 2026</div><span class="dest-pill dest-ppt"><span class="swatch">&#9632;</span>PowerPoint</span></a>
+            <div class="grid br-grid">
+                <!-- Migraine Market -->
+                <div class="br-accordion-card">
+                    <div class="br-accordion-header" onclick="toggleBrAccordion(this)">
+                        <div class="br-accordion-left">
+                            <span class="icon-chip chip-s1"><svg viewBox="0 0 24 24"><path d="M3 19a9 9 0 019-9 9 9 0 019 9"/><path d="M3 19h18M12 10V3"/><path d="M7.8 4.8L12 3l4.2 1.8"/></svg></span>
+                            <div class="br-accordion-info">
+                                <div class="br-accordion-title">Migraine Market</div>
+                                <div class="br-accordion-count">4 documents</div>
+                            </div>
+                        </div>
+                        <svg class="br-chevron" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                    </div>
+                    <div class="br-accordion-body">
+                        <a class="br-doc-row" href="https://pfizer.sharepoint.com/:p:/s/MigraineAnalytics/IQBdBFg1vxdFR6HZvdxtKVPZAUdmK-vTwF4Trvm4JdEBru4?e=TG0guS" target="_blank" rel="noopener">
+                            <span class="br-doc-name">Migraine Market Overview</span>
+                            <span class="br-doc-date">Updated Dec 23, 2025</span>
+                        </a>
+                        <a class="br-doc-row" href="https://pfizer.sharepoint.com/:p:/s/MigraineAnalytics/IQBCUjn2CtrYSpUJ-IXcMFBeAUzgT_soSZpsz8EyDbc3b_I?e=XD5od1" target="_blank" rel="noopener">
+                            <span class="br-doc-name">Migraine Market Basket BR</span>
+                            <span class="br-doc-date">Updated Jan 1, 2025</span>
+                        </a>
+                        <a class="br-doc-row" href="https://pfizer.sharepoint.com/:p:/s/MigraineAnalytics/IQA9ft3L-N9VT4YQzW36UFsXAQU2ZNBXbO3UjFvDwa6NV5E?e=8ytpZI" target="_blank" rel="noopener">
+                            <span class="br-doc-name">IIS BR Master Deck</span>
+                            <span class="br-doc-date">Updated Jan 1, 2026</span>
+                        </a>
+                        <a class="br-doc-row" href="https://pfizer.sharepoint.com/:p:/s/MigraineAnalytics/IQBOAt2MOv_OTqhwLardlsHPAZdTa2hsvBq5pUuZfNbVWTM?e=tDWmaa" target="_blank" rel="noopener">
+                            <span class="br-doc-name">IIS Migraine Data Ecosystem</span>
+                            <span class="br-doc-date">Updated Jan 1, 2026</span>
+                        </a>
+                    </div>
+                </div>
+                <!-- Migraine Dashboard -->
+                <div class="br-accordion-card">
+                    <div class="br-accordion-header" onclick="toggleBrAccordion(this)">
+                        <div class="br-accordion-left">
+                            <span class="icon-chip chip-s4"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 5V3M12 21v-2M16.95 7.05l1.41-1.41M5.64 18.36l1.41-1.41M19 12h2M3 12h2M16.95 16.95l1.41 1.41M5.64 5.64l1.41 1.41"/></svg></span>
+                            <div class="br-accordion-info">
+                                <div class="br-accordion-title">Migraine Dashboard</div>
+                                <div class="br-accordion-count">1 document</div>
+                            </div>
+                        </div>
+                        <svg class="br-chevron" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                    </div>
+                    <div class="br-accordion-body">
+                        <a class="br-doc-row" href="https://pfizer.sharepoint.com/:p:/s/MigraineAnalytics/IQADCiim_iD7QbxZE7Fm3F89Ab8O10p4xzPmog3z4X7KQ2g?e=jA6LCi" target="_blank" rel="noopener">
+                            <span class="br-doc-name">Migraine Dashboard BR</span>
+                            <span class="br-doc-date">Updated Feb 1, 2026</span>
+                        </a>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -2144,6 +2208,12 @@ NPA_PREV_ROWS_QULIPTA_NBRx
 <script>
 (function() {
     'use strict';
+
+    // BR Accordion toggle
+    window.toggleBrAccordion = function(header) {
+        var card = header.closest('.br-accordion-card');
+        card.classList.toggle('is-open');
+    };
 
     // Dropdown
     window.toggleDropdown = function(id, ev) {
