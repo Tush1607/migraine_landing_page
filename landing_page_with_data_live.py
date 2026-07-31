@@ -1010,24 +1010,18 @@ a { color: inherit; text-decoration: none; }
 .badge.weekly { background: rgba(16,185,129,0.12); color: #047857; }
 .badge.monthly { background: rgba(59,130,246,0.12); color: #1E40AF; }
 
-/* ───── BR ACCORDION ───── */
-.br-grid { grid-template-columns: repeat(3, 1fr); }
-.br-accordion-card { background: var(--surface); border-radius: 14px; box-shadow: var(--shadow-sm); overflow: hidden; transition: box-shadow 0.25s var(--ease); }
-.br-accordion-card:hover { box-shadow: var(--shadow-md); }
-.br-accordion-header { display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.2rem; cursor: pointer; user-select: none; }
-.br-accordion-left { display: flex; align-items: center; gap: 0.75rem; }
-.br-accordion-info { display: flex; flex-direction: column; }
-.br-accordion-title { font-family: 'Pfizer Diatype Office', Arial, Helvetica, sans-serif; font-size: 0.95rem; font-weight: 700; color: var(--navy-900); }
-.br-accordion-count { font-size: 0.72rem; color: var(--text-muted); margin-top: 0.15rem; }
-.br-chevron { color: var(--text-muted); transition: transform 0.25s var(--ease); flex-shrink: 0; }
-.br-accordion-card.is-open .br-chevron { transform: rotate(180deg); }
-.br-accordion-body { max-height: 0; overflow: hidden; transition: max-height 0.3s var(--ease), padding 0.3s var(--ease); padding: 0 1.2rem; }
-.br-accordion-card.is-open .br-accordion-body { max-height: 500px; padding: 0 1.2rem 1rem; }
-.br-doc-row { display: flex; align-items: center; justify-content: space-between; padding: 0.55rem 0.6rem; border-radius: 8px; text-decoration: none; color: inherit; transition: background 0.18s var(--ease); }
-.br-doc-row:hover { background: rgba(28,79,192,0.05); }
-.br-doc-name { font-size: 0.84rem; font-weight: 600; color: var(--navy-700); }
-.br-doc-row:hover .br-doc-name { color: var(--navy-900); }
-.br-doc-date { font-size: 0.7rem; color: var(--text-muted); white-space: nowrap; }
+/* ───── BR SECTIONS ───── */
+.br-grid { display: flex; flex-direction: column; gap: 1rem; }
+.br-section-card { background: var(--surface); border-radius: 14px; box-shadow: var(--shadow-sm); padding: 1.1rem 1.4rem; }
+.br-section-header { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.9rem; padding-bottom: 0.7rem; border-bottom: 1px solid var(--hairline-2); }
+.br-section-title { font-family: 'Pfizer Diatype Office', Arial, Helvetica, sans-serif; font-size: 0.95rem; font-weight: 700; color: var(--navy-900); }
+.br-section-count { font-size: 0.7rem; color: var(--text-muted); margin-left: auto; }
+.br-docs-row { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+.br-doc-chip { display: flex; flex-direction: column; gap: 0.2rem; padding: 0.6rem 1rem; border-radius: 10px; background: rgba(28,79,192,0.04); border: 1px solid var(--hairline-2); text-decoration: none; color: inherit; transition: background 0.18s var(--ease), border-color 0.18s var(--ease), transform 0.2s var(--ease-out); }
+.br-doc-chip:hover { background: rgba(28,79,192,0.08); border-color: rgba(28,79,192,0.2); transform: translateY(-1px); }
+.br-doc-name { font-size: 0.82rem; font-weight: 600; color: var(--navy-700); }
+.br-doc-chip:hover .br-doc-name { color: var(--navy-900); }
+.br-doc-date { font-size: 0.65rem; color: var(--text-muted); }
 
 /* ───── HERO BANNER ───── */
 .hero { position: relative; background: radial-gradient(ellipse 90% 80% at 20% 20%, rgba(28,79,192,0.06) 0%, transparent 50%), radial-gradient(ellipse 60% 70% at 80% 80%, rgba(65,182,230,0.05) 0%, transparent 50%), linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(248,250,253,0.95) 100%); border-radius: 16px; padding: 2rem 2rem 1.6rem; border: 1px solid var(--hairline-2); box-shadow: var(--shadow-sm); overflow: hidden; }
@@ -2147,52 +2141,42 @@ NPA_PREV_ROWS_QULIPTA_NBRx
         <!-- 5. DOCS -->
         <section class="section" id="docs" data-label="Business Rule Docs">
             <div class="section-head"><h2>Business Rule Documentation</h2><p>Data definitions, metric calculations, business logic, and reporting standards.</p></div>
-            <div class="grid br-grid">
+            <div class="br-grid">
                 <!-- Migraine Market -->
-                <div class="br-accordion-card">
-                    <div class="br-accordion-header" onclick="toggleBrAccordion(this)">
-                        <div class="br-accordion-left">
-                            <span class="icon-chip chip-s1"><svg viewBox="0 0 24 24"><path d="M3 19a9 9 0 019-9 9 9 0 019 9"/><path d="M3 19h18M12 10V3"/><path d="M7.8 4.8L12 3l4.2 1.8"/></svg></span>
-                            <div class="br-accordion-info">
-                                <div class="br-accordion-title">Migraine Market</div>
-                                <div class="br-accordion-count">4 documents</div>
-                            </div>
-                        </div>
-                        <svg class="br-chevron" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                <div class="br-section-card">
+                    <div class="br-section-header">
+                        <span class="icon-chip chip-s1"><svg viewBox="0 0 24 24"><path d="M3 19a9 9 0 019-9 9 9 0 019 9"/><path d="M3 19h18M12 10V3"/><path d="M7.8 4.8L12 3l4.2 1.8"/></svg></span>
+                        <span class="br-section-title">Migraine Market</span>
+                        <span class="br-section-count">4 documents</span>
                     </div>
-                    <div class="br-accordion-body">
-                        <a class="br-doc-row" href="https://pfizer.sharepoint.com/:p:/s/MigraineAnalytics/IQBdBFg1vxdFR6HZvdxtKVPZAUdmK-vTwF4Trvm4JdEBru4?e=TG0guS" target="_blank" rel="noopener">
+                    <div class="br-docs-row">
+                        <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:p:/s/MigraineAnalytics/IQBdBFg1vxdFR6HZvdxtKVPZAUdmK-vTwF4Trvm4JdEBru4?e=TG0guS" target="_blank" rel="noopener">
                             <span class="br-doc-name">Migraine Market Overview</span>
                             <span class="br-doc-date">Updated Dec 23, 2025</span>
                         </a>
-                        <a class="br-doc-row" href="https://pfizer.sharepoint.com/:p:/s/MigraineAnalytics/IQBCUjn2CtrYSpUJ-IXcMFBeAUzgT_soSZpsz8EyDbc3b_I?e=XD5od1" target="_blank" rel="noopener">
+                        <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:p:/s/MigraineAnalytics/IQBCUjn2CtrYSpUJ-IXcMFBeAUzgT_soSZpsz8EyDbc3b_I?e=XD5od1" target="_blank" rel="noopener">
                             <span class="br-doc-name">Migraine Market Basket BR</span>
                             <span class="br-doc-date">Updated Jan 1, 2025</span>
                         </a>
-                        <a class="br-doc-row" href="https://pfizer.sharepoint.com/:p:/s/MigraineAnalytics/IQA9ft3L-N9VT4YQzW36UFsXAQU2ZNBXbO3UjFvDwa6NV5E?e=8ytpZI" target="_blank" rel="noopener">
+                        <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:p:/s/MigraineAnalytics/IQA9ft3L-N9VT4YQzW36UFsXAQU2ZNBXbO3UjFvDwa6NV5E?e=8ytpZI" target="_blank" rel="noopener">
                             <span class="br-doc-name">IIS BR Master Deck</span>
                             <span class="br-doc-date">Updated Jan 1, 2026</span>
                         </a>
-                        <a class="br-doc-row" href="https://pfizer.sharepoint.com/:p:/s/MigraineAnalytics/IQBOAt2MOv_OTqhwLardlsHPAZdTa2hsvBq5pUuZfNbVWTM?e=tDWmaa" target="_blank" rel="noopener">
+                        <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:p:/s/MigraineAnalytics/IQBOAt2MOv_OTqhwLardlsHPAZdTa2hsvBq5pUuZfNbVWTM?e=tDWmaa" target="_blank" rel="noopener">
                             <span class="br-doc-name">IIS Migraine Data Ecosystem</span>
                             <span class="br-doc-date">Updated Jan 1, 2026</span>
                         </a>
                     </div>
                 </div>
                 <!-- Migraine Dashboard -->
-                <div class="br-accordion-card">
-                    <div class="br-accordion-header" onclick="toggleBrAccordion(this)">
-                        <div class="br-accordion-left">
-                            <span class="icon-chip chip-s4"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 5V3M12 21v-2M16.95 7.05l1.41-1.41M5.64 18.36l1.41-1.41M19 12h2M3 12h2M16.95 16.95l1.41 1.41M5.64 5.64l1.41 1.41"/></svg></span>
-                            <div class="br-accordion-info">
-                                <div class="br-accordion-title">Migraine Dashboard</div>
-                                <div class="br-accordion-count">1 document</div>
-                            </div>
-                        </div>
-                        <svg class="br-chevron" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                <div class="br-section-card">
+                    <div class="br-section-header">
+                        <span class="icon-chip chip-s4"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 5V3M12 21v-2M16.95 7.05l1.41-1.41M5.64 18.36l1.41-1.41M19 12h2M3 12h2M16.95 16.95l1.41 1.41M5.64 5.64l1.41 1.41"/></svg></span>
+                        <span class="br-section-title">Migraine Dashboard</span>
+                        <span class="br-section-count">1 document</span>
                     </div>
-                    <div class="br-accordion-body">
-                        <a class="br-doc-row" href="https://pfizer.sharepoint.com/:p:/s/MigraineAnalytics/IQADCiim_iD7QbxZE7Fm3F89Ab8O10p4xzPmog3z4X7KQ2g?e=jA6LCi" target="_blank" rel="noopener">
+                    <div class="br-docs-row">
+                        <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:p:/s/MigraineAnalytics/IQADCiim_iD7QbxZE7Fm3F89Ab8O10p4xzPmog3z4X7KQ2g?e=jA6LCi" target="_blank" rel="noopener">
                             <span class="br-doc-name">Migraine Dashboard BR</span>
                             <span class="br-doc-date">Updated Feb 1, 2026</span>
                         </a>
@@ -2208,12 +2192,6 @@ NPA_PREV_ROWS_QULIPTA_NBRx
 <script>
 (function() {
     'use strict';
-
-    // BR Accordion toggle
-    window.toggleBrAccordion = function(header) {
-        var card = header.closest('.br-accordion-card');
-        card.classList.toggle('is-open');
-    };
 
     // Dropdown
     window.toggleDropdown = function(id, ev) {
