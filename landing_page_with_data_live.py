@@ -1022,7 +1022,9 @@ a { color: inherit; text-decoration: none; }
 .br-carousel-btn.br-hidden { display: none; }
 .br-carousel-btn svg { width: 14px; height: 14px; stroke: var(--navy-700); fill: none; stroke-width: 2; }
 .br-docs-track { flex: 1; display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; min-width: 0; }
-.br-docs-track .br-doc-chip:nth-child(n+5) { display: none; }
+.br-docs-track > .br-doc-chip:nth-child(n+5) { display: none; }
+.br-doc-chip.br-chip-hidden { display: none !important; }
+.br-doc-chip.br-chip-visible { display: flex !important; }
 .br-doc-chip { display: flex; flex-direction: column; gap: 0.2rem; padding: 0.5rem 0.9rem; border-radius: 10px; background: rgba(28,79,192,0.04); border: 1px solid var(--hairline-2); text-decoration: none; color: inherit; transition: background 0.18s var(--ease), border-color 0.18s var(--ease); min-height: 60px; justify-content: center; }
 .br-doc-chip:hover { background: rgba(28,79,192,0.08); border-color: rgba(28,79,192,0.2); }
 .br-doc-name { font-size: 0.82rem; font-weight: 600; color: var(--navy-700); }
@@ -2283,13 +2285,17 @@ NPA_PREV_ROWS_QULIPTA_NBRx
                 return;
             }
 
-            // Show only 4 chips at a time using display none/flex
+            // Show only 4 chips at a time using class toggle
             var pos = 0;
             function render() {
-                chips.forEach(function(c) { c.style.display = 'none'; });
+                for (var i = 0; i < total; i++) {
+                    chips[i].classList.add('br-chip-hidden');
+                    chips[i].classList.remove('br-chip-visible');
+                }
                 for (var i = 0; i < VISIBLE; i++) {
                     var idx = (pos + i) % total;
-                    chips[idx].style.display = 'flex';
+                    chips[idx].classList.remove('br-chip-hidden');
+                    chips[idx].classList.add('br-chip-visible');
                 }
             }
             render();
@@ -2299,27 +2305,27 @@ NPA_PREV_ROWS_QULIPTA_NBRx
                 e.stopPropagation(); e.preventDefault();
                 if (animating) return;
                 animating = true;
-                track.style.transition = 'opacity 0.2s ease';
+                track.style.transition = 'opacity 0.18s ease';
                 track.style.opacity = '0';
                 setTimeout(function() {
                     pos = (pos + 1) % total;
                     render();
                     track.style.opacity = '1';
-                    setTimeout(function() { animating = false; }, 200);
-                }, 200);
+                    setTimeout(function() { animating = false; }, 180);
+                }, 180);
             });
             prev.addEventListener('click', function(e) {
                 e.stopPropagation(); e.preventDefault();
                 if (animating) return;
                 animating = true;
-                track.style.transition = 'opacity 0.2s ease';
+                track.style.transition = 'opacity 0.18s ease';
                 track.style.opacity = '0';
                 setTimeout(function() {
                     pos = (pos - 1 + total) % total;
                     render();
                     track.style.opacity = '1';
-                    setTimeout(function() { animating = false; }, 200);
-                }, 200);
+                    setTimeout(function() { animating = false; }, 180);
+                }, 180);
             });
         });
     })();
