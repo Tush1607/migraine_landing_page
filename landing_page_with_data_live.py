@@ -1016,8 +1016,13 @@ a { color: inherit; text-decoration: none; }
 .br-section-header { display: flex; align-items: center; gap: 0.75rem; flex-shrink: 0; width: 220px; padding-right: 1.2rem; }
 .br-section-title { font-family: 'Pfizer Diatype Office', Arial, Helvetica, sans-serif; font-size: 0.95rem; font-weight: 700; color: var(--navy-900); white-space: nowrap; }
 .br-section-divider { width: 0; flex-shrink: 0; margin: 0.4rem 0; border: none; border-left: 2px dashed #CBD5E1; }
-.br-docs-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; flex: 1; padding: 0 1.2rem; align-items: stretch; }
-.br-doc-chip { display: flex; flex-direction: column; gap: 0.2rem; padding: 0.5rem 0.9rem; border-radius: 10px; background: rgba(28,79,192,0.04); border: 1px solid var(--hairline-2); text-decoration: none; color: inherit; transition: background 0.18s var(--ease), border-color 0.18s var(--ease), transform 0.2s var(--ease-out); min-height: 60px; min-width: 150px; justify-content: center; }
+.br-carousel-wrap { flex: 1; display: flex; align-items: center; gap: 0.4rem; padding: 0 0.6rem; overflow: hidden; }
+.br-carousel-btn { width: 26px; height: 26px; border-radius: 50%; border: 1px solid var(--hairline-2); background: var(--surface); display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; transition: background 0.18s var(--ease), border-color 0.18s var(--ease); }
+.br-carousel-btn:hover { background: rgba(28,79,192,0.06); border-color: rgba(28,79,192,0.2); }
+.br-carousel-btn:disabled { opacity: 0.3; cursor: default; pointer-events: none; }
+.br-carousel-btn svg { width: 14px; height: 14px; stroke: var(--navy-700); fill: none; stroke-width: 2; }
+.br-docs-track { display: flex; gap: 0.5rem; transition: transform 0.3s var(--ease); flex-shrink: 0; }
+.br-doc-chip { display: flex; flex-direction: column; gap: 0.2rem; padding: 0.5rem 0.9rem; border-radius: 10px; background: rgba(28,79,192,0.04); border: 1px solid var(--hairline-2); text-decoration: none; color: inherit; transition: background 0.18s var(--ease), border-color 0.18s var(--ease), transform 0.2s var(--ease-out); min-height: 60px; width: 180px; flex-shrink: 0; justify-content: center; }
 .br-doc-chip:hover { background: rgba(28,79,192,0.08); border-color: rgba(28,79,192,0.2); transform: translateY(-1px); }
 .br-doc-name { font-size: 0.82rem; font-weight: 600; color: var(--navy-700); }
 .br-doc-chip:hover .br-doc-name { color: var(--navy-900); }
@@ -2150,27 +2155,31 @@ NPA_PREV_ROWS_QULIPTA_NBRx
                         <span class="br-section-title">Migraine Market</span>
                     </div>
                     <div class="br-section-divider"></div>
-                    <div class="br-docs-row">
-                        <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:p:/s/MigraineAnalytics/IQBdBFg1vxdFR6HZvdxtKVPZAUdmK-vTwF4Trvm4JdEBru4?e=TG0guS" target="_blank" rel="noopener">
-                            <span class="br-doc-name">Migraine Market Overview</span>
-                            <span class="br-doc-desc">Market landscape and key therapeutic area definitions.</span>
-                            <span class="br-doc-date">Updated Dec 23, 2025</span>
-                        </a>
-                        <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:p:/s/MigraineAnalytics/IQBCUjn2CtrYSpUJ-IXcMFBeAUzgT_soSZpsz8EyDbc3b_I?e=XD5od1" target="_blank" rel="noopener">
-                            <span class="br-doc-name">Migraine Market Basket BR</span>
-                            <span class="br-doc-desc">Cross-functional business rule alignment documentation.</span>
-                            <span class="br-doc-date">Updated Jan 1, 2025</span>
-                        </a>
-                        <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:p:/s/MigraineAnalytics/IQA9ft3L-N9VT4YQzW36UFsXAQU2ZNBXbO3UjFvDwa6NV5E?e=8ytpZI" target="_blank" rel="noopener">
-                            <span class="br-doc-name">IIS BR Master Deck</span>
-                            <span class="br-doc-desc">Master business rules deck for IIS analytics.</span>
-                            <span class="br-doc-date">Updated Jan 1, 2026</span>
-                        </a>
-                        <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:p:/s/MigraineAnalytics/IQBOAt2MOv_OTqhwLardlsHPAZdTa2hsvBq5pUuZfNbVWTM?e=tDWmaa" target="_blank" rel="noopener">
-                            <span class="br-doc-name">IIS Migraine Data Ecosystem</span>
-                            <span class="br-doc-desc">Data sources, flows, and ecosystem mapping.</span>
-                            <span class="br-doc-date">Updated Jan 1, 2026</span>
-                        </a>
+                    <div class="br-carousel-wrap">
+                        <button class="br-carousel-btn br-prev" disabled><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
+                        <div class="br-docs-track">
+                            <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:p:/s/MigraineAnalytics/IQBdBFg1vxdFR6HZvdxtKVPZAUdmK-vTwF4Trvm4JdEBru4?e=TG0guS" target="_blank" rel="noopener">
+                                <span class="br-doc-name">Migraine Market Overview</span>
+                                <span class="br-doc-desc">Market landscape and key therapeutic area definitions.</span>
+                                <span class="br-doc-date">Updated Dec 23, 2025</span>
+                            </a>
+                            <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:p:/s/MigraineAnalytics/IQBCUjn2CtrYSpUJ-IXcMFBeAUzgT_soSZpsz8EyDbc3b_I?e=XD5od1" target="_blank" rel="noopener">
+                                <span class="br-doc-name">Migraine Market Basket BR</span>
+                                <span class="br-doc-desc">Cross-functional business rule alignment documentation.</span>
+                                <span class="br-doc-date">Updated Jan 1, 2025</span>
+                            </a>
+                            <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:p:/s/MigraineAnalytics/IQA9ft3L-N9VT4YQzW36UFsXAQU2ZNBXbO3UjFvDwa6NV5E?e=8ytpZI" target="_blank" rel="noopener">
+                                <span class="br-doc-name">IIS BR Master Deck</span>
+                                <span class="br-doc-desc">Master business rules deck for IIS analytics.</span>
+                                <span class="br-doc-date">Updated Jan 1, 2026</span>
+                            </a>
+                            <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:p:/s/MigraineAnalytics/IQBOAt2MOv_OTqhwLardlsHPAZdTa2hsvBq5pUuZfNbVWTM?e=tDWmaa" target="_blank" rel="noopener">
+                                <span class="br-doc-name">IIS Migraine Data Ecosystem</span>
+                                <span class="br-doc-desc">Data sources, flows, and ecosystem mapping.</span>
+                                <span class="br-doc-date">Updated Jan 1, 2026</span>
+                            </a>
+                        </div>
+                        <button class="br-carousel-btn br-next"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></button>
                     </div>
                 </div>
                 <!-- Migraine Dashboard -->
@@ -2180,12 +2189,16 @@ NPA_PREV_ROWS_QULIPTA_NBRx
                         <span class="br-section-title">Migraine Dashboard</span>
                     </div>
                     <div class="br-section-divider"></div>
-                    <div class="br-docs-row">
-                        <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:p:/s/MigraineAnalytics/IQADCiim_iD7QbxZE7Fm3F89Ab8O10p4xzPmog3z4X7KQ2g?e=jA6LCi" target="_blank" rel="noopener">
-                            <span class="br-doc-name">Migraine Dashboard BR</span>
-                            <span class="br-doc-desc">Dashboard-specific metric logic and standards.</span>
-                            <span class="br-doc-date">Updated Feb 1, 2026</span>
-                        </a>
+                    <div class="br-carousel-wrap">
+                        <button class="br-carousel-btn br-prev" disabled><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
+                        <div class="br-docs-track">
+                            <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:p:/s/MigraineAnalytics/IQADCiim_iD7QbxZE7Fm3F89Ab8O10p4xzPmog3z4X7KQ2g?e=jA6LCi" target="_blank" rel="noopener">
+                                <span class="br-doc-name">Migraine Dashboard BR</span>
+                                <span class="br-doc-desc">Dashboard-specific metric logic and standards.</span>
+                                <span class="br-doc-date">Updated Feb 1, 2026</span>
+                            </a>
+                        </div>
+                        <button class="br-carousel-btn br-next"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></button>
                     </div>
                 </div>
             </div>
@@ -2198,6 +2211,29 @@ NPA_PREV_ROWS_QULIPTA_NBRx
 <script>
 (function() {
     'use strict';
+
+    // BR Carousel
+    (function() {
+        var VISIBLE = 4;
+        var CHIP_W = 180;
+        var GAP = 8;
+        document.querySelectorAll('.br-carousel-wrap').forEach(function(wrap) {
+            var track = wrap.querySelector('.br-docs-track');
+            var chips = track.querySelectorAll('.br-doc-chip');
+            var prev = wrap.querySelector('.br-prev');
+            var next = wrap.querySelector('.br-next');
+            var pos = 0;
+            var maxPos = Math.max(0, chips.length - VISIBLE);
+            function update() {
+                track.style.transform = 'translateX(-' + pos * (CHIP_W + GAP) + 'px)';
+                prev.disabled = pos === 0;
+                next.disabled = pos >= maxPos;
+            }
+            prev.addEventListener('click', function(e) { e.stopPropagation(); if (pos > 0) { pos--; update(); } });
+            next.addEventListener('click', function(e) { e.stopPropagation(); if (pos < maxPos) { pos++; update(); } });
+            update();
+        });
+    })();
 
     // Dropdown
     window.toggleDropdown = function(id, ev) {
