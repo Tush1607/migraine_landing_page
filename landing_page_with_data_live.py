@@ -1021,7 +1021,8 @@ a { color: inherit; text-decoration: none; }
 .br-doc-chip:hover { background: rgba(28,79,192,0.08); border-color: rgba(28,79,192,0.2); transform: translateY(-1px); }
 .br-doc-name { font-size: 0.82rem; font-weight: 600; color: var(--navy-700); }
 .br-doc-chip:hover .br-doc-name { color: var(--navy-900); }
-.br-doc-date { font-size: 0.65rem; color: var(--text-muted); }
+.br-doc-desc { font-size: 0.7rem; color: var(--text-muted); line-height: 1.4; }
+.br-doc-date { font-size: 0.65rem; color: var(--text-muted); margin-top: auto; }
 
 /* ───── HERO BANNER ───── */
 .hero { position: relative; background: radial-gradient(ellipse 90% 80% at 20% 20%, rgba(28,79,192,0.06) 0%, transparent 50%), radial-gradient(ellipse 60% 70% at 80% 80%, rgba(65,182,230,0.05) 0%, transparent 50%), linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(248,250,253,0.95) 100%); border-radius: 16px; padding: 2rem 2rem 1.6rem; border: 1px solid var(--hairline-2); box-shadow: var(--shadow-sm); overflow: hidden; }
@@ -2152,18 +2153,22 @@ NPA_PREV_ROWS_QULIPTA_NBRx
                     <div class="br-docs-row">
                         <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:p:/s/MigraineAnalytics/IQBdBFg1vxdFR6HZvdxtKVPZAUdmK-vTwF4Trvm4JdEBru4?e=TG0guS" target="_blank" rel="noopener">
                             <span class="br-doc-name">Migraine Market Overview</span>
+                            <span class="br-doc-desc">Market landscape, competitive positioning, and therapeutic area definitions.</span>
                             <span class="br-doc-date">Updated Dec 23, 2025</span>
                         </a>
                         <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:p:/s/MigraineAnalytics/IQBCUjn2CtrYSpUJ-IXcMFBeAUzgT_soSZpsz8EyDbc3b_I?e=XD5od1" target="_blank" rel="noopener">
                             <span class="br-doc-name">Migraine Market Basket BR</span>
+                            <span class="br-doc-desc">Cross-functional business rules for market basket alignment and reporting.</span>
                             <span class="br-doc-date">Updated Jan 1, 2025</span>
                         </a>
                         <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:p:/s/MigraineAnalytics/IQA9ft3L-N9VT4YQzW36UFsXAQU2ZNBXbO3UjFvDwa6NV5E?e=8ytpZI" target="_blank" rel="noopener">
                             <span class="br-doc-name">IIS BR Master Deck</span>
+                            <span class="br-doc-desc">Master reference for IIS analytics business rules and metric definitions.</span>
                             <span class="br-doc-date">Updated Jan 1, 2026</span>
                         </a>
                         <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:p:/s/MigraineAnalytics/IQBOAt2MOv_OTqhwLardlsHPAZdTa2hsvBq5pUuZfNbVWTM?e=tDWmaa" target="_blank" rel="noopener">
                             <span class="br-doc-name">IIS Migraine Data Ecosystem</span>
+                            <span class="br-doc-desc">Data sources, flows, and ecosystem mapping for IIS Migraine analytics.</span>
                             <span class="br-doc-date">Updated Jan 1, 2026</span>
                         </a>
                     </div>
@@ -2178,6 +2183,7 @@ NPA_PREV_ROWS_QULIPTA_NBRx
                     <div class="br-docs-row">
                         <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:p:/s/MigraineAnalytics/IQADCiim_iD7QbxZE7Fm3F89Ab8O10p4xzPmog3z4X7KQ2g?e=jA6LCi" target="_blank" rel="noopener">
                             <span class="br-doc-name">Migraine Dashboard BR</span>
+                            <span class="br-doc-desc">Dashboard-specific metric logic, KPI standards, and visualization rules.</span>
                             <span class="br-doc-date">Updated Feb 1, 2026</span>
                         </a>
                     </div>
