@@ -1016,14 +1016,14 @@ a { color: inherit; text-decoration: none; }
 .br-section-header { display: flex; align-items: center; gap: 0.75rem; flex-shrink: 0; width: 220px; padding-right: 1.2rem; }
 .br-section-title { font-family: 'Pfizer Diatype Office', Arial, Helvetica, sans-serif; font-size: 0.95rem; font-weight: 700; color: var(--navy-900); white-space: nowrap; }
 .br-section-divider { width: 0; flex-shrink: 0; margin: 0.4rem 0; border: none; border-left: 2px dashed #CBD5E1; }
-.br-carousel-wrap { flex: 1; display: flex; align-items: center; gap: 0.4rem; padding: 0 0.6rem; overflow: hidden; min-width: 0; }
-.br-carousel-btn { width: 26px; height: 26px; border-radius: 50%; border: 1px solid var(--hairline-2); background: var(--surface); display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; transition: background 0.18s var(--ease), border-color 0.18s var(--ease); }
+.br-carousel-wrap { flex: 1; display: flex; align-items: center; gap: 0.4rem; padding: 0 0.6rem; overflow: hidden; min-width: 0; position: relative; }
+.br-carousel-btn { width: 26px; height: 26px; border-radius: 50%; border: 1px solid var(--hairline-2); background: var(--surface); display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; transition: background 0.18s var(--ease), border-color 0.18s var(--ease); position: relative; z-index: 2; }
 .br-carousel-btn:hover { background: rgba(28,79,192,0.06); border-color: rgba(28,79,192,0.2); }
-.br-carousel-btn:disabled { opacity: 0.3; cursor: default; pointer-events: none; }
 .br-carousel-btn.br-hidden { display: none; }
 .br-carousel-btn svg { width: 14px; height: 14px; stroke: var(--navy-700); fill: none; stroke-width: 2; }
-.br-docs-track { display: flex; gap: 0.5rem; transition: transform 0.3s var(--ease); width: 100%; }
-.br-doc-chip { display: flex; flex-direction: column; gap: 0.2rem; padding: 0.5rem 0.9rem; border-radius: 10px; background: rgba(28,79,192,0.04); border: 1px solid var(--hairline-2); text-decoration: none; color: inherit; transition: background 0.18s var(--ease), border-color 0.18s var(--ease), transform 0.2s var(--ease-out); min-height: 60px; flex: 1; justify-content: center; }
+.br-docs-viewport { flex: 1; overflow: hidden; min-width: 0; }
+.br-docs-track { display: flex; gap: 0.5rem; transition: transform 0.35s var(--ease); width: 100%; }
+.br-doc-chip { display: flex; flex-direction: column; gap: 0.2rem; padding: 0.5rem 0.9rem; border-radius: 10px; background: rgba(28,79,192,0.04); border: 1px solid var(--hairline-2); text-decoration: none; color: inherit; transition: background 0.18s var(--ease), border-color 0.18s var(--ease), transform 0.2s var(--ease-out); min-height: 60px; flex: 1; justify-content: center; flex-shrink: 0; }
 .br-doc-chip:hover { background: rgba(28,79,192,0.08); border-color: rgba(28,79,192,0.2); transform: translateY(-1px); }
 .br-doc-name { font-size: 0.82rem; font-weight: 600; color: var(--navy-700); }
 .br-doc-chip:hover .br-doc-name { color: var(--navy-900); }
@@ -2267,39 +2267,64 @@ NPA_PREV_ROWS_QULIPTA_NBRx
 (function() {
     'use strict';
 
-    // BR Carousel
+    // BR Carousel - cyclic, always shows 4 tiles
     (function() {
         var VISIBLE = 4;
         document.querySelectorAll('.br-carousel-wrap').forEach(function(wrap) {
             var track = wrap.querySelector('.br-docs-track');
-            var chips = track.querySelectorAll('.br-doc-chip');
+            var chips = Array.from(track.querySelectorAll('.br-doc-chip'));
             var prev = wrap.querySelector('.br-prev');
             var next = wrap.querySelector('.br-next');
-            var pos = 0;
-            var maxPos = Math.max(0, chips.length - VISIBLE);
-            // Always make chips fill evenly
-            chips.forEach(function(c) { c.style.flex = ''; c.style.width = ''; c.style.minWidth = ''; });
-            if (chips.length <= VISIBLE) {
-                // 4 or fewer: no carousel, tiles in 4-col grid
+            var total = chips.length;
+
+            if (total <= VISIBLE) {
+                // 4 or fewer: no carousel
                 prev.classList.add('br-hidden');
                 next.classList.add('br-hidden');
                 track.style.display = 'grid';
                 track.style.gridTemplateColumns = 'repeat(4, 1fr)';
                 track.style.width = '100%';
-            } else {
-                // >= 4: show arrows, track uses pages of VISIBLE items
-                track.style.display = 'grid';
-                track.style.gridTemplateColumns = 'repeat(' + chips.length + ', 1fr)';
-                track.style.width = (chips.length / VISIBLE * 100) + '%';
+                return;
+            }
+
+            // Wrap track in a viewport div for proper clipping
+            var viewport = document.createElement('div');
+            viewport.className = 'br-docs-viewport';
+            track.parentNode.insertBefore(viewport, track);
+            viewport.appendChild(track);
+
+            // Set each chip width based on viewport
+            var gapPx = 8;
+            track.style.display = 'flex';
+            track.style.gap = gapPx + 'px';
+            track.style.width = 'max-content';
+            function setChipWidths() {
+                var vpWidth = viewport.offsetWidth;
+                var chipW = (vpWidth - (VISIBLE - 1) * gapPx) / VISIBLE;
+                chips.forEach(function(c) { c.style.flex = 'none'; c.style.width = chipW + 'px'; });
+            }
+            setChipWidths();
+
+            var pos = 0;
+            function getChipWidth() {
+                return chips[0].offsetWidth + gapPx;
             }
             function update() {
-                var pageWidth = 100 / (chips.length / VISIBLE);
-                track.style.transform = 'translateX(-' + pos * pageWidth + '%)';
-                prev.disabled = pos === 0;
-                next.disabled = pos >= maxPos;
+                var offset = pos * getChipWidth();
+                track.style.transform = 'translateX(-' + offset + 'px)';
             }
-            prev.addEventListener('click', function(e) { e.stopPropagation(); if (pos > 0) { pos--; update(); } });
-            next.addEventListener('click', function(e) { e.stopPropagation(); if (pos < maxPos) { pos++; update(); } });
+            prev.addEventListener('click', function(e) {
+                e.stopPropagation(); e.preventDefault();
+                pos--;
+                if (pos < 0) pos = total - VISIBLE;
+                update();
+            });
+            next.addEventListener('click', function(e) {
+                e.stopPropagation(); e.preventDefault();
+                pos++;
+                if (pos > total - VISIBLE) pos = 0;
+                update();
+            });
             update();
         });
     })();
