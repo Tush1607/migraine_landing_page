@@ -1016,14 +1016,14 @@ a { color: inherit; text-decoration: none; }
 .br-section-header { display: flex; align-items: center; gap: 0.75rem; flex-shrink: 0; width: 220px; padding-right: 1.2rem; }
 .br-section-title { font-family: 'Pfizer Diatype Office', Arial, Helvetica, sans-serif; font-size: 0.95rem; font-weight: 700; color: var(--navy-900); white-space: nowrap; }
 .br-section-divider { width: 0; flex-shrink: 0; margin: 0.4rem 0; border: none; border-left: 2px dashed #CBD5E1; }
-.br-carousel-wrap { flex: 1; display: flex; align-items: center; gap: 0.4rem; padding: 0 0.6rem; overflow: hidden; min-width: 0; position: relative; }
+.br-carousel-wrap { flex: 1; display: flex; align-items: center; gap: 0.4rem; padding: 0 0.6rem; min-width: 0; position: relative; }
 .br-carousel-btn { width: 26px; height: 26px; border-radius: 50%; border: 1px solid var(--hairline-2); background: var(--surface); display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; transition: background 0.18s var(--ease), border-color 0.18s var(--ease); position: relative; z-index: 2; }
 .br-carousel-btn:hover { background: rgba(28,79,192,0.06); border-color: rgba(28,79,192,0.2); }
 .br-carousel-btn.br-hidden { display: none; }
 .br-carousel-btn svg { width: 14px; height: 14px; stroke: var(--navy-700); fill: none; stroke-width: 2; }
 .br-docs-viewport { flex: 1; overflow: hidden; min-width: 0; }
-.br-docs-track { display: flex; gap: 0.5rem; transition: transform 0.35s var(--ease); width: 100%; }
-.br-doc-chip { display: flex; flex-direction: column; gap: 0.2rem; padding: 0.5rem 0.9rem; border-radius: 10px; background: rgba(28,79,192,0.04); border: 1px solid var(--hairline-2); text-decoration: none; color: inherit; transition: background 0.18s var(--ease), border-color 0.18s var(--ease), transform 0.2s var(--ease-out); min-height: 60px; flex: 1; justify-content: center; flex-shrink: 0; }
+.br-docs-track { display: flex; gap: 0.5rem; transition: transform 0.35s cubic-bezier(0.4,0,0.2,1); }
+.br-doc-chip { display: flex; flex-direction: column; gap: 0.2rem; padding: 0.5rem 0.9rem; border-radius: 10px; background: rgba(28,79,192,0.04); border: 1px solid var(--hairline-2); text-decoration: none; color: inherit; transition: background 0.18s var(--ease), border-color 0.18s var(--ease); min-height: 60px; justify-content: center; flex-shrink: 0; }
 .br-doc-chip:hover { background: rgba(28,79,192,0.08); border-color: rgba(28,79,192,0.2); transform: translateY(-1px); }
 .br-doc-name { font-size: 0.82rem; font-weight: 600; color: var(--navy-700); }
 .br-doc-chip:hover .br-doc-name { color: var(--navy-900); }
@@ -2157,7 +2157,7 @@ NPA_PREV_ROWS_QULIPTA_NBRx
                     </div>
                     <div class="br-section-divider"></div>
                     <div class="br-carousel-wrap">
-                        <button class="br-carousel-btn br-prev" disabled><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
+                        <button class="br-carousel-btn br-prev"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
                         <div class="br-docs-track">
                             <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:w:/s/MigraineAnalytics/IQBrXYMFq6EZQLHHGrJNI2kdAX9GikX2sr8Cre4-wNy41i8?e=LenYIw" target="_blank" rel="noopener">
                                 <span class="br-doc-name">Blaze Forecasting</span>
@@ -2211,7 +2211,7 @@ NPA_PREV_ROWS_QULIPTA_NBRx
                     </div>
                     <div class="br-section-divider"></div>
                     <div class="br-carousel-wrap">
-                        <button class="br-carousel-btn br-prev" disabled><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
+                        <button class="br-carousel-btn br-prev"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
                         <div class="br-docs-track">
                             <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:p:/s/MigraineAnalytics/IQBdBFg1vxdFR6HZvdxtKVPZAUdmK-vTwF4Trvm4JdEBru4?e=TG0guS" target="_blank" rel="noopener">
                                 <span class="br-doc-name">Migraine Market Overview</span>
@@ -2245,7 +2245,7 @@ NPA_PREV_ROWS_QULIPTA_NBRx
                     </div>
                     <div class="br-section-divider"></div>
                     <div class="br-carousel-wrap">
-                        <button class="br-carousel-btn br-prev" disabled><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
+                        <button class="br-carousel-btn br-prev"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
                         <div class="br-docs-track">
                             <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:p:/s/MigraineAnalytics/IQADCiim_iD7QbxZE7Fm3F89Ab8O10p4xzPmog3z4X7KQ2g?e=jA6LCi" target="_blank" rel="noopener">
                                 <span class="br-doc-name">Migraine Dashboard BR</span>
@@ -2270,6 +2270,7 @@ NPA_PREV_ROWS_QULIPTA_NBRx
     // BR Carousel - fixed 4-tile window, cyclic with slide animation
     (function() {
         var VISIBLE = 4;
+        var GAP = 8;
         document.querySelectorAll('.br-carousel-wrap').forEach(function(wrap) {
             var track = wrap.querySelector('.br-docs-track');
             var chips = Array.from(track.querySelectorAll('.br-doc-chip'));
@@ -2282,71 +2283,69 @@ NPA_PREV_ROWS_QULIPTA_NBRx
                 next.classList.add('br-hidden');
                 track.style.display = 'grid';
                 track.style.gridTemplateColumns = 'repeat(4, 1fr)';
-                track.style.width = '100%';
                 return;
             }
 
-            // Setup: use flex track inside overflow-hidden wrap
-            track.style.display = 'flex';
-            track.style.gap = '0.5rem';
-            track.style.transition = 'transform 0.35s cubic-bezier(0.4,0,0.2,1)';
-            track.style.width = '100%';
+            // Create viewport wrapper for overflow clipping
+            var viewport = document.createElement('div');
+            viewport.className = 'br-docs-viewport';
+            track.parentNode.insertBefore(viewport, track);
+            viewport.appendChild(track);
 
-            // Calculate chip width as 25% of available space
-            function getSlotWidth() {
-                var wrapWidth = wrap.offsetWidth - prev.offsetWidth - next.offsetWidth - 24;
-                return (wrapWidth - 3 * 8) / VISIBLE;
+            // Size chips to exactly fit 4 in viewport
+            function sizeChips() {
+                var vpW = viewport.offsetWidth;
+                var chipW = (vpW - (VISIBLE - 1) * GAP) / VISIBLE;
+                chips.forEach(function(c) { c.style.width = chipW + 'px'; });
+                return chipW;
             }
-            function setWidths() {
-                var w = getSlotWidth();
-                chips.forEach(function(c) { c.style.flex = 'none'; c.style.width = w + 'px'; });
-            }
-            setWidths();
+            var chipW = sizeChips();
+
+            // Track is wider than viewport to hold all chips
+            track.style.width = (total * (chipW + GAP) - GAP) + 'px';
 
             var pos = 0;
             var animating = false;
 
-            function buildVisibleOrder() {
-                // Reorder DOM to show: pos, pos+1, pos+2, pos+3 (cyclic)
+            function reorder() {
                 for (var i = 0; i < total; i++) {
-                    var idx = (pos + i) % total;
-                    track.appendChild(chips[idx]);
+                    track.appendChild(chips[(pos + i) % total]);
                 }
+                chipW = sizeChips();
+                track.style.width = (total * (chipW + GAP) - GAP) + 'px';
             }
 
             function slideNext() {
                 if (animating) return;
                 animating = true;
-                var slotW = chips[0].offsetWidth + 8;
+                var step = chipW + GAP;
                 track.style.transition = 'transform 0.35s cubic-bezier(0.4,0,0.2,1)';
-                track.style.transform = 'translateX(-' + slotW + 'px)';
+                track.style.transform = 'translateX(-' + step + 'px)';
                 setTimeout(function() {
                     track.style.transition = 'none';
                     track.style.transform = 'translateX(0)';
                     pos = (pos + 1) % total;
-                    buildVisibleOrder();
+                    reorder();
                     animating = false;
-                }, 350);
+                }, 360);
             }
 
             function slidePrev() {
                 if (animating) return;
                 animating = true;
-                var slotW = chips[0].offsetWidth + 8;
-                // Prepend the previous item
-                track.style.transition = 'none';
-                track.style.transform = 'translateX(-' + slotW + 'px)';
+                var step = chipW + GAP;
                 pos = (pos - 1 + total) % total;
-                buildVisibleOrder();
-                // Force reflow
+                reorder();
+                track.style.transition = 'none';
+                track.style.transform = 'translateX(-' + step + 'px)';
                 void track.offsetHeight;
                 track.style.transition = 'transform 0.35s cubic-bezier(0.4,0,0.2,1)';
                 track.style.transform = 'translateX(0)';
-                setTimeout(function() { animating = false; }, 350);
+                setTimeout(function() { animating = false; }, 360);
             }
 
-            buildVisibleOrder();
-
+            reorder();
+            prev.disabled = false;
             next.addEventListener('click', function(e) { e.stopPropagation(); e.preventDefault(); slideNext(); });
             prev.addEventListener('click', function(e) { e.stopPropagation(); e.preventDefault(); slidePrev(); });
         });
