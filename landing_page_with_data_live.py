@@ -2225,8 +2225,8 @@ NPA_PREV_ROWS_QULIPTA_NBRx
             var maxPos = Math.max(0, chips.length - VISIBLE);
             // Always make chips fill evenly
             chips.forEach(function(c) { c.style.flex = ''; c.style.width = ''; c.style.minWidth = ''; });
-            if (chips.length < VISIBLE) {
-                // Less than 4: no carousel, tiles same size as carousel sections
+            if (chips.length <= VISIBLE) {
+                // 4 or fewer: no carousel, tiles in 4-col grid
                 prev.classList.add('br-hidden');
                 next.classList.add('br-hidden');
                 track.style.display = 'grid';
