@@ -1016,15 +1016,13 @@ a { color: inherit; text-decoration: none; }
 .br-section-header { display: flex; align-items: center; gap: 0.75rem; flex-shrink: 0; width: 220px; padding-right: 1.2rem; }
 .br-section-title { font-family: 'Pfizer Diatype Office', Arial, Helvetica, sans-serif; font-size: 0.95rem; font-weight: 700; color: var(--navy-900); white-space: nowrap; }
 .br-section-divider { width: 0; flex-shrink: 0; margin: 0.4rem 0; border: none; border-left: 2px dashed #CBD5E1; }
-.br-carousel-wrap { flex: 1; display: flex; align-items: center; gap: 0.4rem; padding: 0 0.6rem; min-width: 0; position: relative; }
+.br-carousel-wrap { flex: 1; display: flex; align-items: center; gap: 0.4rem; padding: 0 0.6rem; min-width: 0; position: relative; overflow: hidden; }
 .br-carousel-btn { width: 26px; height: 26px; border-radius: 50%; border: 1px solid var(--hairline-2); background: var(--surface); display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; transition: background 0.18s var(--ease), border-color 0.18s var(--ease); position: relative; z-index: 2; }
 .br-carousel-btn:hover { background: rgba(28,79,192,0.06); border-color: rgba(28,79,192,0.2); }
 .br-carousel-btn.br-hidden { display: none; }
 .br-carousel-btn svg { width: 14px; height: 14px; stroke: var(--navy-700); fill: none; stroke-width: 2; }
 .br-docs-track { flex: 1; display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; min-width: 0; }
-.br-docs-track > .br-doc-chip:nth-child(n+5) { display: none; }
-.br-doc-chip.br-chip-hidden { display: none !important; }
-.br-doc-chip.br-chip-visible { display: flex !important; }
+.br-docs-track > :nth-child(n+5) { display: none; }
 .br-doc-chip { display: flex; flex-direction: column; gap: 0.2rem; padding: 0.5rem 0.9rem; border-radius: 10px; background: rgba(28,79,192,0.04); border: 1px solid var(--hairline-2); text-decoration: none; color: inherit; transition: background 0.18s var(--ease), border-color 0.18s var(--ease); min-height: 60px; justify-content: center; }
 .br-doc-chip:hover { background: rgba(28,79,192,0.08); border-color: rgba(28,79,192,0.2); }
 .br-doc-name { font-size: 0.82rem; font-weight: 600; color: var(--navy-700); }
@@ -2269,15 +2267,14 @@ NPA_PREV_ROWS_QULIPTA_NBRx
 (function() {
     'use strict';
 
-    // BR Carousel - fixed 4-tile window, cyclic with animation
+    // BR Carousel - DOM reorder approach, cyclic with slide animation
     (function() {
         var VISIBLE = 4;
         document.querySelectorAll('.br-carousel-wrap').forEach(function(wrap) {
             var track = wrap.querySelector('.br-docs-track');
-            var chips = Array.from(track.querySelectorAll('.br-doc-chip'));
             var prev = wrap.querySelector('.br-prev');
             var next = wrap.querySelector('.br-next');
-            var total = chips.length;
+            var total = track.children.length;
 
             if (total <= VISIBLE) {
                 prev.classList.add('br-hidden');
@@ -2285,48 +2282,37 @@ NPA_PREV_ROWS_QULIPTA_NBRx
                 return;
             }
 
-            // Show only 4 chips at a time using class toggle
-            var pos = 0;
-            function render() {
-                for (var i = 0; i < total; i++) {
-                    chips[i].classList.add('br-chip-hidden');
-                    chips[i].classList.remove('br-chip-visible');
-                }
-                for (var i = 0; i < VISIBLE; i++) {
-                    var idx = (pos + i) % total;
-                    chips[idx].classList.remove('br-chip-hidden');
-                    chips[idx].classList.add('br-chip-visible');
-                }
-            }
-            render();
-
             var animating = false;
-            next.addEventListener('click', function(e) {
-                e.stopPropagation(); e.preventDefault();
+
+            function slideRight() {
                 if (animating) return;
                 animating = true;
-                track.style.transition = 'opacity 0.18s ease';
-                track.style.opacity = '0';
+                track.style.transition = 'transform 0.25s cubic-bezier(0.4,0,0.2,1)';
+                track.style.transform = 'translateX(-25%)';
                 setTimeout(function() {
-                    pos = (pos + 1) % total;
-                    render();
-                    track.style.opacity = '1';
-                    setTimeout(function() { animating = false; }, 180);
-                }, 180);
-            });
-            prev.addEventListener('click', function(e) {
-                e.stopPropagation(); e.preventDefault();
+                    track.style.transition = 'none';
+                    track.style.transform = 'translateX(0)';
+                    // Move first child to end
+                    track.appendChild(track.firstElementChild);
+                    animating = false;
+                }, 260);
+            }
+
+            function slideLeft() {
                 if (animating) return;
                 animating = true;
-                track.style.transition = 'opacity 0.18s ease';
-                track.style.opacity = '0';
-                setTimeout(function() {
-                    pos = (pos - 1 + total) % total;
-                    render();
-                    track.style.opacity = '1';
-                    setTimeout(function() { animating = false; }, 180);
-                }, 180);
-            });
+                // Move last child to front
+                track.insertBefore(track.lastElementChild, track.firstElementChild);
+                track.style.transition = 'none';
+                track.style.transform = 'translateX(-25%)';
+                void track.offsetHeight;
+                track.style.transition = 'transform 0.25s cubic-bezier(0.4,0,0.2,1)';
+                track.style.transform = 'translateX(0)';
+                setTimeout(function() { animating = false; }, 260);
+            }
+
+            next.addEventListener('click', function(e) { e.stopPropagation(); e.preventDefault(); slideRight(); });
+            prev.addEventListener('click', function(e) { e.stopPropagation(); e.preventDefault(); slideLeft(); });
         });
     })();
 
