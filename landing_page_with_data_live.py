@@ -2224,12 +2224,15 @@ NPA_PREV_ROWS_QULIPTA_NBRx
             var pos = 0;
             var maxPos = Math.max(0, chips.length - VISIBLE);
             // Always make chips fill evenly
-            chips.forEach(function(c) { c.style.flex = '1'; c.style.width = 'auto'; c.style.minWidth = '0'; });
+            chips.forEach(function(c) { c.style.flex = ''; c.style.width = ''; c.style.minWidth = ''; });
             if (chips.length < VISIBLE) {
-                // Less than 4: no carousel needed
+                // Less than 4: no carousel, show tiles at natural size
                 prev.classList.add('br-hidden');
                 next.classList.add('br-hidden');
-                track.style.width = '100%';
+                track.style.display = 'flex';
+                track.style.gap = '0.5rem';
+                track.style.width = 'auto';
+                chips.forEach(function(c) { c.style.width = '180px'; c.style.flexShrink = '0'; });
             } else {
                 // >= 4: show arrows, track uses pages of VISIBLE items
                 track.style.display = 'grid';
