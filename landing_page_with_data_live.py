@@ -1016,14 +1016,14 @@ a { color: inherit; text-decoration: none; }
 .br-section-header { display: flex; align-items: center; gap: 0.75rem; flex-shrink: 0; width: 220px; padding-right: 1.2rem; }
 .br-section-title { font-family: 'Pfizer Diatype Office', Arial, Helvetica, sans-serif; font-size: 0.95rem; font-weight: 700; color: var(--navy-900); white-space: nowrap; }
 .br-section-divider { width: 0; flex-shrink: 0; margin: 0.4rem 0; border: none; border-left: 2px dashed #CBD5E1; }
-.br-carousel-wrap { flex: 1; display: flex; align-items: center; gap: 0.4rem; padding: 0 0.6rem; overflow: hidden; }
+.br-carousel-wrap { flex: 1; display: flex; align-items: center; gap: 0.4rem; padding: 0 0.6rem; overflow: hidden; min-width: 0; }
 .br-carousel-btn { width: 26px; height: 26px; border-radius: 50%; border: 1px solid var(--hairline-2); background: var(--surface); display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; transition: background 0.18s var(--ease), border-color 0.18s var(--ease); }
 .br-carousel-btn:hover { background: rgba(28,79,192,0.06); border-color: rgba(28,79,192,0.2); }
 .br-carousel-btn:disabled { opacity: 0.3; cursor: default; pointer-events: none; }
 .br-carousel-btn.br-hidden { display: none; }
 .br-carousel-btn svg { width: 14px; height: 14px; stroke: var(--navy-700); fill: none; stroke-width: 2; }
-.br-docs-track { display: flex; gap: 0.5rem; transition: transform 0.3s var(--ease); }
-.br-doc-chip { display: flex; flex-direction: column; gap: 0.2rem; padding: 0.5rem 0.9rem; border-radius: 10px; background: rgba(28,79,192,0.04); border: 1px solid var(--hairline-2); text-decoration: none; color: inherit; transition: background 0.18s var(--ease), border-color 0.18s var(--ease), transform 0.2s var(--ease-out); min-height: 60px; width: 180px; flex-shrink: 0; justify-content: center; }
+.br-docs-track { display: flex; gap: 0.5rem; transition: transform 0.3s var(--ease); width: 100%; }
+.br-doc-chip { display: flex; flex-direction: column; gap: 0.2rem; padding: 0.5rem 0.9rem; border-radius: 10px; background: rgba(28,79,192,0.04); border: 1px solid var(--hairline-2); text-decoration: none; color: inherit; transition: background 0.18s var(--ease), border-color 0.18s var(--ease), transform 0.2s var(--ease-out); min-height: 60px; flex: 1; justify-content: center; }
 .br-doc-chip:hover { background: rgba(28,79,192,0.08); border-color: rgba(28,79,192,0.2); transform: translateY(-1px); }
 .br-doc-name { font-size: 0.82rem; font-weight: 600; color: var(--navy-700); }
 .br-doc-chip:hover .br-doc-name { color: var(--navy-900); }
@@ -2216,8 +2216,6 @@ NPA_PREV_ROWS_QULIPTA_NBRx
     // BR Carousel
     (function() {
         var VISIBLE = 4;
-        var CHIP_W = 180;
-        var GAP = 8;
         document.querySelectorAll('.br-carousel-wrap').forEach(function(wrap) {
             var track = wrap.querySelector('.br-docs-track');
             var chips = track.querySelectorAll('.br-doc-chip');
@@ -2225,13 +2223,22 @@ NPA_PREV_ROWS_QULIPTA_NBRx
             var next = wrap.querySelector('.br-next');
             var pos = 0;
             var maxPos = Math.max(0, chips.length - VISIBLE);
-            if (chips.length <= VISIBLE) {
+            // Always make chips fill evenly
+            chips.forEach(function(c) { c.style.flex = '1'; c.style.width = 'auto'; c.style.minWidth = '0'; });
+            if (chips.length < VISIBLE) {
+                // Less than 4: no carousel needed
                 prev.classList.add('br-hidden');
                 next.classList.add('br-hidden');
-                chips.forEach(function(c) { c.style.flex = '1'; c.style.width = 'auto'; });
+                track.style.width = '100%';
+            } else {
+                // >= 4: show arrows, track uses pages of VISIBLE items
+                track.style.display = 'grid';
+                track.style.gridTemplateColumns = 'repeat(' + chips.length + ', 1fr)';
+                track.style.width = (chips.length / VISIBLE * 100) + '%';
             }
             function update() {
-                track.style.transform = 'translateX(-' + pos * (CHIP_W + GAP) + 'px)';
+                var pageWidth = 100 / (chips.length / VISIBLE);
+                track.style.transform = 'translateX(-' + pos * pageWidth + '%)';
                 prev.disabled = pos === 0;
                 next.disabled = pos >= maxPos;
             }
