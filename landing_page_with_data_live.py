@@ -2226,13 +2226,12 @@ NPA_PREV_ROWS_QULIPTA_NBRx
             // Always make chips fill evenly
             chips.forEach(function(c) { c.style.flex = ''; c.style.width = ''; c.style.minWidth = ''; });
             if (chips.length < VISIBLE) {
-                // Less than 4: no carousel, show tiles at natural size
+                // Less than 4: no carousel, tiles same size as carousel sections
                 prev.classList.add('br-hidden');
                 next.classList.add('br-hidden');
-                track.style.display = 'flex';
-                track.style.gap = '0.5rem';
-                track.style.width = 'auto';
-                chips.forEach(function(c) { c.style.width = '180px'; c.style.flexShrink = '0'; });
+                track.style.display = 'grid';
+                track.style.gridTemplateColumns = 'repeat(4, 1fr)';
+                track.style.width = '100%';
             } else {
                 // >= 4: show arrows, track uses pages of VISIBLE items
                 track.style.display = 'grid';
