@@ -2267,7 +2267,7 @@ NPA_PREV_ROWS_QULIPTA_NBRx
 (function() {
     'use strict';
 
-    // BR Carousel - fixed 4-tile window, cyclic
+    // BR Carousel - fixed 4-tile window, cyclic with slide animation
     (function() {
         var VISIBLE = 4;
         document.querySelectorAll('.br-carousel-wrap').forEach(function(wrap) {
@@ -2286,32 +2286,69 @@ NPA_PREV_ROWS_QULIPTA_NBRx
                 return;
             }
 
-            // Hide all chips, only show current window of 4
+            // Setup: use flex track inside overflow-hidden wrap
+            track.style.display = 'flex';
+            track.style.gap = '0.5rem';
+            track.style.transition = 'transform 0.35s cubic-bezier(0.4,0,0.2,1)';
+            track.style.width = '100%';
+
+            // Calculate chip width as 25% of available space
+            function getSlotWidth() {
+                var wrapWidth = wrap.offsetWidth - prev.offsetWidth - next.offsetWidth - 24;
+                return (wrapWidth - 3 * 8) / VISIBLE;
+            }
+            function setWidths() {
+                var w = getSlotWidth();
+                chips.forEach(function(c) { c.style.flex = 'none'; c.style.width = w + 'px'; });
+            }
+            setWidths();
+
             var pos = 0;
-            function render() {
-                chips.forEach(function(c) { c.style.display = 'none'; });
-                for (var i = 0; i < VISIBLE; i++) {
+            var animating = false;
+
+            function buildVisibleOrder() {
+                // Reorder DOM to show: pos, pos+1, pos+2, pos+3 (cyclic)
+                for (var i = 0; i < total; i++) {
                     var idx = (pos + i) % total;
-                    chips[idx].style.display = 'flex';
+                    track.appendChild(chips[idx]);
                 }
             }
-            track.style.display = 'grid';
-            track.style.gridTemplateColumns = 'repeat(4, 1fr)';
-            track.style.gap = '0.5rem';
-            track.style.width = '100%';
-            track.style.transform = 'none';
 
-            prev.addEventListener('click', function(e) {
-                e.stopPropagation(); e.preventDefault();
+            function slideNext() {
+                if (animating) return;
+                animating = true;
+                var slotW = chips[0].offsetWidth + 8;
+                track.style.transition = 'transform 0.35s cubic-bezier(0.4,0,0.2,1)';
+                track.style.transform = 'translateX(-' + slotW + 'px)';
+                setTimeout(function() {
+                    track.style.transition = 'none';
+                    track.style.transform = 'translateX(0)';
+                    pos = (pos + 1) % total;
+                    buildVisibleOrder();
+                    animating = false;
+                }, 350);
+            }
+
+            function slidePrev() {
+                if (animating) return;
+                animating = true;
+                var slotW = chips[0].offsetWidth + 8;
+                // Prepend the previous item
+                track.style.transition = 'none';
+                track.style.transform = 'translateX(-' + slotW + 'px)';
                 pos = (pos - 1 + total) % total;
-                render();
-            });
-            next.addEventListener('click', function(e) {
-                e.stopPropagation(); e.preventDefault();
-                pos = (pos + 1) % total;
-                render();
-            });
-            render();
+                buildVisibleOrder();
+                // Force reflow
+                void track.offsetHeight;
+                track.style.transition = 'transform 0.35s cubic-bezier(0.4,0,0.2,1)';
+                track.style.transform = 'translateX(0)';
+                setTimeout(function() { animating = false; }, 350);
+            }
+
+            buildVisibleOrder();
+
+            next.addEventListener('click', function(e) { e.stopPropagation(); e.preventDefault(); slideNext(); });
+            prev.addEventListener('click', function(e) { e.stopPropagation(); e.preventDefault(); slidePrev(); });
         });
     })();
 
