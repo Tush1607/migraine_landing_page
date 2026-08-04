@@ -2164,6 +2164,16 @@ NPA_PREV_ROWS_QULIPTA_NBRx
                                 <span class="br-doc-desc">Detailed deep-dive analyses across key metrics.</span>
                                 <span class="br-doc-date">Updated Jun 2026</span>
                             </a>
+                            <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:p:/s/MigraineAnalytics/IQDMISkfgYeaRbxeVSvtJZ3yAVfEwpmlzFLET-tsiVzj-HM?e=Gw58Qh" target="_blank" rel="noopener">
+                                <span class="br-doc-name">Nurtec Strategy Deck</span>
+                                <span class="br-doc-desc">Strategic planning and positioning for Nurtec.</span>
+                                <span class="br-doc-date">Updated Jun 8, 2026</span>
+                            </a>
+                            <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:x:/s/MigraineAnalytics/IQAVxd1IHlmwR7iRpYYuMH7BAQ2gY5jodUexjg_VvED38eI?e=k6Osrq" target="_blank" rel="noopener">
+                                <span class="br-doc-name">Waterfall Analysis</span>
+                                <span class="br-doc-desc">Waterfall analysis and breakdown metrics.</span>
+                                <span class="br-doc-date">Updated Jun 2026</span>
+                            </a>
                         </div>
                         <button class="br-carousel-btn br-next"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></button>
                     </div>
@@ -2192,25 +2202,6 @@ NPA_PREV_ROWS_QULIPTA_NBRx
                         <button class="br-carousel-btn br-next"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></button>
                     </div>
                 </div>
-                <!-- Nurtec Strategy -->
-                <div class="br-section-card">
-                    <div class="br-section-header">
-                        <span class="icon-chip chip-s3"><svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg></span>
-                        <span class="br-section-title">Nurtec Strategy</span>
-                    </div>
-                    <div class="br-section-divider"></div>
-                    <div class="br-carousel-wrap">
-                        <button class="br-carousel-btn br-prev"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
-                        <div class="br-docs-track">
-                            <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:p:/s/MigraineAnalytics/IQDMISkfgYeaRbxeVSvtJZ3yAVfEwpmlzFLET-tsiVzj-HM?e=Gw58Qh" target="_blank" rel="noopener">
-                                <span class="br-doc-name">Nurtec Strategy Deck</span>
-                                <span class="br-doc-desc">Strategic planning and positioning for Nurtec.</span>
-                                <span class="br-doc-date">Updated Jun 8, 2026</span>
-                            </a>
-                        </div>
-                        <button class="br-carousel-btn br-next"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></button>
-                    </div>
-                </div>
                 <!-- HCP Segmentation -->
                 <div class="br-section-card">
                     <div class="br-section-header">
@@ -2230,25 +2221,6 @@ NPA_PREV_ROWS_QULIPTA_NBRx
                                 <span class="br-doc-name">HCP Segmentation Deck</span>
                                 <span class="br-doc-desc">HCP segmentation presentation and findings.</span>
                                 <span class="br-doc-date">Updated Jul 21, 2026</span>
-                            </a>
-                        </div>
-                        <button class="br-carousel-btn br-next"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></button>
-                    </div>
-                </div>
-                <!-- Waterfall Analysis -->
-                <div class="br-section-card">
-                    <div class="br-section-header">
-                        <span class="icon-chip chip-s2"><svg viewBox="0 0 24 24"><path d="M18 20V10M12 20V4M6 20v-6"/></svg></span>
-                        <span class="br-section-title">Waterfall Analysis</span>
-                    </div>
-                    <div class="br-section-divider"></div>
-                    <div class="br-carousel-wrap">
-                        <button class="br-carousel-btn br-prev"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
-                        <div class="br-docs-track">
-                            <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:x:/s/MigraineAnalytics/IQAVxd1IHlmwR7iRpYYuMH7BAQ2gY5jodUexjg_VvED38eI?e=k6Osrq" target="_blank" rel="noopener">
-                                <span class="br-doc-name">Waterfall Analysis Workbook</span>
-                                <span class="br-doc-desc">Waterfall analysis and breakdown metrics.</span>
-                                <span class="br-doc-date">Updated Jun 2026</span>
                             </a>
                         </div>
                         <button class="br-carousel-btn br-next"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></button>
