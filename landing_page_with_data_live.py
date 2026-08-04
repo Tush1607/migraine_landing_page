@@ -1013,7 +1013,7 @@ a { color: inherit; text-decoration: none; }
 /* ───── BR SECTIONS ───── */
 .br-grid { display: flex; flex-direction: column; gap: 1rem; }
 .br-section-card { background: var(--surface); border-radius: 14px; box-shadow: var(--shadow-sm); padding: 1rem 1.4rem; display: flex; align-items: stretch; gap: 0; min-height: 120px; }
-.br-section-header { display: flex; align-items: center; gap: 0.75rem; flex-shrink: 0; width: 220px; padding-right: 1.2rem; }
+.br-section-header { display: flex; align-items: center; gap: 0.75rem; flex-shrink: 0; width: 220px; padding-right: 1.8rem; }
 .br-section-title { font-family: 'Pfizer Diatype Office', Arial, Helvetica, sans-serif; font-size: 0.95rem; font-weight: 700; color: var(--navy-900); white-space: nowrap; }
 .br-section-divider { width: 0; flex-shrink: 0; margin: 0.4rem 0; border: none; border-left: 2px dashed #CBD5E1; }
 .br-carousel-wrap { flex: 1; display: flex; align-items: center; gap: 0.4rem; padding: 0 0.6rem; min-width: 0; position: relative; overflow: hidden; }
@@ -2151,27 +2151,27 @@ NPA_PREV_ROWS_QULIPTA_NBRx
                         <div class="br-docs-track">
                             <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:p:/s/MigraineAnalytics/IQA7CzbiZxm9SYbErQAXLG5kASpgzKHmNLmQz8yBenX6kNc?e=KgQ7yz" target="_blank" rel="noopener">
                                 <span class="br-doc-name">Nurtec Offsite Deck</span>
-                                <span class="br-doc-desc">Strategic offsite presentation with market overview.</span>
+                                <span class="br-doc-desc">Leadership offsite deck covering Nurtec market positioning and growth trajectory.</span>
                                 <span class="br-doc-date">Updated Feb 24, 2026</span>
                             </a>
                             <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:p:/s/MigraineAnalytics/IQBvAxCrDDmeTbpe9RH14ha6AeG6J09GqT4ft1vRBHtmTk8?e=qFF3D9" target="_blank" rel="noopener">
                                 <span class="br-doc-name">oCGRP Market Dynamics</span>
-                                <span class="br-doc-desc">Competitive dynamics and market share analysis.</span>
+                                <span class="br-doc-desc">oCGRP class competitive share trends, payer mix shifts, and market dynamics.</span>
                                 <span class="br-doc-date">Updated Feb 4, 2026</span>
                             </a>
                             <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:p:/s/MigraineAnalytics/IQA8dEBkpo8qS57uZt85D9mxAb7LlGJbbedsau2vKNAWdOI?e=CvuHLg" target="_blank" rel="noopener">
                                 <span class="br-doc-name">Nurtec Deep-Dives</span>
-                                <span class="br-doc-desc">Detailed deep-dive analyses across key metrics.</span>
+                                <span class="br-doc-desc">Granular metric deep-dives across payer, channel, and geographic dimensions.</span>
                                 <span class="br-doc-date">Updated Jun 2026</span>
                             </a>
                             <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:p:/s/MigraineAnalytics/IQDMISkfgYeaRbxeVSvtJZ3yAVfEwpmlzFLET-tsiVzj-HM?e=Gw58Qh" target="_blank" rel="noopener">
                                 <span class="br-doc-name">Nurtec Strategy Deck</span>
-                                <span class="br-doc-desc">Strategic planning and positioning for Nurtec.</span>
+                                <span class="br-doc-desc">Long-term strategic positioning, growth levers, and competitive response framework.</span>
                                 <span class="br-doc-date">Updated Jun 8, 2026</span>
                             </a>
                             <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:x:/s/MigraineAnalytics/IQAVxd1IHlmwR7iRpYYuMH7BAQ2gY5jodUexjg_VvED38eI?e=k6Osrq" target="_blank" rel="noopener">
                                 <span class="br-doc-name">Waterfall Analysis</span>
-                                <span class="br-doc-desc">Waterfall analysis and breakdown metrics.</span>
+                                <span class="br-doc-desc">Sequential volume decomposition identifying key drivers of TRx change.</span>
                                 <span class="br-doc-date">Updated Jun 2026</span>
                             </a>
                         </div>
@@ -2189,13 +2189,13 @@ NPA_PREV_ROWS_QULIPTA_NBRx
                         <button class="br-carousel-btn br-prev"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
                         <div class="br-docs-track">
                             <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:x:/s/MigraineAnalytics/IQDZfXTQFhJPTrwXAfrf5sPsAb9GXkRE5XQPyKkkk-E5aj8?e=1A8yYE" target="_blank" rel="noopener">
-                                <span class="br-doc-name">Access Workbook</span>
-                                <span class="br-doc-desc">Access changes tracking workbook.</span>
+                                <span class="br-doc-name">Access Impact Analysis</span>
+                                <span class="br-doc-desc">Quantified impact of formulary access changes on Nurtec volume and share.</span>
                                 <span class="br-doc-date">Updated Jul 14, 2026</span>
                             </a>
                             <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:p:/s/MigraineAnalytics/IQA00OULhasKRZbqpCLTimFhAdzw0_ucJ8dvqsRg3mXPRmc?e=49eqaj" target="_blank" rel="noopener">
-                                <span class="br-doc-name">Access PPT</span>
-                                <span class="br-doc-desc">Access changes presentation deck.</span>
+                                <span class="br-doc-name">Access Strategy Deck</span>
+                                <span class="br-doc-desc">Executive summary of payer access wins, losses, and strategic implications.</span>
                                 <span class="br-doc-date">Updated Jul 14, 2026</span>
                             </a>
                         </div>
@@ -2213,13 +2213,13 @@ NPA_PREV_ROWS_QULIPTA_NBRx
                         <button class="br-carousel-btn br-prev"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
                         <div class="br-docs-track">
                             <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:x:/s/MigraineAnalytics/IQCzU-TBKzs2R6R8OBlTorWlAXi5scVtjY-kvt4zIW2kE8w?e=fp2TNs" target="_blank" rel="noopener">
-                                <span class="br-doc-name">HCP Segmentation Workbook</span>
-                                <span class="br-doc-desc">HCP segmentation data and analysis workbook.</span>
+                                <span class="br-doc-name">Segmentation Analysis</span>
+                                <span class="br-doc-desc">HCP behavioral clustering, prescribing patterns, and segment-level opportunity sizing.</span>
                                 <span class="br-doc-date">Updated Jul 21, 2026</span>
                             </a>
                             <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:p:/s/MigraineAnalytics/IQCpXVMtEp3wSIwPWzgGNybXAfEvHh5Vm97TczXtv7xMTX0?e=9bTkNw" target="_blank" rel="noopener">
-                                <span class="br-doc-name">HCP Segmentation Deck</span>
-                                <span class="br-doc-desc">HCP segmentation presentation and findings.</span>
+                                <span class="br-doc-name">Segmentation Executive Summary</span>
+                                <span class="br-doc-desc">Key findings, segment profiles, and targeting recommendations for field teams.</span>
                                 <span class="br-doc-date">Updated Jul 21, 2026</span>
                             </a>
                         </div>
