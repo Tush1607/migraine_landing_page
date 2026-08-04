@@ -2270,7 +2270,7 @@ NPA_PREV_ROWS_QULIPTA_NBRx
                             </a>
                             <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:w:/s/MigraineAnalytics/IQBrXYMFq6EZQLHHGrJNI2kdAX9GikX2sr8Cre4-wNy41i8?e=LenYIw" target="_blank" rel="noopener">
                                 <span class="br-doc-name">Blaze Forecasting</span>
-                                <span class="br-doc-desc">Data granularity, business rules, and time grains for Blaze forecasting.</span>
+                                <span class="br-doc-desc">Forecasting pipeline for TRx/NBRx with NPA lag and restatement adjustments at weekly grain.</span>
                                 <span class="br-doc-date">Updated Dec 30, 2025</span>
                             </a>
                             <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:w:/s/MigraineAnalytics/IQCxW3pPz56cRovjeDADfXQ8AX0RBgBjumPePN6RLg6MJps?e=OdPqBq" target="_blank" rel="noopener">
