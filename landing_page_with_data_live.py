@@ -2138,10 +2138,122 @@ NPA_PREV_ROWS_QULIPTA_NBRx
         <!-- 4. DELIVERABLES -->
         <section class="section" id="deliverables" data-label="Analytics Deliverables">
             <div class="section-head"><h2>Analytics Deliverables</h2><p>PowerPoint and Excel deliverables for leadership and cross-functional stakeholders.</p></div>
-            <div class="grid">
-                <a class="card" href="https://pfizer.sharepoint.com/:p:/s/MigraineAnalytics/IQA7CzbiZxm9SYbErQAXLG5kASpgzKHmNLmQz8yBenX6kNc?e=KgQ7yz" target="_blank" rel="noopener"><div class="card-top"><span class="icon-chip chip-s4"><svg viewBox="0 0 24 24"><path d="M4 4h16a1 1 0 011 1v14a1 1 0 01-1 1H4a1 1 0 01-1-1V5a1 1 0 011-1z"/><path d="M8 9h8M8 13h6M8 17h4"/></svg></span></div><div class="card-title">Nurtec Offsite Deck</div><div class="card-desc">Strategic offsite presentation with market overview.</div><div class="card-updated">Updated Feb 24, 2026</div><span class="dest-pill dest-ppt"><span class="swatch">&#9632;</span>PowerPoint</span></a>
-                <a class="card" href="https://pfizer.sharepoint.com/:p:/s/MigraineAnalytics/IQBvAxCrDDmeTbpe9RH14ha6AeG6J09GqT4ft1vRBHtmTk8?e=qFF3D9" target="_blank" rel="noopener"><div class="card-top"><span class="icon-chip chip-s4"><svg viewBox="0 0 24 24"><circle cx="6" cy="18" r="2"/><circle cx="18" cy="18" r="2"/><circle cx="12" cy="6" r="2"/><path d="M6 16V8l6-2M18 16V8l-6-2"/></svg></span></div><div class="card-title">oCGRP Market Dynamics</div><div class="card-desc">Competitive dynamics and market share analysis.</div><div class="card-updated">Updated Feb 4, 2026</div><span class="dest-pill dest-ppt"><span class="swatch">&#9632;</span>PPT &middot; Excel</span></a>
-                <a class="card" href="https://pfizer.sharepoint.com/:p:/s/MigraineAnalytics/IQA8dEBkpo8qS57uZt85D9mxAb7LlGJbbedsau2vKNAWdOI?e=CvuHLg" target="_blank" rel="noopener"><div class="card-top"><span class="icon-chip chip-s4"><svg viewBox="0 0 24 24"><path d="M14 3v4a1 1 0 001 1h4"/><path d="M17 21H7a2 2 0 01-2-2V5a2 2 0 012-2h7l5 5v11a2 2 0 01-2 2z"/><path d="M9 17v-6M12 17v-1M15 17v-4"/></svg></span></div><div class="card-title">Nurtec Deep-Dives</div><div class="card-desc">Detailed deep-dive analyses across key metrics.</div><div class="card-updated">Updated Jun 2026</div><span class="dest-pill dest-ppt"><span class="swatch">&#9632;</span>PowerPoint</span></a>
+            <div class="br-grid">
+                <!-- Nurtec and oCGRP Market -->
+                <div class="br-section-card">
+                    <div class="br-section-header">
+                        <span class="icon-chip chip-s4"><svg viewBox="0 0 24 24"><path d="M4 4h16a1 1 0 011 1v14a1 1 0 01-1 1H4a1 1 0 01-1-1V5a1 1 0 011-1z"/><path d="M8 9h8M8 13h6M8 17h4"/></svg></span>
+                        <span class="br-section-title">Nurtec &amp; oCGRP Market</span>
+                    </div>
+                    <div class="br-section-divider"></div>
+                    <div class="br-carousel-wrap">
+                        <button class="br-carousel-btn br-prev"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
+                        <div class="br-docs-track">
+                            <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:p:/s/MigraineAnalytics/IQA7CzbiZxm9SYbErQAXLG5kASpgzKHmNLmQz8yBenX6kNc?e=KgQ7yz" target="_blank" rel="noopener">
+                                <span class="br-doc-name">Nurtec Offsite Deck</span>
+                                <span class="br-doc-desc">Strategic offsite presentation with market overview.</span>
+                                <span class="br-doc-date">Updated Feb 24, 2026</span>
+                            </a>
+                            <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:p:/s/MigraineAnalytics/IQBvAxCrDDmeTbpe9RH14ha6AeG6J09GqT4ft1vRBHtmTk8?e=qFF3D9" target="_blank" rel="noopener">
+                                <span class="br-doc-name">oCGRP Market Dynamics</span>
+                                <span class="br-doc-desc">Competitive dynamics and market share analysis.</span>
+                                <span class="br-doc-date">Updated Feb 4, 2026</span>
+                            </a>
+                            <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:p:/s/MigraineAnalytics/IQA8dEBkpo8qS57uZt85D9mxAb7LlGJbbedsau2vKNAWdOI?e=CvuHLg" target="_blank" rel="noopener">
+                                <span class="br-doc-name">Nurtec Deep-Dives</span>
+                                <span class="br-doc-desc">Detailed deep-dive analyses across key metrics.</span>
+                                <span class="br-doc-date">Updated Jun 2026</span>
+                            </a>
+                        </div>
+                        <button class="br-carousel-btn br-next"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></button>
+                    </div>
+                </div>
+                <!-- Access Changes -->
+                <div class="br-section-card">
+                    <div class="br-section-header">
+                        <span class="icon-chip chip-s1"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></span>
+                        <span class="br-section-title">Access Changes</span>
+                    </div>
+                    <div class="br-section-divider"></div>
+                    <div class="br-carousel-wrap">
+                        <button class="br-carousel-btn br-prev"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
+                        <div class="br-docs-track">
+                            <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:x:/s/MigraineAnalytics/IQDZfXTQFhJPTrwXAfrf5sPsAb9GXkRE5XQPyKkkk-E5aj8?e=1A8yYE" target="_blank" rel="noopener">
+                                <span class="br-doc-name">Access Workbook</span>
+                                <span class="br-doc-desc">Access changes tracking workbook.</span>
+                                <span class="br-doc-date">Updated Jul 14, 2026</span>
+                            </a>
+                            <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:p:/s/MigraineAnalytics/IQA00OULhasKRZbqpCLTimFhAdzw0_ucJ8dvqsRg3mXPRmc?e=49eqaj" target="_blank" rel="noopener">
+                                <span class="br-doc-name">Access PPT</span>
+                                <span class="br-doc-desc">Access changes presentation deck.</span>
+                                <span class="br-doc-date">Updated Jul 14, 2026</span>
+                            </a>
+                        </div>
+                        <button class="br-carousel-btn br-next"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></button>
+                    </div>
+                </div>
+                <!-- Nurtec Strategy -->
+                <div class="br-section-card">
+                    <div class="br-section-header">
+                        <span class="icon-chip chip-s3"><svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg></span>
+                        <span class="br-section-title">Nurtec Strategy</span>
+                    </div>
+                    <div class="br-section-divider"></div>
+                    <div class="br-carousel-wrap">
+                        <button class="br-carousel-btn br-prev"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
+                        <div class="br-docs-track">
+                            <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:p:/s/MigraineAnalytics/IQDMISkfgYeaRbxeVSvtJZ3yAVfEwpmlzFLET-tsiVzj-HM?e=Gw58Qh" target="_blank" rel="noopener">
+                                <span class="br-doc-name">Nurtec Strategy Deck</span>
+                                <span class="br-doc-desc">Strategic planning and positioning for Nurtec.</span>
+                                <span class="br-doc-date">Updated Jun 8, 2026</span>
+                            </a>
+                        </div>
+                        <button class="br-carousel-btn br-next"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></button>
+                    </div>
+                </div>
+                <!-- HCP Segmentation -->
+                <div class="br-section-card">
+                    <div class="br-section-header">
+                        <span class="icon-chip chip-s5"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></span>
+                        <span class="br-section-title">HCP Segmentation</span>
+                    </div>
+                    <div class="br-section-divider"></div>
+                    <div class="br-carousel-wrap">
+                        <button class="br-carousel-btn br-prev"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
+                        <div class="br-docs-track">
+                            <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:x:/s/MigraineAnalytics/IQCzU-TBKzs2R6R8OBlTorWlAXi5scVtjY-kvt4zIW2kE8w?e=fp2TNs" target="_blank" rel="noopener">
+                                <span class="br-doc-name">HCP Segmentation Workbook</span>
+                                <span class="br-doc-desc">HCP segmentation data and analysis workbook.</span>
+                                <span class="br-doc-date">Updated Jul 21, 2026</span>
+                            </a>
+                            <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:p:/s/MigraineAnalytics/IQCpXVMtEp3wSIwPWzgGNybXAfEvHh5Vm97TczXtv7xMTX0?e=9bTkNw" target="_blank" rel="noopener">
+                                <span class="br-doc-name">HCP Segmentation Deck</span>
+                                <span class="br-doc-desc">HCP segmentation presentation and findings.</span>
+                                <span class="br-doc-date">Updated Jul 21, 2026</span>
+                            </a>
+                        </div>
+                        <button class="br-carousel-btn br-next"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></button>
+                    </div>
+                </div>
+                <!-- Waterfall Analysis -->
+                <div class="br-section-card">
+                    <div class="br-section-header">
+                        <span class="icon-chip chip-s2"><svg viewBox="0 0 24 24"><path d="M18 20V10M12 20V4M6 20v-6"/></svg></span>
+                        <span class="br-section-title">Waterfall Analysis</span>
+                    </div>
+                    <div class="br-section-divider"></div>
+                    <div class="br-carousel-wrap">
+                        <button class="br-carousel-btn br-prev"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
+                        <div class="br-docs-track">
+                            <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:x:/s/MigraineAnalytics/IQAVxd1IHlmwR7iRpYYuMH7BAQ2gY5jodUexjg_VvED38eI?e=k6Osrq" target="_blank" rel="noopener">
+                                <span class="br-doc-name">Waterfall Analysis Workbook</span>
+                                <span class="br-doc-desc">Waterfall analysis and breakdown metrics.</span>
+                                <span class="br-doc-date">Updated Jun 2026</span>
+                            </a>
+                        </div>
+                        <button class="br-carousel-btn br-next"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></button>
+                    </div>
+                </div>
             </div>
         </section>
 
