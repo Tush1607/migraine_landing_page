@@ -2245,42 +2245,42 @@ NPA_PREV_ROWS_QULIPTA_NBRx
                         <div class="br-docs-track">
                             <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:w:/s/MigraineAnalytics/IQDbjA3d9ScmR7i6UeEmkQd3ATQQ7Nx4JR4hsZ_A9aaFLm4?e=DzpQMR" target="_blank" rel="noopener">
                                 <span class="br-doc-name">LAAD Flow</span>
-                                <span class="br-doc-desc">SDL documentation for LAAD data flow.</span>
+                                <span class="br-doc-desc">Data granularity, business rules, and time grains for LAAD reporting.</span>
                                 <span class="br-doc-date">Updated May 26, 2026</span>
                             </a>
                             <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:w:/s/MigraineAnalytics/IQDDclIUfRCbS568ELGNyo6WATa1Stjy9HVnhNb-IF79bNs?e=Es7JeA" target="_blank" rel="noopener">
                                 <span class="br-doc-name">ELAAD Flow</span>
-                                <span class="br-doc-desc">SDL documentation for ELAAD data flow.</span>
+                                <span class="br-doc-desc">Data granularity, business rules, and time grains for ELAAD reporting.</span>
                                 <span class="br-doc-date">Updated Jul 9, 2026</span>
                             </a>
                             <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:w:/s/MigraineAnalytics/IQAIoRRbOYovTbBORRTx5KKBAUWJZL4fyrzBtK9K9AwNyds?e=keDfgB" target="_blank" rel="noopener">
                                 <span class="br-doc-name">Forsyth Flow</span>
-                                <span class="br-doc-desc">SDL documentation for Forsyth data flow.</span>
+                                <span class="br-doc-desc">Data granularity, business rules, and time grains for Forsyth reporting.</span>
                                 <span class="br-doc-date">Updated Nov 28, 2025</span>
                             </a>
                             <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:w:/s/MigraineAnalytics/IQC4iqCLZZJtSJQNjW3wUv1vAckkbWa6JePLGxTAXOSgYqg?e=42AzZ6" target="_blank" rel="noopener">
                                 <span class="br-doc-name">Optum Flow</span>
-                                <span class="br-doc-desc">SDL documentation for Optum data flow.</span>
+                                <span class="br-doc-desc">Data granularity, business rules, and time grains for Optum reporting.</span>
                                 <span class="br-doc-date">Updated Nov 19, 2025</span>
                             </a>
                             <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:w:/s/MigraineAnalytics/IQDyAUgy2kZ3SqBxbq0rLuWEAfjHRX8lCXjcSEv7kMJ40dA?e=8gobHY" target="_blank" rel="noopener">
                                 <span class="br-doc-name">NPA Flow</span>
-                                <span class="br-doc-desc">SDL documentation for NPA data flow.</span>
+                                <span class="br-doc-desc">Data granularity, business rules, and time grains for NPA reporting.</span>
                                 <span class="br-doc-date">Updated Jan 13, 2026</span>
                             </a>
                             <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:w:/s/MigraineAnalytics/IQBrXYMFq6EZQLHHGrJNI2kdAX9GikX2sr8Cre4-wNy41i8?e=LenYIw" target="_blank" rel="noopener">
                                 <span class="br-doc-name">Blaze Forecasting</span>
-                                <span class="br-doc-desc">SDL documentation for Blaze forecasting flow.</span>
+                                <span class="br-doc-desc">Data granularity, business rules, and time grains for Blaze forecasting.</span>
                                 <span class="br-doc-date">Updated Dec 30, 2025</span>
                             </a>
                             <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:w:/s/MigraineAnalytics/IQCxW3pPz56cRovjeDADfXQ8AX0RBgBjumPePN6RLg6MJps?e=OdPqBq" target="_blank" rel="noopener">
                                 <span class="br-doc-name">Finance Flow</span>
-                                <span class="br-doc-desc">SDL documentation for Finance data flow.</span>
+                                <span class="br-doc-desc">Data granularity, business rules, and time grains for Finance reporting.</span>
                                 <span class="br-doc-date">Updated Nov 7, 2025</span>
                             </a>
                             <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:w:/s/MigraineAnalytics/IQCdfPixrb_SQa8PoVSyy3J8Ad_9toCsoIMOHZH-SjCD1r8?e=Dwnd1U" target="_blank" rel="noopener">
                                 <span class="br-doc-name">Xponent Flow</span>
-                                <span class="br-doc-desc">SDL documentation for Xponent data flow.</span>
+                                <span class="br-doc-desc">Data granularity, business rules, and time grains for Xponent reporting.</span>
                                 <span class="br-doc-date">Updated Oct 17, 2025</span>
                             </a>
                         </div>
@@ -2299,22 +2299,22 @@ NPA_PREV_ROWS_QULIPTA_NBRx
                         <div class="br-docs-track">
                             <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:p:/s/MigraineAnalytics/IQBdBFg1vxdFR6HZvdxtKVPZAUdmK-vTwF4Trvm4JdEBru4?e=TG0guS" target="_blank" rel="noopener">
                                 <span class="br-doc-name">Migraine Market Overview</span>
-                                <span class="br-doc-desc">Market landscape and key therapeutic area definitions.</span>
+                                <span class="br-doc-desc">Competitive landscape, branded vs. generic segmentation, and treatment class definitions.</span>
                                 <span class="br-doc-date">Updated Dec 23, 2025</span>
                             </a>
                             <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:p:/s/MigraineAnalytics/IQBCUjn2CtrYSpUJ-IXcMFBeAUzgT_soSZpsz8EyDbc3b_I?e=XD5od1" target="_blank" rel="noopener">
                                 <span class="br-doc-name">Migraine Market Basket BR</span>
-                                <span class="br-doc-desc">Cross-functional business rule alignment documentation.</span>
+                                <span class="br-doc-desc">Product inclusions, exclusions, and hierarchy logic for market basket share calculations.</span>
                                 <span class="br-doc-date">Updated Jan 1, 2025</span>
                             </a>
                             <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:p:/s/MigraineAnalytics/IQA9ft3L-N9VT4YQzW36UFsXAQU2ZNBXbO3UjFvDwa6NV5E?e=8ytpZI" target="_blank" rel="noopener">
                                 <span class="br-doc-name">IIS BR Master Deck</span>
-                                <span class="br-doc-desc">Master business rules deck for IIS analytics.</span>
+                                <span class="br-doc-desc">Metric calculation standards, data source mappings, and KPI approval criteria for IIS.</span>
                                 <span class="br-doc-date">Updated Jan 1, 2026</span>
                             </a>
                             <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:p:/s/MigraineAnalytics/IQBOAt2MOv_OTqhwLardlsHPAZdTa2hsvBq5pUuZfNbVWTM?e=tDWmaa" target="_blank" rel="noopener">
                                 <span class="br-doc-name">IIS Migraine Data Ecosystem</span>
-                                <span class="br-doc-desc">Data sources, flows, and ecosystem mapping.</span>
+                                <span class="br-doc-desc">Upstream data feeds, transformation layers, and downstream reporting touchpoints.</span>
                                 <span class="br-doc-date">Updated Jan 1, 2026</span>
                             </a>
                         </div>
@@ -2333,7 +2333,7 @@ NPA_PREV_ROWS_QULIPTA_NBRx
                         <div class="br-docs-track">
                             <a class="br-doc-chip" href="https://pfizer.sharepoint.com/:p:/s/MigraineAnalytics/IQADCiim_iD7QbxZE7Fm3F89Ab8O10p4xzPmog3z4X7KQ2g?e=jA6LCi" target="_blank" rel="noopener">
                                 <span class="br-doc-name">Migraine Dashboard BR</span>
-                                <span class="br-doc-desc">Dashboard-specific metric logic and standards.</span>
+                                <span class="br-doc-desc">KPI definitions, threshold logic, and refresh cadence for all IIS Migraine team dashboards.</span>
                                 <span class="br-doc-date">Updated Feb 1, 2026</span>
                             </a>
                         </div>
