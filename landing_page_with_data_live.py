@@ -984,7 +984,7 @@ a { color: inherit; text-decoration: none; }
 .section-head p { font-size: 0.84rem; color: var(--text-muted); max-width: 680px; }
 
 .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
-#agents .grid { grid-template-columns: repeat(4, 1fr); }
+
 
 /* ───── CARDS ───── */
 .card { position: relative; display: flex; flex-direction: column; background: var(--surface); border-radius: 14px; padding: 1.15rem 1.2rem; min-height: 148px; overflow: hidden; box-shadow: var(--shadow-sm); transition: transform 0.28s var(--ease-out), box-shadow 0.28s var(--ease); cursor: pointer; }
