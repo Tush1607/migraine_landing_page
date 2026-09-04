@@ -982,6 +982,7 @@ a { color: inherit; text-decoration: none; }
 .section-head-row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 0.2rem; }
 .section-head h2 { font-size: 1.35rem; font-weight: 700; color: var(--navy-900); letter-spacing: -0.02em; margin-bottom: 0.2rem; }
 .section-head p { font-size: 0.84rem; color: var(--text-muted); max-width: 680px; }
+#agents .section-head p { max-width: none; }
 
 .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
 
