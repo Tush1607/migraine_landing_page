@@ -1,12 +1,22 @@
-# Temporary Fix: NPA TRx Week Cap to NBRx Max
+# Temporary Fix: NPA Week Cap to NBRx Max
 
-## What was changed
-**File:** `landing_page_with_data_live.py`  
-**Location:** Lines 184-190 (after `nbrx_brand_df = load_brand_data("NBRx")`)
+## Why
+NBRx data was 1 week behind TRx (50 vs 51 weeks), causing `ValueError: Length of values does not match length of index` across multiple Excel download and chart functions.
 
-### Added lines (to revert):
+## When to revert
+Once the latest NBRx file is available and both TRx and NBRx have the same number of weeks.
+
+## How to find all changes
+Search for `TEMP FIX` in `landing_page_with_data_live.py`. All temp lines are tagged with:
+```
+# TEMP FIX: cap ... (revert when NBRx catches up)
+```
+
+## All locations changed (6 total)
+
+### 1. NPA Brand Data (lines ~184-190)
+After `nbrx_brand_df = load_brand_data("NBRx")`, added:
 ```python
-# TEMP FIX: cap TRx weeks to NBRx max so lengths match (revert when NBRx catches up)
 _nbrx_max_wk = nbrx_brand_df['WEEK_ID'].max()
 npa_brand_df = npa_brand_df[npa_brand_df['WEEK_ID'] <= _nbrx_max_wk]
 weeks = sorted(npa_brand_df['WEEK_ID'].unique())
@@ -14,17 +24,42 @@ nurtec_data = npa_brand_df[npa_brand_df['BRAND'] == 'NURTEC'].sort_values('WEEK_
 ubrelvy_data = npa_brand_df[npa_brand_df['BRAND'] == 'UBRELVY'].sort_values('WEEK_ID')
 qulipta_data = npa_brand_df[npa_brand_df['BRAND'] == 'QULIPTA'].sort_values('WEEK_ID')
 ```
-
-### To revert, replace lines 183-191 with:
+**Revert:** Remove these 7 lines (including comment). Keep only:
 ```python
 nbrx_brand_df = load_brand_data("NBRx")
-nbrx_nurtec = nbrx_brand_df[nbrx_brand_df['BRAND'] == 'NURTEC'].sort_values('WEEK_ID')
+nbrx_nurtec = ...
 ```
 
-The original `weeks`, `nurtec_data`, `ubrelvy_data`, `qulipta_data` assignments at lines 178-181 will then be the only ones (no re-assignment needed since they already exist above).
+### 2. get_channel_dict() (line ~200-201)
+Added inside function after `ch_df = load_channel_data(...)`:
+```python
+ch_df = ch_df[ch_df['WEEK_ID'] <= _nbrx_max_wk]
+```
+**Revert:** Remove this line and the comment above it.
 
-## Why
-NBRx data was 1 week behind TRx (50 vs 51 weeks), causing a `ValueError: Length of values (50) does not match length of index (51)` in `_build_npa_brand_excel` and `_build_xpt_excel`.
+### 3. Acute/Preventive Brand Data (lines ~220-224)
+After loading all 4 dataframes, added:
+```python
+_acute_trx_df = _acute_trx_df[_acute_trx_df['WEEK_ID'] <= _nbrx_max_wk]
+_acute_nbrx_df = _acute_nbrx_df[_acute_nbrx_df['WEEK_ID'] <= _nbrx_max_wk]
+_prev_trx_df = _prev_trx_df[_prev_trx_df['WEEK_ID'] <= _nbrx_max_wk]
+_prev_nbrx_df = _prev_nbrx_df[_prev_nbrx_df['WEEK_ID'] <= _nbrx_max_wk]
+```
+**Revert:** Remove these 5 lines (including comment).
 
-## When to revert
-Once the latest NBRx file is available and both TRx and NBRx have the same number of weeks.
+### 4. _build_ap_channel_excel() (line ~317-318)
+Added inside function after `ch_df = load_acute_prev_channel_data(...)`:
+```python
+ch_df = ch_df[ch_df['WEEK_ID'] <= _nbrx_max_wk]
+```
+**Revert:** Remove this line and the comment above it.
+
+### 5. build_ap_channel_chart_live() (line ~558-559)
+Added inside function after `ch_df = load_acute_prev_channel_data(...)`:
+```python
+ch_df = ch_df[ch_df['WEEK_ID'] <= _nbrx_max_wk]
+```
+**Revert:** Remove this line and the comment above it.
+
+## Quick revert command
+Search and delete all lines matching `TEMP FIX` and the filter line immediately after each comment. Also remove the `_nbrx_max_wk` variable and the re-assignments of `npa_brand_df`, `weeks`, `nurtec_data`, `ubrelvy_data`, `qulipta_data` at location #1.
