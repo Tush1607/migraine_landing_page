@@ -181,13 +181,6 @@ ubrelvy_data = npa_brand_df[npa_brand_df['BRAND'] == 'UBRELVY'].sort_values('WEE
 qulipta_data = npa_brand_df[npa_brand_df['BRAND'] == 'QULIPTA'].sort_values('WEEK_ID')
 
 nbrx_brand_df = load_brand_data("NBRx")
-# TEMP FIX: cap TRx weeks to NBRx max so lengths match (revert when NBRx catches up)
-_nbrx_max_wk = nbrx_brand_df['WEEK_ID'].max()
-npa_brand_df = npa_brand_df[npa_brand_df['WEEK_ID'] <= _nbrx_max_wk]
-weeks = sorted(npa_brand_df['WEEK_ID'].unique())
-nurtec_data = npa_brand_df[npa_brand_df['BRAND'] == 'NURTEC'].sort_values('WEEK_ID')
-ubrelvy_data = npa_brand_df[npa_brand_df['BRAND'] == 'UBRELVY'].sort_values('WEEK_ID')
-qulipta_data = npa_brand_df[npa_brand_df['BRAND'] == 'QULIPTA'].sort_values('WEEK_ID')
 nbrx_nurtec = nbrx_brand_df[nbrx_brand_df['BRAND'] == 'NURTEC'].sort_values('WEEK_ID')
 nbrx_ubrelvy = nbrx_brand_df[nbrx_brand_df['BRAND'] == 'UBRELVY'].sort_values('WEEK_ID')
 nbrx_qulipta = nbrx_brand_df[nbrx_brand_df['BRAND'] == 'QULIPTA'].sort_values('WEEK_ID')
@@ -197,8 +190,6 @@ def get_channel_dict(segment):
     result = {}
     for brand in ['NURTEC', 'UBRELVY', 'QULIPTA']:
         ch_df = load_channel_data(segment, brand)
-        # TEMP FIX: cap to NBRx max week (revert when NBRx catches up)
-        ch_df = ch_df[ch_df['WEEK_ID'] <= _nbrx_max_wk]
         retail_df = ch_df[ch_df['CHANNEL_TYPE'] == 'Retail'].sort_values('WEEK_ID')
         mail_df = ch_df[ch_df['CHANNEL_TYPE'] == 'MAIL'].sort_values('WEEK_ID')
         ltc_df = ch_df[ch_df['CHANNEL_TYPE'] == 'Long term'].sort_values('WEEK_ID')
@@ -217,11 +208,6 @@ _acute_trx_df = load_acute_prev_brand_data("TRx", "Acute")
 _acute_nbrx_df = load_acute_prev_brand_data("NBRx", "Acute")
 _prev_trx_df = load_acute_prev_brand_data("TRx", "Preventive")
 _prev_nbrx_df = load_acute_prev_brand_data("NBRx", "Preventive")
-# TEMP FIX: cap Acute/Prev to NBRx max week (revert when NBRx catches up)
-_acute_trx_df = _acute_trx_df[_acute_trx_df['WEEK_ID'] <= _nbrx_max_wk]
-_acute_nbrx_df = _acute_nbrx_df[_acute_nbrx_df['WEEK_ID'] <= _nbrx_max_wk]
-_prev_trx_df = _prev_trx_df[_prev_trx_df['WEEK_ID'] <= _nbrx_max_wk]
-_prev_nbrx_df = _prev_nbrx_df[_prev_nbrx_df['WEEK_ID'] <= _nbrx_max_wk]
 
 # --- Xponent Trends Data (Live) ---
 _xpt_df = load_xponent_trends()
@@ -314,8 +300,6 @@ def _build_acute_prev_brand_excel(trx_df, nbrx_df, rx_class, brands):
 
 def _build_ap_channel_excel(segment, rx_class, brand, dates_list, sheet_name):
     ch_df = load_acute_prev_channel_data(segment, rx_class, brand)
-    # TEMP FIX: cap to NBRx max week (revert when NBRx catches up)
-    ch_df = ch_df[ch_df['WEEK_ID'] <= _nbrx_max_wk]
     retail_df = ch_df[ch_df['CHANNEL_TYPE'] == 'Retail'].sort_values('WEEK_ID')
     mail_df = ch_df[ch_df['CHANNEL_TYPE'] == 'MAIL'].sort_values('WEEK_ID')
     ltc_df = ch_df[ch_df['CHANNEL_TYPE'] == 'Long term'].sort_values('WEEK_ID')
@@ -555,8 +539,6 @@ prev_nbrx_chart = build_acute_prev_chart(_prev_nbrx_df, 'NURTEC', 'QULIPTA', 'Nu
 # --- Acute/Preventive Channel Charts ---
 def build_ap_channel_chart_live(segment, rx_class, brand, metric_label, dates_list):
     ch_df = load_acute_prev_channel_data(segment, rx_class, brand)
-    # TEMP FIX: cap to NBRx max week (revert when NBRx catches up)
-    ch_df = ch_df[ch_df['WEEK_ID'] <= _nbrx_max_wk]
     retail_df = ch_df[ch_df['CHANNEL_TYPE'] == 'Retail'].sort_values('WEEK_ID')
     mail_df = ch_df[ch_df['CHANNEL_TYPE'] == 'MAIL'].sort_values('WEEK_ID')
     ltc_df = ch_df[ch_df['CHANNEL_TYPE'] == 'Long term'].sort_values('WEEK_ID')
