@@ -181,6 +181,13 @@ ubrelvy_data = npa_brand_df[npa_brand_df['BRAND'] == 'UBRELVY'].sort_values('WEE
 qulipta_data = npa_brand_df[npa_brand_df['BRAND'] == 'QULIPTA'].sort_values('WEEK_ID')
 
 nbrx_brand_df = load_brand_data("NBRx")
+# TEMP FIX: cap TRx weeks to NBRx max so lengths match (revert when NBRx catches up)
+_nbrx_max_wk = nbrx_brand_df['WEEK_ID'].max()
+npa_brand_df = npa_brand_df[npa_brand_df['WEEK_ID'] <= _nbrx_max_wk]
+weeks = sorted(npa_brand_df['WEEK_ID'].unique())
+nurtec_data = npa_brand_df[npa_brand_df['BRAND'] == 'NURTEC'].sort_values('WEEK_ID')
+ubrelvy_data = npa_brand_df[npa_brand_df['BRAND'] == 'UBRELVY'].sort_values('WEEK_ID')
+qulipta_data = npa_brand_df[npa_brand_df['BRAND'] == 'QULIPTA'].sort_values('WEEK_ID')
 nbrx_nurtec = nbrx_brand_df[nbrx_brand_df['BRAND'] == 'NURTEC'].sort_values('WEEK_ID')
 nbrx_ubrelvy = nbrx_brand_df[nbrx_brand_df['BRAND'] == 'UBRELVY'].sort_values('WEEK_ID')
 nbrx_qulipta = nbrx_brand_df[nbrx_brand_df['BRAND'] == 'QULIPTA'].sort_values('WEEK_ID')
