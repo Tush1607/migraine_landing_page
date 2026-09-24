@@ -1203,7 +1203,7 @@ a { color: inherit; text-decoration: none; }
         <button class="nav-item" data-target="agents">
             <span class="nav-icon"><svg viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="10" rx="2"/><path d="M9 16v3M15 16v3M9 6V3M15 6V3M3 11h3M18 11h3"/></svg></span>
             <span class="nav-label">CoWork Agents</span>
-            <span class="nav-count">4</span>
+            <span class="nav-count">5</span>
         </button>
         <button class="nav-item" data-target="deliverables">
             <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M14 3v5h5M5 21h14a1 1 0 001-1V8l-5-5H5a1 1 0 00-1 1v16a1 1 0 001 1z"/></svg></span>
@@ -1213,7 +1213,7 @@ a { color: inherit; text-decoration: none; }
         <button class="nav-item" data-target="docs">
             <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M5 3h11l3 3v15a1 1 0 01-1 1H5a1 1 0 01-1-1V4a1 1 0 011-1z"/><path d="M9 9h6M9 13h6M9 17h4"/></svg></span>
             <span class="nav-label">Business Rule Docs</span>
-            <span class="nav-count">5</span>
+            <span class="nav-count">3</span>
         </button>
     </nav>
     <div class="sidebar-spacer"></div>
